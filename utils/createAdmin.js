@@ -15,7 +15,7 @@ const createAdminUser = async () => {
   //   const adminUser = new User({
   //     name: 'Admin User',
   //     email: 'admin@mrmohrr7am.com',
-  //     password: 'admin123', // Will be hashed by the model
+  //     password: '1qaz2wsx', // Will be hashed by the model
   //     age: 30,
   //     year: 'Year 10', // Required field but not used for admin
   //     schoolName: 'System Administrator',
