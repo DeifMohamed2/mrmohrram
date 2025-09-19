@@ -1,0 +1,1557 @@
+<%- include('partials/header', { title: 'Student Dashboard', student: student }) %>
+
+<!-- Floating Math Background -->
+<div class="math-background-container">
+  <div class="floating-math-elements">
+    <div class="math-element" data-equation="π">π</div>
+    <div class="math-element" data-equation="∑">∑</div>
+    <div class="math-element" data-equation="∫">∫</div>
+    <div class="math-element" data-equation="√">√</div>
+    <div class="math-element" data-equation="∞">∞</div>
+    <div class="math-element" data-equation="α">α</div>
+    <div class="math-element" data-equation="β">β</div>
+    <div class="math-element" data-equation="θ">θ</div>
+    <div class="math-element" data-equation="Δ">Δ</div>
+    <div class="math-element" data-equation="λ">λ</div>
+    <div class="math-element" data-equation="∂">∂</div>
+    <div class="math-element" data-equation="≈">≈</div>
+    <div class="math-element" data-equation="≠">≠</div>
+    <div class="math-element" data-equation="≤">≤</div>
+    <div class="math-element" data-equation="≥">≥</div>
+  </div>
+</div>
+
+<div class="dashboard-container">
+  <!-- Welcome Section -->
+  <section class="welcome-section" data-aos="fade-down">
+    <div class="container">
+      <div class="welcome-content">
+        <div class="welcome-text">
+          <h1 class="welcome-title">
+            Welcome back, <span class="student-name"><%= student.name %></span>!
+          </h1>
+          <p class="welcome-subtitle">
+            Ready to continue your mathematical journey? Choose your year to get started.
+          </p>
+        </div>
+        <div class="welcome-stats">
+          <div class="stat-item" data-aos="fade-up" data-aos-delay="100">
+            <div class="stat-icon">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value"><%= student.year || 'Not Set' %></div>
+              <div class="stat-label">Current Year</div>
+            </div>
+          </div>
+          <div class="stat-item" data-aos="fade-up" data-aos-delay="200">
+            <div class="stat-icon">
+              <i class="fas fa-school"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value"><%= student.studentType || 'Not Set' %></div>
+              <div class="stat-label">Learning Mode</div>
+            </div>
+          </div>
+          <div class="stat-item" data-aos="fade-up" data-aos-delay="300">
+            <div class="stat-icon">
+              <i class="fas fa-trophy"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value"><%= progressStats.progressPercentage %>%</div>
+              <div class="stat-label">Progress</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Year Selection Section -->
+  <section class="year-selection-section">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <h2 class="section-title">Choose Your Year Level</h2>
+        <p class="section-subtitle">Choose the year you want to study and explore interactive mathematics</p>
+      </div>
+
+      <div class="year-cards-container" id="yearCardsContainer">
+        <!-- Year 8 Card -->
+        <div class="year-card" data-year="Year 8" data-aos="zoom-in" data-aos-delay="100">
+          <div class="card-inner">
+            <div class="card-glow"></div>
+            <div class="card-icon">
+              <i class="fas fa-calculator"></i>
+            </div>
+            <h3 class="card-title">Year 8</h3>
+            <p class="card-description">
+              Cambridge Lower Secondary (Checkpoint) mathematics curriculum
+            </p>
+            <div class="card-features">
+              <span class="feature-tag">Algebra Basics</span>
+              <span class="feature-tag">Geometry</span>
+              <span class="feature-tag">Checkpoint</span>
+            </div>
+            <div class="card-progress">
+              <div class="progress-bar">
+                <% const year8Progress = student.year === 'Year 8' ? progressStats.progressPercentage : 0; %>
+                <div class="progress-fill" style="--progress-width: <%= year8Progress %>%"></div>
+              </div>
+              <span class="progress-text"><%= year8Progress %>% Complete</span>
+            </div>
+            <button class="select-year-btn <%= student.year === 'Year 8' ? 'active' : '' %>">
+              <span><%= student.year === 'Year 8' ? 'Continue Learning' : 'Explore Year 8' %></span>
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Year 9 Card -->
+        <div class="year-card" data-year="Year 9" data-aos="zoom-in" data-aos-delay="200">
+          <div class="card-inner">
+            <div class="card-glow"></div>
+            <div class="card-icon">
+              <i class="fas fa-square-root-alt"></i>
+            </div>
+            <h3 class="card-title">Year 9</h3>
+            <p class="card-description">
+              Cambridge (Core) and Edexcel (Modular) mathematics curriculum
+            </p>
+            <div class="card-features">
+              <span class="feature-tag">Cambridge Core</span>
+              <span class="feature-tag">Edexcel Modular</span>
+              <span class="feature-tag">Statistics</span>
+            </div>
+            <div class="card-progress">
+              <div class="progress-bar">
+                <% const year9Progress = student.year === 'Year 9' ? progressStats.progressPercentage : 0; %>
+                <div class="progress-fill" style="--progress-width: <%= year9Progress %>%"></div>
+              </div>
+              <span class="progress-text"><%= year9Progress %>% Complete</span>
+            </div>
+            <button class="select-year-btn <%= student.year === 'Year 9' ? 'active' : '' %>">
+              <span><%= student.year === 'Year 9' ? 'Continue Learning' : 'Explore Year 9' %></span>
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Year 10 Card -->
+        <div class="year-card" data-year="Year 10" data-aos="zoom-in" data-aos-delay="300">
+          <div class="card-inner">
+            <div class="card-glow"></div>
+            <div class="card-icon">
+              <i class="fas fa-infinity"></i>
+            </div>
+            <h3 class="card-title">Year 10</h3>
+            <p class="card-description">
+              OL Edexcel (Linear & Modular) and OL Cambridge mathematics curriculum
+            </p>
+            <div class="card-features">
+              <span class="feature-tag">OL Edexcel</span>
+              <span class="feature-tag">OL Cambridge</span>
+              <span class="feature-tag">Linear & Modular</span>
+            </div>
+            <div class="card-progress">
+              <div class="progress-bar">
+                <% const year10Progress = student.year === 'Year 10' ? progressStats.progressPercentage : 0; %>
+                <div class="progress-fill" style="--progress-width: <%= year10Progress %>%"></div>
+              </div>
+              <span class="progress-text"><%= year10Progress %>% Complete</span>
+            </div>
+            <button class="select-year-btn <%= student.year === 'Year 10' ? 'active' : '' %>">
+              <span><%= student.year === 'Year 10' ? 'Continue Learning' : 'Explore Year 10' %></span>
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Learning Type Selection Section -->
+  <section class="learning-type-selection-section" id="learningTypeSelectionSection" style="display: none;">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <h2 class="section-title">Choose Your Learning Mode</h2>
+        <p class="section-subtitle">Select how you want to learn <%= student.year %> mathematics</p>
+      </div>
+
+      <div class="learning-type-cards-container" data-aos="fade-up" data-aos-delay="200">
+        <!-- School Learning Card -->
+        <div class="learning-type-card <%= student.studentType !== 'School' ? 'disabled' : '' %>" data-type="School" data-aos="zoom-in" data-aos-delay="100">
+          <div class="card-inner">
+            <div class="card-glow"></div>
+            <div class="card-icon">
+              <i class="fas fa-graduation-cap"></i>
+            </div>
+            <h3 class="card-title">School Support</h3>
+            <p class="card-description">
+              Complement your school curriculum with additional practice, notes, and support materials
+            </p>
+            <div class="card-features">
+              <span class="feature-tag">School Integration</span>
+              <span class="feature-tag">Extra Practice</span>
+              <span class="feature-tag">Support Materials</span>
+            </div>
+            
+            <!-- Curriculum Selection within School Card -->
+            <div class="curriculum-selection-mini">
+              <h4 class="curriculum-mini-title">Select Your Curriculum:</h4>
+              <div class="curriculum-mini-cards">
+                <div class="curriculum-mini-card <%= student.curriculum !== 'Cambridge' ? 'disabled' : '' %>" data-curriculum="Cambridge">
+                  <div class="mini-card-icon">
+                    <i class="fas fa-university"></i>
+                  </div>
+                  <span class="mini-card-label">Cambridge</span>
+                  <% if (student.curriculum === 'Cambridge') { %>
+                    <button class="mini-curriculum-btn active" data-curriculum="Cambridge" data-student-type="School">
+                      <span>Access</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </button>
+                  <% } else { %>
+                    <button class="mini-curriculum-btn disabled" disabled>
+                      <span>Not Assigned</span>
+                      <i class="fas fa-lock"></i>
+                    </button>
+                  <% } %>
+                </div>
+                
+                <div class="curriculum-mini-card <%= student.curriculum !== 'Edexcel' ? 'disabled' : '' %>" data-curriculum="Edexcel">
+                  <div class="mini-card-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                  </div>
+                  <span class="mini-card-label">Edexcel</span>
+                  <% if (student.curriculum === 'Edexcel') { %>
+                    <button class="mini-curriculum-btn active" data-curriculum="Edexcel" data-student-type="School">
+                      <span>Access</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </button>
+                  <% } else { %>
+                    <button class="mini-curriculum-btn disabled" disabled>
+                      <span>Not Assigned</span>
+                      <i class="fas fa-lock"></i>
+                    </button>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center Learning Card -->
+        <div class="learning-type-card <%= student.studentType !== 'Center' ? 'disabled' : '' %>" data-type="Center" data-aos="zoom-in" data-aos-delay="200">
+          <div class="card-inner">
+            <div class="card-glow"></div>
+            <div class="card-icon">
+              <i class="fas fa-building"></i>
+            </div>
+            <h3 class="card-title">Learning Center</h3>
+            <p class="card-description">
+              Face-to-face instruction with expert tutors, interactive whiteboards, and personalized guidance
+            </p>
+            <div class="card-features">
+              <span class="feature-tag">Expert Tutors</span>
+              <span class="feature-tag">Interactive Sessions</span>
+              <span class="feature-tag">Personal Guidance</span>
+            </div>
+            
+            <!-- Curriculum Selection within Center Card -->
+            <div class="curriculum-selection-mini">
+              <h4 class="curriculum-mini-title">Select Your Curriculum:</h4>
+              <div class="curriculum-mini-cards">
+                <div class="curriculum-mini-card <%= student.curriculum !== 'Cambridge' ? 'disabled' : '' %>" data-curriculum="Cambridge">
+                  <div class="mini-card-icon">
+                    <i class="fas fa-university"></i>
+                  </div>
+                  <span class="mini-card-label">Cambridge</span>
+                  <% if (student.curriculum === 'Cambridge') { %>
+                    <button class="mini-curriculum-btn active" data-curriculum="Cambridge" data-student-type="Center">
+                      <span>Access</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </button>
+                  <% } else { %>
+                    <button class="mini-curriculum-btn disabled" disabled>
+                      <span>Not Assigned</span>
+                      <i class="fas fa-lock"></i>
+                    </button>
+                  <% } %>
+                </div>
+                
+                <div class="curriculum-mini-card <%= student.curriculum !== 'Edexcel' ? 'disabled' : '' %>" data-curriculum="Edexcel">
+                  <div class="mini-card-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                  </div>
+                  <span class="mini-card-label">Edexcel</span>
+                  <% if (student.curriculum === 'Edexcel') { %>
+                    <button class="mini-curriculum-btn active" data-curriculum="Edexcel" data-student-type="Center">
+                      <span>Access</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </button>
+                  <% } else { %>
+                    <button class="mini-curriculum-btn disabled" disabled>
+                      <span>Not Assigned</span>
+                      <i class="fas fa-lock"></i>
+                    </button>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Online Learning Card -->
+        <div class="learning-type-card <%= student.studentType !== 'Online' ? 'disabled' : '' %>" data-type="Online" data-aos="zoom-in" data-aos-delay="300">
+          <div class="card-inner">
+            <div class="card-glow"></div>
+            <div class="card-icon">
+              <i class="fas fa-laptop"></i>
+            </div>
+            <h3 class="card-title">Online Learning</h3>
+            <p class="card-description">
+              Virtual classrooms with 3D visualizations, interactive simulations, and flexible scheduling
+            </p>
+            <div class="card-features">
+              <span class="feature-tag">3D Visualizations</span>
+              <span class="feature-tag">Interactive Sims</span>
+              <span class="feature-tag">Flexible Schedule</span>
+            </div>
+            
+            <!-- Curriculum Selection within Online Card -->
+            <div class="curriculum-selection-mini">
+              <h4 class="curriculum-mini-title">Select Your Curriculum:</h4>
+              <div class="curriculum-mini-cards">
+                <div class="curriculum-mini-card <%= student.curriculum !== 'Cambridge' ? 'disabled' : '' %>" data-curriculum="Cambridge">
+                  <div class="mini-card-icon">
+                    <i class="fas fa-university"></i>
+                  </div>
+                  <span class="mini-card-label">Cambridge</span>
+                  <% if (student.curriculum === 'Cambridge') { %>
+                    <button class="mini-curriculum-btn active" data-curriculum="Cambridge" data-student-type="Online">
+                      <span>Access</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </button>
+                  <% } else { %>
+                    <button class="mini-curriculum-btn disabled" disabled>
+                      <span>Not Assigned</span>
+                      <i class="fas fa-lock"></i>
+                    </button>
+                  <% } %>
+                </div>
+                
+                <div class="curriculum-mini-card <%= student.curriculum !== 'Edexcel' ? 'disabled' : '' %>" data-curriculum="Edexcel">
+                  <div class="mini-card-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                  </div>
+                  <span class="mini-card-label">Edexcel</span>
+                  <% if (student.curriculum === 'Edexcel') { %>
+                    <button class="mini-curriculum-btn active" data-curriculum="Edexcel" data-student-type="Online">
+                      <span>Access</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </button>
+                  <% } else { %>
+                    <button class="mini-curriculum-btn disabled" disabled>
+                      <span>Not Assigned</span>
+                      <i class="fas fa-lock"></i>
+                    </button>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-buttons" data-aos="fade-up" data-aos-delay="400">
+        <button class="back-btn" id="backToYearSelection">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Year Selection</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Learning Content Access Section -->
+  <section class="learning-content-access-section" id="learningContentAccessSection" style="display: none;">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <h2 class="section-title">Access Your Learning Content</h2>
+        <p class="section-subtitle">Choose what you want to explore for <%= student.year %> mathematics</p>
+      </div>
+
+      <div class="content-access-cards-container" data-aos="fade-up" data-aos-delay="200">
+        <!-- Past Papers Card -->
+        <div class="content-access-card" data-content="past-papers" data-aos="zoom-in" data-aos-delay="100">
+          <div class="card-inner">
+            <div class="card-glow"></div>
+            <div class="card-icon">
+              <i class="fas fa-file-alt"></i>
+            </div>
+            <h3 class="card-title">Past Papers</h3>
+            <p class="card-description">
+              Access comprehensive collection of past examination papers with detailed solutions and practice tests
+            </p>
+            <div class="card-features">
+              <span class="feature-tag">Exam Papers</span>
+              <span class="feature-tag">Solutions</span>
+              <span class="feature-tag">Practice Tests</span>
+            </div>
+            <div class="card-stats">
+              <div class="stat-item">
+                <i class="fas fa-file-pdf"></i>
+                <span><%= pastPapers.length %> Papers</span>
+              </div>
+              <div class="stat-item">
+                <i class="fas fa-calendar"></i>
+                <span><%= new Set(pastPapers.map(p => p.examYear)).size %> Years</span>
+              </div>
+            </div>
+            <button class="access-content-btn" id="accessPastPapers">
+              <span>Access Past Papers</span>
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Weeks Card -->
+        <div class="content-access-card" data-content="weeks" data-aos="zoom-in" data-aos-delay="200">
+          <div class="card-inner">
+            <div class="card-glow"></div>
+            <div class="card-icon">
+              <i class="fas fa-calendar-week"></i>
+            </div>
+            <h3 class="card-title">Weekly Learning</h3>
+            <p class="card-description">
+              Follow structured weekly learning schedule with topics, exercises, and progress tracking
+            </p>
+            <div class="card-features">
+              <span class="feature-tag">Structured Learning</span>
+              <span class="feature-tag">Progress Tracking</span>
+              <span class="feature-tag">Interactive Content</span>
+            </div>
+            <div class="card-stats">
+              <div class="stat-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span><%= weeks.length %> Weeks</span>
+              </div>
+              <div class="stat-item">
+                <i class="fas fa-chart-line"></i>
+                <span><%= progressStats.progressPercentage %>% Progress</span>
+              </div>
+            </div>
+            <button class="access-content-btn" id="accessWeeks">
+              <span>Access Weekly Learning</span>
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-buttons" data-aos="fade-up" data-aos-delay="400">
+        <button class="back-btn" id="backToLearningTypeSelection">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Learning Mode</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Past Papers Section (Hidden by default) -->
+  <section class="past-papers-section" id="pastPapersSection" style="display: none;">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <h2 class="section-title">Past Papers</h2>
+        <p class="section-subtitle">Practice with previous examination papers</p>
+      </div>
+
+      <!-- Main Past Papers Card -->
+      <div class="main-paper-card" data-aos="zoom-in" data-aos-delay="100">
+        <div class="main-card-inner">
+          <div class="main-card-glow"></div>
+          <div class="main-card-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <h3 class="main-card-title">Past Papers Collection</h3>
+          <p class="main-card-description">
+            Access comprehensive collection of past examination papers for <%= student.year %>
+          </p>
+          <div class="main-card-stats">
+            <div class="main-stat-item">
+              <span class="main-stat-number"><%= pastPapers.length %></span>
+              <span class="main-stat-label">Total Papers</span>
+            </div>
+            <div class="main-stat-item">
+              <span class="main-stat-number"><%= Object.keys(papersByType).length %></span>
+              <span class="main-stat-label">Paper Types</span>
+            </div>
+            <div class="main-stat-item">
+              <span class="main-stat-number"><%= new Set(pastPapers.map(p => p.examYear)).size %></span>
+              <span class="main-stat-label">Years Available</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paper Sub-Cards -->
+      <div class="papers-sub-container" data-aos="fade-up" data-aos-delay="200">
+        <% 
+          const paperTypes = Object.keys(papersByType);
+          const paperIcons = {
+            'Paper 1': 'fas fa-file-alt',
+            'Paper 2': 'fas fa-calculator',
+            'Paper 3': 'fas fa-chart-line',
+            'Paper 4': 'fas fa-infinity'
+          };
+          const paperDescriptions = {
+            'Paper 1': 'Non-calculator mathematics covering core concepts',
+            'Paper 2': 'Calculator mathematics with advanced analysis',
+            'Paper 3': 'Extended mathematics with complex problem solving',
+            'Paper 4': 'Advanced mathematics with comprehensive coverage'
+          };
+        %>
+        
+        <% paperTypes.forEach((paperType, index) => { %>
+          <div class="paper-sub-card" data-paper="<%= paperType.toLowerCase().replace(' ', '') %>" data-aos="slide-in-<%= index % 2 === 0 ? 'left' : 'right' %>" data-aos-delay="<%= 300 + (index * 100) %>">
+            <div class="paper-sub-inner">
+              <div class="paper-sub-glow"></div>
+              <div class="paper-sub-icon">
+                <i class="<%= paperIcons[paperType] || 'fas fa-file-alt' %>"></i>
+              </div>
+              <h4 class="paper-sub-title"><%= paperType %></h4>
+              <p class="paper-sub-description">
+                <%= paperDescriptions[paperType] || 'Mathematics examination paper' %>
+              </p>
+              <div class="paper-sub-features">
+                <% 
+                  const papers = papersByType[paperType];
+                  const firstPaper = papers[0];
+                  if (firstPaper) {
+                %>
+                  <span class="sub-feature-tag"><%= firstPaper.calculatorAllowed ? 'Calculator' : 'No Calculator' %></span>
+                  <span class="sub-feature-tag"><%= firstPaper.duration %> Minutes</span>
+                <% } %>
+              </div>
+              <div class="paper-sub-stats">
+                <div class="sub-stat-item">
+                  <span class="sub-stat-number"><%= papers.length %></span>
+                  <span class="sub-stat-label">Available</span>
+                </div>
+              </div>
+              <button class="access-sub-paper-btn" onclick="showPapersForType('<%= paperType %>')">
+                <span>Access <%= paperType %></span>
+                <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+
+      <!-- Individual Past Papers Grid -->
+      <div class="individual-papers-container" data-aos="fade-up" data-aos-delay="300" style="display: none;">
+        <div class="papers-header">
+          <h4 class="papers-subtitle">Available Past Papers</h4>
+          <div class="papers-header-actions">
+            <button class="test-btn" onclick="testPapersData()" style="margin-right: 1rem; padding: 0.5rem 1rem; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer;">
+              Test Data
+            </button>
+            <button class="back-to-types-btn" onclick="backToPaperTypes()">
+              <i class="fas fa-arrow-left"></i>
+              <span>Back to Paper Types</span>
+            </button>
+          </div>
+        </div>
+        <div class="papers-grid" id="individualPapersGrid">
+          <% pastPapers.forEach((paper, index) => { %>
+                            <div class="paper-item" data-paper-id="<%= paper._id %>" data-paper-type="<%= paper.paperType %>" data-aos="zoom-in" data-aos-delay="<%= 400 + (index * 50) %>" style="display: none;">
+                              <div class="paper-item-inner">
+                                <div class="paper-item-header">
+                                  <div class="paper-item-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                  </div>
+                                  <div class="paper-item-badges">
+                                    <span class="paper-badge year"><%= paper.year %></span>
+                                    <span class="paper-badge type"><%= paper.paperType %></span>
+                                    <span class="paper-badge difficulty <%= paper.difficulty.toLowerCase() %>"><%= paper.difficulty %></span>
+                                  </div>
+                                </div>
+                                
+                                <div class="paper-item-content">
+                                  <h5 class="paper-item-title"><%= paper.title %></h5>
+                                  <p class="paper-item-description"><%= paper.description %></p>
+                                  
+                                  <div class="paper-item-details">
+                                    <div class="detail-item">
+                                      <i class="fas fa-calendar"></i>
+                                      <span><%= paper.examYear %></span>
+                                    </div>
+                                    <div class="detail-item">
+                                      <i class="fas fa-clock"></i>
+                                      <span><%= paper.duration %> min</span>
+                                    </div>
+                                    <div class="detail-item">
+                                      <i class="fas fa-star"></i>
+                                      <span><%= paper.totalMarks %> marks</span>
+                                    </div>
+                                    <div class="detail-item">
+                                      <i class="fas fa-calculator"></i>
+                                      <span><%= paper.calculatorAllowed ? 'Calculator' : 'No Calculator' %></span>
+                                    </div>
+                                  </div>
+                                  
+                                  <% if (paper.topics && paper.topics.length > 0) { %>
+                                    <div class="paper-item-topics">
+                                      <% paper.topics.slice(0, 3).forEach(topic => { %>
+                                        <span class="topic-tag"><%= topic %></span>
+                                      <% }); %>
+                                      <% if (paper.topics.length > 3) { %>
+                                        <span class="topic-tag more">+<%= paper.topics.length - 3 %> more</span>
+                                      <% } %>
+                                    </div>
+                                  <% } %>
+                                </div>
+                                
+                                <div class="paper-item-actions">
+                                  <% if (paper.allowPreview) { %>
+                                    <a href="/student/past-paper/<%= paper._id %>" class="paper-action-btn preview">
+                                      <i class="fas fa-eye"></i>
+                                      <span>View Paper</span>
+                                    </a>
+                                  <% } %>
+                                  <button class="paper-action-btn download" onclick="downloadPastPaper('<%= paper._id %>')">
+                                    <i class="fas fa-download"></i>
+                                    <span>Download</span>
+                                  </button>
+                                </div>
+                                
+                                <div class="paper-item-stats">
+                                  <div class="stat">
+                                    <i class="fas fa-download"></i>
+                                    <span><%= paper.downloadCount || 0 %></span>
+                                  </div>
+                                  <div class="stat">
+                                    <i class="fas fa-eye"></i>
+                                    <span><%= paper.viewCount || 0 %></span>
+                                  </div>
+                                  <div class="stat">
+                                    <i class="fas fa-star"></i>
+                                    <span class="rating"><%= paper.rating || '4.5' %></span>
+                                  </div>
+                                </div>
+                                
+                                <div class="paper-item-hover">
+                                  <div class="hover-content">
+                                    <h4>Quick Actions</h4>
+                                    <div class="hover-actions">
+                                      <a href="/student/past-paper/<%= paper._id %>" class="hover-btn view">
+                                        <i class="fas fa-eye"></i>
+                                        <span>View</span>
+                                      </a>
+                                      <button class="hover-btn download" onclick="downloadPastPaper('<%= paper._id %>')">
+                                        <i class="fas fa-download"></i>
+                                        <span>Download</span>
+                                      </button>
+                                      <button class="hover-btn favorite" onclick="toggleFavorite('<%= paper._id %>')">
+                                        <i class="far fa-heart"></i>
+                                        <span>Favorite</span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+          <% }); %>
+        </div>
+      </div>
+
+      <div class="action-buttons" data-aos="fade-up" data-aos-delay="500">
+        <button class="back-btn" id="backToTypeDisplay">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back</span>
+        </button>
+        <button class="weeks-btn" id="goToWeeks">
+          <span>View Weeks</span>
+          <i class="fas fa-calendar-week"></i>
+        </button>
+      </div>
+    </div>
+  </section> <!-- Weeks Section (Hidden by default) -->
+  <section class="weeks-section" id="weeksSection" style="display: none;">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <h2 class="section-title">Weekly Learning Schedule</h2>
+        <p class="section-subtitle">Your structured learning journey week by week</p>
+      </div>
+
+      <div class="weeks-grid" id="weeksGrid">
+        <!-- Dynamic Week Cards -->
+        <% weeks.forEach((week, index) => { %>
+          <% 
+            const progress = studentProgress.find(p => p.week && p.week._id && p.week._id.toString() === week._id.toString());
+            const isCurrentWeek = week.isCurrentWeek || week.weekNumber === progressStats.currentWeek;
+            const isCompleted = week.isCompleted || (progress && progress.status === 'completed');
+            const isUnlocked = week.isUnlocked || (progress && progress.accessControl && progress.accessControl.isUnlocked);
+            const isAccessible = week.isAccessible || isCompleted || isUnlocked || isCurrentWeek || week.weekNumber <= progressStats.currentWeek;
+          %>
+          <div class="week-card" data-week="<%= week.weekNumber %>" data-week-id="<%= week._id %>" data-aos="zoom-in" data-aos-delay="<%= (index + 1) * 50 %>">
+            <div class="week-inner">
+              <div class="week-header">
+                <div class="week-number">Week <%= week.weekNumber %></div>
+                <div class="week-status">
+                  <% if (isCurrentWeek) { %>
+                    <span class="status current">Current</span>
+                  <% } else if (isCompleted) { %>
+                    <span class="status completed">Completed</span>
+                  <% } else if (isUnlocked) { %>
+                    <span class="status unlocked">Unlocked</span>
+                  <% } else if (isAccessible) { %>
+                    <span class="status available">Available</span>
+                  <% } else { %>
+                    <span class="status locked">Locked</span>
+                  <% } %>
+                </div>
+              </div>
+
+              <div class="week-content">
+                <h4 class="week-title"><%= week.title %></h4>
+                <p class="week-description"><%= week.description %></p>
+
+                <div class="week-dates">
+                  <span class="date-range">
+                    <%= new Date(week.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) %> -
+                    <%= new Date(week.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) %>
+                  </span>
+                </div>
+
+              <div class="week-stats">
+                <div class="stat-item">
+                  <i class="fas fa-play-circle"></i>
+                  <span><%= week.totalTopics || 0 %> Topics</span>
+                </div>
+                <div class="stat-item">
+                  <i class="fas fa-clock"></i>
+                  <span><%= week.studyTimeHours || 0 %>h Study</span>
+                </div>
+              </div>
+
+              <div class="week-progress">
+                <div class="progress-bar">
+                  <% const weekProgress = week.progressPercentage || (progress ? progress.score : 0); %>
+                  <div class="progress-fill" style="--progress-width: <%= weekProgress %>%"></div>
+                </div>
+                <span class="progress-text">
+                  <% if (isCompleted) { %>
+                    Completed
+                  <% } else { %>
+                    <%= weekProgress %>% Complete
+                  <% } %>
+                </span>
+              </div>
+            </div>
+
+            <button class="week-btn <% if (!isAccessible) { %>disabled<% } %>">
+              <% if (isCompleted) { %>
+              <span>Review Week</span>
+              <i class="fas fa-eye"></i>
+              <% } else if (isCurrentWeek) { %>
+              <span>Continue</span>
+              <i class="fas fa-play"></i>
+              <% } else if (isUnlocked) { %>
+              <span>Start Week</span>
+              <i class="fas fa-unlock"></i>
+              <% } else if (isAccessible) { %>
+              <span>Start Week</span>
+              <i class="fas fa-rocket"></i>
+              <% } else { %>
+              <span>Locked</span>
+              <i class="fas fa-lock"></i>
+              <% } %>
+            </button>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+
+      <div class="action-buttons" data-aos="fade-up" data-aos-delay="400">
+        <button class="back-btn" id="backToPapers">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Papers</span>
+        </button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Import new CSS and JavaScript -->
+<link rel="stylesheet" href="/css/student-dashboard-new.css">
+<script src="/js/student-dashboard.js"></script>
+
+<style>
+.progress-fill {
+  width: var(--progress-width, 0%) !important;
+}
+
+/* Paper loading overlay */
+.papers-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}
+
+.papers-loading-overlay .loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(58, 146, 98, 0.2);
+  border-left-color: var(--math-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.papers-loading-overlay p {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--math-text);
+}
+
+/* Paper item animations */
+.paper-sub-card, .paper-item {
+  transition: all 0.3s ease;
+}
+
+.individual-papers-container {
+  position: relative;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.papers-sub-container {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Paper item hover effects */
+.paper-item-inner {
+  position: relative;
+  overflow: hidden;
+}
+
+.paper-item-hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(58, 146, 98, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all 0.3s ease;
+  border-radius: 16px;
+}
+
+.paper-item:hover .paper-item-hover {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hover-content {
+  text-align: center;
+  color: white;
+  padding: 2rem;
+}
+
+.hover-content h4 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.hover-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hover-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.hover-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-5px);
+  color: white;
+  text-decoration: none;
+}
+
+.hover-btn i {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.hover-btn span {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Curriculum Selection Mini Cards */
+.curriculum-selection-mini {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.curriculum-mini-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--math-text);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.curriculum-mini-cards {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.curriculum-mini-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  min-width: 120px;
+  position: relative;
+  overflow: hidden;
+}
+
+.curriculum-mini-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(58, 146, 98, 0.1), rgba(34, 197, 94, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.curriculum-mini-card:not(.disabled):hover::before {
+  opacity: 1;
+}
+
+.curriculum-mini-card:not(.disabled):hover {
+  border-color: var(--math-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(58, 146, 98, 0.2);
+}
+
+.curriculum-mini-card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mini-card-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  color: var(--math-primary);
+  transition: all 0.3s ease;
+}
+
+.curriculum-mini-card:not(.disabled):hover .mini-card-icon {
+  background: var(--math-primary);
+  color: white;
+  transform: scale(1.1);
+}
+
+.mini-card-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--math-text);
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.mini-curriculum-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--math-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  position: relative;
+  z-index: 1;
+}
+
+.mini-curriculum-btn:hover {
+  background: var(--math-primary-dark);
+  color: rgb(0, 0, 0);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(58, 146, 98, 0.3);
+}
+
+.mini-curriculum-btn.disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.mini-curriculum-btn i {
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+.mini-curriculum-btn:not(.disabled):hover i {
+  transform: translateX(2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .curriculum-mini-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .curriculum-mini-card {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+</style>
+
+<script type="application/json" id="papers-data"><%- JSON.stringify(papersByType) %></script>
+
+<!-- Store student data for JavaScript -->
+<script>
+  window.studentData = {
+    name: '<%= student.name %>',
+    email: '<%= student.email %>',
+    year: '<%= student.year || "" %>',
+    studentType: '<%= student.studentType || "" %>'
+  };
+  
+  // Set papers data separately to avoid EJS parsing issues
+  window.papersByType = JSON.parse(document.getElementById('papers-data').textContent);
+  console.log('Papers data loaded:', window.papersByType);
+
+  // Simple function to show papers for a specific type
+  function showPapersForType(paperType) {
+    // Use the dashboard class method if available
+    if (window.studentDashboard && typeof window.studentDashboard.showPapersForType === 'function') {
+      window.studentDashboard.showPapersForType(paperType);
+      return;
+    }
+    
+    // Fallback implementation
+    // Hide the sub-cards
+    const subContainer = document.querySelector('.papers-sub-container');
+    if (subContainer) {
+      subContainer.style.display = 'none';
+    }
+    
+    // Show the individual papers container
+    const individualContainer = document.querySelector('.individual-papers-container');
+    if (individualContainer) {
+      individualContainer.style.display = 'block';
+      
+      // Filter and show only papers of this type
+      const paperItems = individualContainer.querySelectorAll('.paper-item');
+      let visibleCount = 0;
+      
+      paperItems.forEach(item => {
+        const dataPaperType = item.getAttribute('data-paper-type');
+        const paperTypeBadge = item.querySelector('.paper-badge.type');
+        const badgeText = paperTypeBadge ? paperTypeBadge.textContent.trim() : '';
+        
+        if (dataPaperType === paperType || badgeText === paperType) {
+          item.style.display = 'block';
+          visibleCount++;
+        } else {
+          item.style.display = 'none';
+        }
+      });
+      
+      // Update the subtitle
+      const subtitle = individualContainer.querySelector('.papers-subtitle');
+      if (subtitle) {
+        subtitle.textContent = `Available ${paperType} Papers (${visibleCount} found)`;
+      }
+      
+      // Scroll to the section
+      individualContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      showNotification(`Showing papers for ${paperType}`, 'success');
+    }
+  }
+
+  // Past Paper Functions (keeping the old function for reference)
+  function viewPapers(paperType) {
+    console.log('viewPapers called with:', paperType);
+    
+    // Show individual papers for this type instead of redirecting
+    const papers = window.papersByType && window.papersByType[paperType];
+    console.log('Available papers for', paperType, ':', papers);
+    
+    if (papers && papers.length > 0) {
+      // Hide the sub-cards and show individual papers
+      const subContainer = document.querySelector('.papers-sub-container');
+      const individualContainer = document.querySelector('.individual-papers-container');
+      
+      console.log('Sub container:', subContainer);
+      console.log('Individual container:', individualContainer);
+      
+      if (subContainer) subContainer.style.display = 'none';
+      if (individualContainer) {
+        individualContainer.style.display = 'block';
+        
+        // Filter and show only papers of this type
+        const paperItems = individualContainer.querySelectorAll('.paper-item');
+        console.log('Found paper items:', paperItems.length);
+        
+        let visibleCount = 0;
+        paperItems.forEach(item => {
+          // Try both methods: data attribute and badge text
+          const dataPaperType = item.getAttribute('data-paper-type');
+          const paperTypeBadge = item.querySelector('.paper-badge.type');
+          const badgeText = paperTypeBadge ? paperTypeBadge.textContent.trim() : '';
+          
+          console.log('Paper item data-paper-type:', dataPaperType);
+          console.log('Paper type badge text:', badgeText);
+          
+          if (dataPaperType === paperType || badgeText === paperType) {
+            item.style.display = 'block';
+            visibleCount++;
+            console.log('Showing paper:', item.querySelector('.paper-item-title')?.textContent);
+          } else {
+            item.style.display = 'none';
+          }
+        });
+        
+        console.log('Visible papers count:', visibleCount);
+        
+        // Update the subtitle
+        const subtitle = individualContainer.querySelector('.papers-subtitle');
+        if (subtitle) {
+          subtitle.textContent = `Available ${paperType} Papers (${visibleCount} found)`;
+        }
+        
+        // Scroll to the individual papers section
+        individualContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        if (visibleCount === 0) {
+          // Fallback: show all papers if no specific type found
+          console.log('No papers found for specific type, showing all papers as fallback');
+          paperItems.forEach(item => {
+            item.style.display = 'block';
+          });
+          visibleCount = paperItems.length;
+          showNotification(`No specific ${paperType} papers found. Showing all available papers.`, 'info');
+        } else {
+          showNotification(`Showing ${visibleCount} ${paperType} papers`, 'success');
+        }
+      }
+    } else {
+      showNotification('No papers available for ' + paperType, 'error');
+    }
+  }
+
+  function backToPaperTypes() {
+    // Show the sub-cards and hide individual papers
+    const subContainer = document.querySelector('.papers-sub-container');
+    const individualContainer = document.querySelector('.individual-papers-container');
+    
+    if (subContainer) subContainer.style.display = 'block';
+    if (individualContainer) individualContainer.style.display = 'none';
+    
+    // Scroll to the papers section
+    const pastPapersSection = document.getElementById('pastPapersSection');
+    if (pastPapersSection) {
+      pastPapersSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function testPapersData() {
+    console.log('=== TESTING PAPERS DATA ===');
+    console.log('window.papersByType:', window.papersByType);
+    
+    const individualContainer = document.querySelector('.individual-papers-container');
+    const paperItems = individualContainer.querySelectorAll('.paper-item');
+    
+    console.log('Individual container:', individualContainer);
+    console.log('Paper items found:', paperItems.length);
+    
+    paperItems.forEach((item, index) => {
+      const dataPaperType = item.getAttribute('data-paper-type');
+      const paperTypeBadge = item.querySelector('.paper-badge.type');
+      const badgeText = paperTypeBadge ? paperTypeBadge.textContent.trim() : '';
+      const title = item.querySelector('.paper-item-title')?.textContent;
+      
+      console.log(`Paper ${index + 1}:`, {
+        dataPaperType,
+        badgeText,
+        title,
+        element: item
+      });
+    });
+    
+    // Show all papers for testing
+    paperItems.forEach(item => {
+      item.style.display = 'block';
+    });
+    
+    showNotification(`Test complete! Found ${paperItems.length} papers. Check console for details.`, 'info');
+  }
+  
+  function toggleFavorite(paperId) {
+    // Get favorites from localStorage
+    const favorites = JSON.parse(localStorage.getItem('favoritePapers') || '[]');
+    const index = favorites.indexOf(paperId);
+    
+    // Find the button that was clicked
+    const buttons = document.querySelectorAll(`.hover-btn.favorite[onclick*="${paperId}"]`);
+    
+    if (index > -1) {
+      // Remove from favorites
+      favorites.splice(index, 1);
+      localStorage.setItem('favoritePapers', JSON.stringify(favorites));
+      
+      // Update all buttons for this paper
+      buttons.forEach(button => {
+        const icon = button.querySelector('i');
+        if (icon) {
+          icon.className = 'far fa-heart';
+        }
+      });
+      
+      showNotification('Removed from favorites', 'info');
+    } else {
+      // Add to favorites
+      favorites.push(paperId);
+      localStorage.setItem('favoritePapers', JSON.stringify(favorites));
+      
+      // Update all buttons for this paper
+      buttons.forEach(button => {
+        const icon = button.querySelector('i');
+        if (icon) {
+          icon.className = 'fas fa-heart';
+          icon.style.color = '#ff6b6b';
+        }
+      });
+      
+      showNotification('Added to favorites!', 'success');
+    }
+  }
+
+  async function previewPastPaper(paperId) {
+    try {
+      const response = await fetch(`/student/api/past-papers/${paperId}/preview`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        showPastPaperPreviewModal(result.paper);
+      } else {
+        showNotification(result.message || 'Error loading past paper preview', 'error');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showNotification('Error loading past paper preview', 'error');
+    }
+  }
+
+  function downloadPastPaper(paperId) {
+    try {
+      // Show notification first
+      showNotification('Starting download...', 'info');
+      
+      // Open the download URL directly in a new tab or trigger download
+      window.open(`/student/api/past-papers/${paperId}/download`, '_blank');
+      
+      // Show success notification after a short delay
+      setTimeout(() => {
+        showNotification('Past paper download started!', 'success');
+      }, 1000);
+    } catch (error) {
+      console.error('Error:', error);
+      showNotification('Error downloading past paper', 'error');
+    }
+  }
+
+  function showPastPaperPreviewModal(paper) {
+    // Create and show a modal with past paper preview
+    const modal = document.createElement('div');
+    modal.className = 'paper-preview-modal';
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+      <div class="paper-preview-content">
+        <div class="paper-preview-header">
+          <h3 class="paper-preview-title">${paper.title}</h3>
+          <button class="paper-preview-close" onclick="this.closest('.paper-preview-modal').remove()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="paper-preview-body">
+          <div class="paper-preview-info">
+            <div class="info-row">
+              <span class="info-label">Paper Type:</span>
+              <span class="info-value">${paper.paperType}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Exam Year:</span>
+              <span class="info-value">${paper.examYear}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Duration:</span>
+              <span class="info-value">${paper.duration} minutes</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Total Marks:</span>
+              <span class="info-value">${paper.totalMarks}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Calculator:</span>
+              <span class="info-value">${paper.calculatorAllowed ? 'Allowed' : 'Not Allowed'}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Difficulty:</span>
+              <span class="info-value">${paper.difficulty}</span>
+            </div>
+          </div>
+          
+          <div class="paper-preview-iframe-container">
+            <iframe 
+              src="${paper.fileUrl}#toolbar=0&navpanes=0&scrollbar=1&page=1&view=FitH" 
+              class="paper-preview-iframe"
+              title="Past Paper Preview">
+            </iframe>
+            <div class="preview-overlay">
+              <div class="preview-notice">
+                <i class="fas fa-eye"></i>
+                <span>Preview - First ${paper.previewPages || 3} pages only</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="paper-preview-footer">
+          <button class="preview-btn secondary" onclick="this.closest('.paper-preview-modal').remove()">Close</button>
+          <button class="preview-btn primary" onclick="downloadPastPaper('${paper._id}'); this.closest('.paper-preview-modal').remove();">
+            <i class="fas fa-download"></i>
+            Download Full Paper
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+      <div class="notification-content">
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+        <span>${message}</span>
+      </div>
+    `;
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Show notification
+    setTimeout(() => notification.classList.add('show'), 100);
+    
+    // Hide and remove after 3 seconds
+    setTimeout(() => {
+      notification.classList.remove('show');
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+
+  // Dashboard Navigation Functions
+  function showSection(sectionId) {
+    // Hide all sections
+    const sections = [
+      'yearSelectionSection',
+      'learningTypeSelectionSection', 
+      'learningContentAccessSection',
+      'pastPapersSection',
+      'weeksSection'
+    ];
+    
+    sections.forEach(id => {
+      const section = document.getElementById(id);
+      if (section) {
+        section.style.display = 'none';
+      }
+    });
+    
+    // Show target section
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+      targetSection.style.display = 'block';
+      // Scroll to top of the section
+      targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      // Initialize favorites if showing past papers section
+      if (sectionId === 'pastPapersSection') {
+        initializeFavorites();
+      }
+    }
+  }
+  
+  // Initialize favorite icons based on localStorage
+  function initializeFavorites() {
+    const favorites = JSON.parse(localStorage.getItem('favoritePapers') || '[]');
+    if (favorites.length > 0) {
+      favorites.forEach(paperId => {
+        const buttons = document.querySelectorAll(`.hover-btn.favorite[onclick*="${paperId}"]`);
+        buttons.forEach(button => {
+          const icon = button.querySelector('i');
+          if (icon) {
+            icon.className = 'fas fa-heart';
+            icon.style.color = '#ff6b6b';
+          }
+        });
+      });
+    }
+  }
+
+  // Event Listeners for Navigation
+  document.addEventListener('DOMContentLoaded', function() {
+    // Year selection buttons
+    const yearButtons = document.querySelectorAll('.select-year-btn');
+    yearButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const yearCard = this.closest('.year-card');
+        const year = yearCard.getAttribute('data-year');
+        
+        // Store selected year
+        window.selectedYear = year;
+        
+        // Show learning type selection
+        showSection('learningTypeSelectionSection');
+      });
+    });
+
+    // Curriculum selection buttons within learning mode cards
+    const curriculumButtons = document.querySelectorAll('.mini-curriculum-btn:not(.disabled)');
+    curriculumButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const curriculum = this.getAttribute('data-curriculum');
+        const studentType = this.getAttribute('data-student-type');
+        
+        // Store selected curriculum and student type
+        window.selectedCurriculum = curriculum;
+        window.selectedStudentType = studentType;
+        
+        // Show content access section
+        showSection('learningContentAccessSection');
+      });
+    });
+
+    // Content access buttons
+    const accessPastPapersBtn = document.getElementById('accessPastPapers');
+    if (accessPastPapersBtn) {
+      accessPastPapersBtn.addEventListener('click', function() {
+        showSection('pastPapersSection');
+      });
+    }
+
+    const accessWeeksBtn = document.getElementById('accessWeeks');
+    if (accessWeeksBtn) {
+      accessWeeksBtn.addEventListener('click', function() {
+        showSection('weeksSection');
+      });
+    }
+
+    // Back navigation buttons
+    const backToYearSelectionBtn = document.getElementById('backToYearSelection');
+    if (backToYearSelectionBtn) {
+      backToYearSelectionBtn.addEventListener('click', function() {
+        showSection('yearSelectionSection');
+      });
+    }
+
+    const backToLearningTypeSelectionBtn = document.getElementById('backToLearningTypeSelection');
+    if (backToLearningTypeSelectionBtn) {
+      backToLearningTypeSelectionBtn.addEventListener('click', function() {
+        showSection('learningTypeSelectionSection');
+      });
+    }
+
+    const backToTypeDisplayBtn = document.getElementById('backToTypeDisplay');
+    if (backToTypeDisplayBtn) {
+      backToTypeDisplayBtn.addEventListener('click', function() {
+        showSection('learningContentAccessSection');
+      });
+    }
+
+    const backToPapersBtn = document.getElementById('backToPapers');
+    if (backToPapersBtn) {
+      backToPapersBtn.addEventListener('click', function() {
+        showSection('learningContentAccessSection');
+      });
+    }
+
+    const goToWeeksBtn = document.getElementById('goToWeeks');
+    if (goToWeeksBtn) {
+      goToWeeksBtn.addEventListener('click', function() {
+        showSection('weeksSection');
+      });
+    }
+  });
+</script>

@@ -1,0 +1,380 @@
+<%- include('partials/header', { title: selectedYear + ' - ' + learningMode + ' Learning', student: student }) %>
+
+<div class="learning-content-container">
+  <!-- Breadcrumb Navigation -->
+  <section class="breadcrumb-section" data-aos="fade-down">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb-custom">
+          <li class="breadcrumb-item">
+            <a href="/student/dashboard">
+              <i class="fas fa-home"></i>
+              Dashboard
+            </a>
+          </li>
+          <li class="breadcrumb-item active">
+            <%= selectedYear %> - <%= learningMode %>
+          </li>
+        </ol>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Learning Header -->
+  <section class="learning-header" data-aos="fade-up">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <div class="header-content">
+            <div class="year-badge">
+              <i class="fas fa-graduation-cap"></i>
+              <span><%= selectedYear %></span>
+            </div>
+            <h1 class="learning-title">
+              <span class="mode-highlight"><%= learningMode %></span> Learning Experience
+            </h1>
+            <p class="learning-subtitle">
+              Welcome to your personalized <%= selectedYear %> mathematics journey.
+              Explore interactive lessons, practice problems, and track your progress.
+            </p>
+            <div class="learning-stats">
+              <div class="stat">
+                <div class="stat-number">24</div>
+                <div class="stat-label">Lessons</div>
+              </div>
+              <div class="stat">
+                <div class="stat-number">120</div>
+                <div class="stat-label">Exercises</div>
+              </div>
+              <div class="stat">
+                <div class="stat-number">12</div>
+                <div class="stat-label">Assessments</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="progress-overview" data-aos="fade-left" data-aos-delay="200">
+            <div class="progress-circle">
+              <svg class="progress-ring" width="120" height="120">
+                <circle class="progress-ring-circle" cx="60" cy="60" r="50" fill="transparent" stroke="#e0e7ff" stroke-width="8" />
+                <circle class="progress-ring-fill" cx="60" cy="60" r="50" fill="transparent" stroke="url(#gradient)" stroke-width="8" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="188.5" />
+                <defs>
+                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#667eea" />
+                    <stop offset="100%" style="stop-color:#764ba2" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="progress-text">
+                <span class="progress-percentage">40%</span>
+                <span class="progress-label">Complete</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Learning Content Grid -->
+  <section class="content-grid-section">
+    <div class="container">
+      <div class="content-grid">
+        <!-- Lessons Card -->
+        <div class="content-card lessons-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="card-header">
+            <div class="card-icon">
+              <i class="fas fa-play-circle"></i>
+            </div>
+            <h3 class="card-title">Interactive Lessons</h3>
+            <p class="card-subtitle">Explore mathematical concepts through engaging visual content</p>
+          </div>
+          <div class="card-content">
+            <div class="lesson-list">
+              <div class="lesson-item completed">
+                <div class="lesson-status">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="lesson-content">
+                  <h4>Introduction to Algebra</h4>
+                  <p>Basic algebraic expressions and equations</p>
+                </div>
+                <div class="lesson-duration">15 min</div>
+              </div>
+              <div class="lesson-item current">
+                <div class="lesson-status">
+                  <i class="fas fa-play-circle"></i>
+                </div>
+                <div class="lesson-content">
+                  <h4>Linear Equations</h4>
+                  <p>Solving and graphing linear equations</p>
+                </div>
+                <div class="lesson-duration">20 min</div>
+              </div>
+              <div class="lesson-item">
+                <div class="lesson-status">
+                  <i class="fas fa-lock"></i>
+                </div>
+                <div class="lesson-content">
+                  <h4>Quadratic Functions</h4>
+                  <p>Understanding parabolas and their properties</p>
+                </div>
+                <div class="lesson-duration">25 min</div>
+              </div>
+            </div>
+            <button class="card-action-btn">
+              <span>Continue Learning</span>
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Practice Card -->
+        <div class="content-card practice-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="card-header">
+            <div class="card-icon">
+              <i class="fas fa-pencil-alt"></i>
+            </div>
+            <h3 class="card-title">Practice Problems</h3>
+            <p class="card-subtitle">Strengthen your understanding with targeted exercises</p>
+          </div>
+          <div class="card-content">
+            <div class="practice-stats">
+              <div class="practice-stat">
+                <div class="stat-icon">
+                  <i class="fas fa-check"></i>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-number">85</div>
+                  <div class="stat-label">Completed</div>
+                </div>
+              </div>
+              <div class="practice-stat">
+                <div class="stat-icon">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-number">12</div>
+                  <div class="stat-label">Pending</div>
+                </div>
+              </div>
+              <div class="practice-stat">
+                <div class="stat-icon">
+                  <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-number">92%</div>
+                  <div class="stat-label">Accuracy</div>
+                </div>
+              </div>
+            </div>
+            <div class="difficulty-levels">
+              <div class="difficulty-item easy completed">
+                <span class="difficulty-label">Easy</span>
+                <div class="difficulty-progress">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="difficulty-item medium current">
+                <span class="difficulty-label">Medium</span>
+                <div class="difficulty-progress">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 65%"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="difficulty-item hard">
+                <span class="difficulty-label">Hard</span>
+                <div class="difficulty-progress">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="card-action-btn">
+              <span>Start Practice</span>
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Assessment Card -->
+        <div class="content-card assessment-card" data-aos="fade-up" data-aos-delay="300">
+          <div class="card-header">
+            <div class="card-icon">
+              <i class="fas fa-clipboard-check"></i>
+            </div>
+            <h3 class="card-title">Assessments</h3>
+            <p class="card-subtitle">Test your knowledge and track your progress</p>
+          </div>
+          <div class="card-content">
+            <div class="assessment-list">
+              <div class="assessment-item upcoming">
+                <div class="assessment-info">
+                  <h4>Chapter 3 Quiz</h4>
+                  <p>Linear Equations & Inequalities</p>
+                  <div class="assessment-meta">
+                    <span class="duration"><i class="fas fa-clock"></i> 30 min</span>
+                    <span class="questions"><i class="fas fa-question-circle"></i> 15 questions</span>
+                  </div>
+                </div>
+                <div class="assessment-status">
+                  <span class="status-badge upcoming">Upcoming</span>
+                </div>
+              </div>
+              <div class="assessment-item completed">
+                <div class="assessment-info">
+                  <h4>Chapter 2 Test</h4>
+                  <p>Algebraic Expressions</p>
+                  <div class="assessment-meta">
+                    <span class="score"><i class="fas fa-star"></i> 88%</span>
+                    <span class="date"><i class="fas fa-calendar"></i> 2 days ago</span>
+                  </div>
+                </div>
+                <div class="assessment-status">
+                  <span class="status-badge completed">Completed</span>
+                </div>
+              </div>
+            </div>
+            <button class="card-action-btn">
+              <span>View Assessments</span>
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3D Visualizations Card -->
+        <div class="content-card visualization-card" data-aos="fade-up" data-aos-delay="400">
+          <div class="card-header">
+            <div class="card-icon">
+              <i class="fas fa-cube"></i>
+            </div>
+            <h3 class="card-title">3D Visualizations</h3>
+            <p class="card-subtitle">Explore mathematics in three dimensions</p>
+          </div>
+          <div class="card-content">
+            <div class="visualization-preview">
+              <div class="preview-container">
+                <div class="math-object rotating">
+                  <div class="object-face front">y = x²</div>
+                  <div class="object-face back">∫ f(x)dx</div>
+                  <div class="object-face right">∑ aₙ</div>
+                  <div class="object-face left">lim</div>
+                  <div class="object-face top">∞</div>
+                  <div class="object-face bottom">π</div>
+                </div>
+              </div>
+            </div>
+            <div class="visualization-topics">
+              <span class="topic-tag">Function Graphs</span>
+              <span class="topic-tag">Geometric Shapes</span>
+              <span class="topic-tag">Data Visualization</span>
+            </div>
+            <button class="card-action-btn">
+              <span>Explore 3D Math</span>
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress Tracking Card -->
+        <div class="content-card progress-card" data-aos="fade-up" data-aos-delay="500">
+          <div class="card-header">
+            <div class="card-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h3 class="card-title">Progress Tracking</h3>
+            <p class="card-subtitle">Monitor your learning journey and achievements</p>
+          </div>
+          <div class="card-content">
+            <div class="progress-chart">
+              <div class="chart-container">
+                <canvas id="progressChart" width="300" height="150"></canvas>
+              </div>
+            </div>
+            <div class="achievement-highlights">
+              <div class="achievement">
+                <i class="fas fa-trophy achievement-icon"></i>
+                <span>Problem Solver</span>
+              </div>
+              <div class="achievement">
+                <i class="fas fa-medal achievement-icon"></i>
+                <span>Fast Learner</span>
+              </div>
+            </div>
+            <button class="card-action-btn">
+              <span>View Full Report</span>
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Help & Support Card -->
+        <div class="content-card support-card" data-aos="fade-up" data-aos-delay="600">
+          <div class="card-header">
+            <div class="card-icon">
+              <i class="fas fa-headset"></i>
+            </div>
+            <h3 class="card-title">Help & Support</h3>
+            <p class="card-subtitle">Get assistance whenever you need it</p>
+          </div>
+          <div class="card-content">
+            <div class="support-options">
+              <div class="support-option">
+                <i class="fas fa-robot"></i>
+                <span>AI Tutor</span>
+              </div>
+              <div class="support-option">
+                <i class="fas fa-users"></i>
+                <span>Study Groups</span>
+              </div>
+              <div class="support-option">
+                <i class="fas fa-video"></i>
+                <span>Live Sessions</span>
+              </div>
+            </div>
+            <button class="card-action-btn">
+              <span>Get Help</span>
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Actions Floating Button -->
+  <div class="floating-actions" id="floatingActions">
+    <div class="fab-container">
+      <button class="fab-main" id="fabMain">
+        <i class="fas fa-plus"></i>
+      </button>
+      <div class="fab-options">
+        <button class="fab-option" data-action="practice">
+          <i class="fas fa-pencil-alt"></i>
+          <span>Quick Practice</span>
+        </button>
+        <button class="fab-option" data-action="lesson">
+          <i class="fas fa-play"></i>
+          <span>Continue Lesson</span>
+        </button>
+        <button class="fab-option" data-action="help">
+          <i class="fas fa-question"></i>
+          <span>Get Help</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Learning Content Specific CSS -->
+<link rel="stylesheet" href="/css/learning-content.css">
+
+<!-- Learning Content JavaScript -->
+<script src="/js/learning-content.js"></script>
+
+<%- include('partials/footer') %>

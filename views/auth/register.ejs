@@ -1,0 +1,278 @@
+<%- include('../partials/header') %>
+
+<!-- Flash Messages - Floating from left below navbar -->
+<% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
+<div class="floating-flash-message error-flash" style="position: fixed; top: 90px; left: 20px; z-index: 1200; max-width: 400px; animation: slideInLeft 0.5s ease-out;">
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-info-circle me-2"></i>
+      <strong>Notice:</strong>
+    </div>
+    <hr class="my-2">
+    <p class="mb-0"><%= error_msg %></p>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+<% } %>
+
+<% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
+<div class="floating-flash-message success-flash" style="position: fixed; top: 90px; left: 20px; z-index: 1200; max-width: 400px; animation: slideInLeft 0.5s ease-out;">
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-check-circle me-2"></i>
+      <strong>Success!</strong>
+    </div>
+    <hr class="my-2">
+    <p class="mb-0"><%= success_msg %></p>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+<% } %>
+
+<div class="auth-container math-auth-bg" data-aos="fade">
+  <div class="auth-background"></div>
+  <div class="auth-particles" id="auth-particles-register"></div>
+  <div class="math-shape-auth auth-shape1 floating-element"></div>
+  <div class="math-shape-auth auth-shape2 floating-element"></div>
+  <div class="math-shape-auth auth-shape3 floating-element"></div>
+  <div class="math-shape-auth auth-shape4 floating-element"></div>
+
+  <!-- Removed duplicate floating theme toggle to avoid conflicts with navbar toggle -->
+
+  <div class="container">
+    <div class="card auth-card mx-auto" data-aos="fade-up" data-aos-delay="200">
+      <div class="card-body p-4 p-md-5">
+        <div class="auth-header">
+          <div class="auth-icon-container">
+            <i class="fas fa-square-root-alt math-icon-animated"></i>
+          </div>
+          <h2 class="auth-title gradient-text mb-4" data-aos="fade-down" data-aos-delay="200">
+            <i class="fas fa-user-plus me-2"></i>Join The Math Journey
+          </h2>
+
+          <form action="/auth/register" method="POST" data-aos="fade-up" data-aos-delay="300">
+            <p>Start your exciting math journey today!</p>
+        </div>
+
+        <!-- Display Errors -->
+        <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+        <div class="alert alert-danger" role="alert" style="position: relative; z-index: 1100; margin-bottom: 20px;">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Registration Failed!</strong>
+          </div>
+          <hr class="my-2">
+          <ul class="mb-0">
+            <% errors.forEach(function(error) { %>
+            <li><%= error.msg %></li>
+            <% }); %>
+          </ul>
+        </div>
+        <% } %>
+
+        <!-- Display Success Messages -->
+        <% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
+        <div class="alert alert-success" role="alert" style="position: relative; z-index: 1100; margin-bottom: 20px;">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-check-circle me-2"></i>
+            <strong>Success!</strong>
+          </div>
+          <hr class="my-2">
+          <p class="mb-0"><%= success_msg %></p>
+        </div>
+        <% } %>
+
+        <form action="/auth/register" method="POST" class="auth-form needs-validation" novalidate>
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <label for="name" class="form-label">Full Name</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                <input type="text" id="name" name="name" class="form-control" placeholder="Enter your full name" value="<%= typeof name != 'undefined' ? name : '' %>" required>
+                <div class="invalid-feedback">
+                  Please enter your full name.
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <label for="email" class="form-label">Email Address</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" value="<%= typeof email != 'undefined' ? email : '' %>" required>
+                <div class="invalid-feedback">
+                  Please enter a valid email address.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <label for="age" class="form-label">Age</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-birthday-cake"></i></span>
+                <input type="number" id="age" name="age" class="form-control" placeholder="Enter your age" min="10" max="100" value="<%= typeof age != 'undefined' ? age : '' %>" required>
+                <div class="invalid-feedback">
+                  Please enter a valid age (10-100).
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <label for="year" class="form-label">Academic Year</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
+                <select id="year" name="year" class="form-select" required>
+                  <option value="">Select your year</option>
+                  <option value="Year 7" <%= typeof year != 'undefined' && year == 'Year 7' ? 'selected' : '' %>>Year 7</option>
+                  <option value="Year 8" <%= typeof year != 'undefined' && year == 'Year 8' ? 'selected' : '' %>>Year 8</option>
+                  <option value="Year 9" <%= typeof year != 'undefined' && year == 'Year 9' ? 'selected' : '' %>>Year 9</option>
+                  <option value="Year 10" <%= typeof year != 'undefined' && year == 'Year 10' ? 'selected' : '' %>>Year 10</option>
+                  <option value="Year 11" <%= typeof year != 'undefined' && year == 'Year 11' ? 'selected' : '' %>>Year 11</option>
+                  <option value="Year 12" <%= typeof year != 'undefined' && year == 'Year 12' ? 'selected' : '' %>>Year 12</option>
+                  <option value="Year 13" <%= typeof year != 'undefined' && year == 'Year 13' ? 'selected' : '' %>>Year 13</option>
+                </select>
+                <div class="invalid-feedback">
+                  Please select your academic year.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <label for="schoolName" class="form-label">School Name</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-school"></i></span>
+                <input type="text" id="schoolName" name="schoolName" class="form-control" placeholder="Enter your school name" value="<%= typeof schoolName != 'undefined' ? schoolName : '' %>" required>
+                <div class="invalid-feedback">
+                  Please enter your school name.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <label for="studentPhoneNumber" class="form-label">Student Phone Number</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+                <input type="tel" id="studentPhoneNumber" name="studentPhoneNumber" class="form-control" placeholder="Enter student phone number" value="<%= typeof studentPhoneNumber != 'undefined' ? studentPhoneNumber : '' %>" required>
+                <div class="invalid-feedback">
+                  Please enter a valid student phone number.
+                </div>
+              </div>
+              <div class="form-text">Student's personal phone number.</div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <label for="parentPhoneNumber" class="form-label">Parent Phone Number</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                <input type="tel" id="parentPhoneNumber" name="parentPhoneNumber" class="form-control" placeholder="Enter parent phone number" value="<%= typeof parentPhoneNumber != 'undefined' ? parentPhoneNumber : '' %>" required>
+                <div class="invalid-feedback">
+                  Please enter a valid parent phone number.
+                </div>
+              </div>
+              <div class="form-text">Include country code if outside your country (e.g., +44 for UK).</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <label for="curriculum" class="form-label">Curriculum</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-book"></i></span>
+                <select id="curriculum" name="curriculum" class="form-select" required>
+                  <option value="">Select curriculum</option>
+                  <option value="Cambridge" <%= typeof curriculum != 'undefined' && curriculum == 'Cambridge' ? 'selected' : '' %>>Cambridge</option>
+                  <option value="Edexcel" <%= typeof curriculum != 'undefined' && curriculum == 'Edexcel' ? 'selected' : '' %>>Edexcel</option>
+                </select>
+                <div class="invalid-feedback">
+                  Please select your curriculum.
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <label for="studentType" class="form-label">Student Type</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-users"></i></span>
+                <select id="studentType" name="studentType" class="form-select" required>
+                  <option value="">Select type</option>
+                  <option value="School" <%= typeof studentType != 'undefined' && studentType == 'School' ? 'selected' : '' %>>School Student</option>
+                  <option value="Center" <%= typeof studentType != 'undefined' && studentType == 'Center' ? 'selected' : '' %>>Center Student</option>
+                  <option value="Online" <%= typeof studentType != 'undefined' && studentType == 'Online' ? 'selected' : '' %>>Online Student</option>
+                </select>
+                <div class="invalid-feedback">
+                  Please select your student type.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <label for="password" class="form-label">Password</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Create a password" required minlength="6">
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <div class="invalid-feedback">
+                  Password must be at least 6 characters.
+                </div>
+              </div>
+              <div class="form-text">Password must be at least 6 characters long.</div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <label for="password2" class="form-label">Confirm Password</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" id="password2" name="password2" class="form-control" placeholder="Confirm your password" required>
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <div class="invalid-feedback">
+                  Please confirm your password.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4 form-check">
+            <input type="checkbox" class="form-check-input" id="termsCheck" required>
+            <label class="form-check-label" for="termsCheck">
+              I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+            </label>
+            <div class="invalid-feedback">
+              You must agree before submitting.
+            </div>
+          </div>
+
+          <div class="d-grid" data-aos="fade-up" data-aos-delay="300">
+            <button type="submit" class="btn btn-primary btn-lg">
+              <i class="fas fa-rocket me-2"></i> Start Your Journey
+            </button>
+          </div>
+        </form>
+
+
+        <div class="auth-footer" data-aos="fade-up" data-aos-delay="450">
+          <p>Already have an account? <a href="/auth/login" class="animated-link">Login Here</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Auth Common JavaScript -->
+<script src="/js/auth-common.js"></script>
+
+<!-- Auth Animations -->
+<script src="/js/auth-animations.js"></script>
+
+<%- include('../partials/footer') %>

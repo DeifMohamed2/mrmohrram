@@ -1,0 +1,130 @@
+<!-- Admin Sidebar -->
+<aside class="admin-sidebar" id="adminSidebar">
+    <!-- Sidebar Header -->
+    <div class="admin-sidebar-header">
+        <div class="admin-logo">
+            <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div class="admin-brand">
+            <div class="admin-brand-title">Mr Moharram</div>
+            <div class="admin-brand-subtitle">Admin Panel</div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <nav class="admin-sidebar-nav">
+        <!-- Main Section -->
+        <div class="admin-nav-section">
+            <div class="admin-nav-section-title">Main</div>
+            
+            <a href="/admin/dashboard" class="admin-nav-item <%= typeof page !== 'undefined' && page === 'dashboard' ? 'active' : '' %>">
+                <div class="admin-nav-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <span class="admin-nav-text">Dashboard</span>
+            </a>
+
+            <a href="/admin/manage-users" class="admin-nav-item <%= typeof page !== 'undefined' && page === 'users' ? 'active' : '' %>">
+                <div class="admin-nav-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <span class="admin-nav-text">Users</span>
+                <span class="admin-nav-badge" id="usersBadge">0</span>
+            </a>
+
+            <a href="/admin/manage-weeks" class="admin-nav-item <%= typeof page !== 'undefined' && page === 'weeks' ? 'active' : '' %>">
+                <div class="admin-nav-icon">
+                    <i class="fas fa-calendar-week"></i>
+                </div>
+                <span class="admin-nav-text">Weeks</span>
+            </a>
+        </div>
+
+        <!-- Content Section -->
+        <div class="admin-nav-section">
+            <div class="admin-nav-section-title">Content</div>
+            
+            <a href="/admin/homework" class="admin-nav-item <%= typeof page !== 'undefined' && page === 'homework' ? 'active' : '' %>">
+                <div class="admin-nav-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <span class="admin-nav-text">Homework</span>
+                <span class="admin-nav-badge" id="homeworkBadge">0</span>
+            </a>
+
+            <a href="/admin/notes" class="admin-nav-item <%= typeof page !== 'undefined' && page === 'notes' ? 'active' : '' %>">
+                <div class="admin-nav-icon">
+                    <i class="fas fa-sticky-note"></i>
+                </div>
+                <span class="admin-nav-text">Notes</span>
+            </a>
+
+
+            <a href="/admin/past-papers" class="admin-nav-item <%= typeof page !== 'undefined' && page === 'past-papers' ? 'active' : '' %>">
+                <div class="admin-nav-icon">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <span class="admin-nav-text">Past Papers</span>
+            </a>
+
+            <a href="/admin/year-content" class="admin-nav-item <%= typeof page !== 'undefined' && page === 'year-content' ? 'active' : '' %>">
+                <div class="admin-nav-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <span class="admin-nav-text">Year Content</span>
+            </a>
+
+            <a href="/admin/progress" class="admin-nav-item <%= typeof page !== 'undefined' && page === 'progress' ? 'active' : '' %>">
+                <div class="admin-nav-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span class="admin-nav-text">Progress</span>
+            </a>
+        </div>
+
+        <!-- Management Section -->
+        <div class="admin-nav-section">
+            <div class="admin-nav-section-title">Management</div>
+            
+            <a href="/admin/restrictions" class="admin-nav-item <%= typeof page !== 'undefined' && page === 'restrictions' ? 'active' : '' %>">
+                <div class="admin-nav-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <span class="admin-nav-text">Restrictions</span>
+            </a>
+
+            <a href="/admin/settings" class="admin-nav-item <%= typeof page !== 'undefined' && page === 'settings' ? 'active' : '' %>">
+                <div class="admin-nav-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <span class="admin-nav-text">Settings</span>
+            </a>
+        </div>
+
+        <!-- Quick Actions Section -->
+        <div class="admin-nav-section">
+            <div class="admin-nav-section-title">Quick Actions</div>
+            
+            <a href="#" class="admin-nav-item" onclick="openCreateUserModal()">
+                <div class="admin-nav-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <span class="admin-nav-text">Add Student</span>
+            </a>
+
+            <a href="#" class="admin-nav-item" onclick="openCreateWeekModal()">
+                <div class="admin-nav-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <span class="admin-nav-text">Add Week</span>
+            </a>
+
+            <a href="/admin/reports" class="admin-nav-item">
+                <div class="admin-nav-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <span class="admin-nav-text">Reports</span>
+            </a>
+        </div>
+    </nav>
+</aside>

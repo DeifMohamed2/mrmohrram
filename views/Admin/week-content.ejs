@@ -1,0 +1,1149 @@
+<%- include('partials/header', { title: 'Week Content Management' }) %>
+
+<!-- Admin Layout -->
+<div class="admin-layout">
+    <%- include('partials/sidebar') %>
+    
+    <!-- Main Content -->
+    <main class="admin-main-content">
+        <%- include('partials/header-bar', { title: 'Week Content Management' }) %>
+        
+        <!-- Content Area -->
+        <div class="admin-content">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up">
+                        <div class="admin-card-header">
+                            <div>
+                                <h2 class="admin-card-title">Week Content Management</h2>
+                                <p class="text-muted mb-0">Manage content for: <strong id="weekTitle">Loading...</strong></p>
+                            </div>
+                            <div>
+                                <button class="admin-btn admin-btn-secondary" onclick="goBack()">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Back to Weeks
+                                </button>
+                                <button class="admin-btn admin-btn-primary" onclick="openAddContentModal()">
+                                    <i class="fas fa-plus"></i>
+                                    Add Content
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Week Info -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="admin-card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <div class="fw-bold text-primary" style="font-size: 2rem;" id="totalTopics">0</div>
+                                        <small class="text-muted">Topics</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <div class="fw-bold text-success" style="font-size: 2rem;" id="totalStudyTime">0h</div>
+                                        <small class="text-muted">Study Time</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <div class="fw-bold text-warning" style="font-size: 2rem;" id="totalFiles">0</div>
+                                        <small class="text-muted">Files</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <div class="fw-bold text-info" style="font-size: 2rem;" id="totalSize">0 MB</div>
+                                        <small class="text-muted">Total Size</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content List -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="admin-card-header">
+                            <h3 class="admin-card-title">Content Items</h3>
+                            <div class="admin-card-actions">
+                                <div class="admin-search-box">
+                                    <input type="text" class="admin-search-input" id="contentSearch" placeholder="Search content...">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="admin-card-body">
+                            <div id="contentList">
+                                <div class="text-center py-4">
+                                    <div class="admin-spinner"></div>
+                                    <p class="text-muted mt-2">Loading content...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Add Content Modal -->
+<div class="admin-modal-overlay" id="addContentModal">
+    <div class="admin-modal" style="max-width: 1000px; width: 95%; max-height: 90vh; overflow-y: auto;">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">Add New Content</h3>
+            <button class="admin-modal-close" onclick="closeAddContentModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body" style="max-height: 70vh; overflow-y: auto;">
+            <form id="addContentForm" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Content Type *</label>
+                        <select class="admin-form-input" name="type" id="contentType" required onchange="toggleContentFields()">
+                            <option value="">Select Type</option>
+                            <option value="homework">Homework</option>
+                            <option value="notes">Notes</option>
+                            <option value="pdf">PDF Document</option>
+                            <option value="el-5olasa">El-5olasa (Summary)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Title *</label>
+                        <input type="text" class="admin-form-input" name="title" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="admin-form-label">Description</label>
+                    <textarea class="admin-form-input" name="description" rows="3"></textarea>
+                </div>
+
+                <!-- Text Content (for notes, assignments) -->
+                <div id="textContentField" class="mb-3" style="display: none;">
+                    <label class="admin-form-label" id="textContentLabel">Content</label>
+                    <textarea class="admin-form-input" name="content" rows="6" placeholder="Enter content here..."></textarea>
+                </div>
+
+                <!-- File Upload -->
+                <div id="fileUploadField" class="mb-3" style="display: none;">
+                    <label class="admin-form-label">Upload File <span id="fileRequiredIndicator" class="text-danger">*</span></label>
+                    <div class="file-upload-container">
+                        <input type="file" class="admin-form-input" name="file" id="fileInput" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png" onchange="handleFileSelect(this)">
+                        <div class="file-upload-info mt-2">
+                            <small class="text-muted">Supported formats: PDF, DOC, DOCX, TXT, Images</small>
+                            <div id="fileInfo" class="mt-2" style="display: none;">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-file me-2"></i>
+                                    <span id="fileName"></span>
+                                    <span id="fileSize" class="text-muted ms-2"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Upload Progress -->
+                        <div id="uploadProgress" class="mt-3" style="display: none;">
+                            <div class="progress">
+                                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                    <span id="progressText">0%</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2">
+                                <small id="uploadStatus" class="text-muted">Preparing upload...</small>
+                                <small id="uploadSpeed" class="text-muted"></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File URL (alternative to upload) -->
+                <div id="fileUrlField" class="mb-3" style="display: none;">
+                    <label class="admin-form-label">File URL</label>
+                    <input type="url" class="admin-form-input" name="fileUrl" placeholder="https://example.com/file.pdf">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Estimated Time (minutes)</label>
+                        <input type="number" class="admin-form-input" name="estimatedTime" min="1" max="300" value="30">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Max Score</label>
+                        <input type="number" class="admin-form-input" name="maxScore" min="0" max="100" value="100">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Order</label>
+                        <input type="number" class="admin-form-input" name="order" min="0" value="0">
+                    </div>
+                </div>
+
+                <!-- Due Date and Time (only for homework) -->
+                <div id="dueDateField" class="mb-3" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="admin-form-label">Due Date *</label>
+                            <input type="date" class="admin-form-input" name="dueDateOnly" id="dueDateOnly" required onchange="updateDueDatePreview()">
+                            <small class="text-muted">Select the due date for this homework</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="admin-form-label">Due Time *</label>
+                            <input type="time" class="admin-form-input" name="dueTime" id="dueTime" required onchange="updateDueDatePreview()">
+                            <small class="text-muted">Select the due time (24-hour format)</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="admin-form-label">Allow Late Submission</label>
+                            <select class="admin-form-input" name="allowLateSubmission" id="allowLateSubmission" onchange="toggleLatePenalty()">
+                                <option value="false">No</option>
+                                <option value="true">Yes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3" id="latePenaltyField" style="display: none;">
+                            <label class="admin-form-label">Late Penalty (%)</label>
+                            <input type="number" class="admin-form-input" name="latePenalty" id="latePenalty" min="0" max="100" value="0">
+                            <small class="text-muted">Percentage penalty for late submissions (0-100)</small>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="admin-form-label">Timezone</label>
+                        <select class="admin-form-input" name="timezone" id="timezone" onchange="updateDueDatePreview()">
+                            <option value="UTC">UTC</option>
+                            <option value="America/New_York">Eastern Time (ET)</option>
+                            <option value="America/Chicago">Central Time (CT)</option>
+                            <option value="America/Denver">Mountain Time (MT)</option>
+                            <option value="America/Los_Angeles">Pacific Time (PT)</option>
+                            <option value="Europe/London">London (GMT)</option>
+                            <option value="Europe/Paris">Paris (CET)</option>
+                            <option value="Asia/Dubai">Dubai (GST)</option>
+                            <option value="Asia/Kolkata">India (IST)</option>
+                            <option value="Asia/Shanghai">China (CST)</option>
+                            <option value="Asia/Tokyo">Japan (JST)</option>
+                            <option value="Australia/Sydney">Sydney (AEST)</option>
+                        </select>
+                    </div>
+                    <div class="due-date-preview" id="dueDatePreview" style="display: none;">
+                        <div class="admin-alert admin-alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Due Date Preview:</strong> <span id="dueDatePreviewText"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Required</label>
+                        <select class="admin-form-input" name="isRequired">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Security Options -->
+                <div id="securityOptions" class="mb-3" style="display: none;">
+                    <h5>Security Options</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="isSecure" id="isSecure">
+                                <label class="form-check-label" for="isSecure">
+                                    Secure File (Preview Only)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="allowDownload" id="allowDownload" checked>
+                                <label class="form-check-label" for="allowDownload">
+                                    Allow Download
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="admin-modal-footer">
+            <button type="button" class="admin-btn admin-btn-secondary" onclick="closeAddContentModal()">Cancel</button>
+            <button type="button" class="admin-btn admin-btn-primary" onclick="addContent()">Add Content</button>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+
+<style>
+/* Upload Progress Styles */
+.file-upload-container {
+    position: relative;
+}
+
+.file-upload-info {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+#fileInfo {
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 4px;
+    padding: 8px 12px;
+}
+
+#fileInfo i {
+    color: #1976d2;
+}
+
+.progress {
+    height: 20px;
+    background-color: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    transition: width 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.progress-bar-striped {
+    background-image: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+    background-size: 1rem 1rem;
+}
+
+.progress-bar-animated {
+    animation: progress-bar-stripes 1s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+    0% { background-position: 1rem 0; }
+    100% { background-position: 0 0; }
+}
+
+#uploadStatus {
+    font-weight: 500;
+}
+
+#uploadSpeed {
+    font-style: italic;
+}
+
+/* File required indicator */
+#fileRequiredIndicator {
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .file-upload-info {
+        padding: 8px;
+    }
+    
+    .progress {
+        height: 16px;
+    }
+    
+    .progress-bar {
+        font-size: 10px;
+    }
+}
+</style>
+
+<script>
+let currentWeekId = null;
+let currentWeek = null;
+let weekContent = [];
+
+// Helper function to deduplicate content by ID
+function deduplicateContent(contentArray) {
+    const uniqueIds = new Set();
+    const uniqueContent = [];
+    const weekMaterialIds = new Set();
+    const weekContentIds = new Set();
+    
+    // First pass: collect all IDs and separate week materials from week content
+    for (const content of contentArray) {
+        if (!content || !content._id) continue;
+        
+        if (content.isWeekMaterial) {
+            // For week materials, use title+type as the unique identifier
+            const uniqueKey = `${content.title}-${content.type}-${content.fileName || ''}`;
+            weekMaterialIds.add(uniqueKey);
+        } else {
+            // For WeekContent, use the MongoDB ID
+            weekContentIds.add(content._id);
+        }
+    }
+    
+    // Second pass: prioritize WeekContent over Week.materials
+    for (const content of contentArray) {
+        if (!content || !content._id) continue;
+        
+        if (content.isWeekMaterial) {
+            // For week materials, check if there's a WeekContent with the same title+type
+            const uniqueKey = `${content.title}-${content.type}-${content.fileName || ''}`;
+            
+            // Only add if we haven't already added this content and there's no WeekContent with the same key
+            if (!uniqueIds.has(content._id) && !uniqueContent.some(c => 
+                !c.isWeekMaterial && 
+                c.title === content.title && 
+                c.type === content.type && 
+                (c.fileName === content.fileName || (!c.fileName && !content.fileName))
+            )) {
+                uniqueIds.add(content._id);
+                uniqueContent.push(content);
+            }
+        } else {
+            // For WeekContent, just check the ID
+            if (!uniqueIds.has(content._id)) {
+                uniqueIds.add(content._id);
+                uniqueContent.push(content);
+            }
+        }
+    }
+    
+    return uniqueContent;
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Week content page loaded');
+    const urlParams = new URLSearchParams(window.location.search);
+    currentWeekId = urlParams.get('weekId');
+    
+    console.log('Week ID:', currentWeekId);
+    
+    if (currentWeekId) {
+        loadWeekContent();
+    } else {
+        showError('Week ID not provided');
+    }
+    
+    // Test button click
+    const addButton = document.querySelector('button[onclick="openAddContentModal()"]');
+    if (addButton) {
+        console.log('Add button found');
+        addButton.addEventListener('click', function(e) {
+            console.log('Add button clicked');
+            e.preventDefault();
+            openAddContentModal();
+        });
+    } else {
+        console.error('Add button not found');
+    }
+});
+
+// Load week content
+async function loadWeekContent() {
+    try {
+        const response = await fetch(`/admin/api/weeks/${currentWeekId}/content`);
+        const result = await response.json();
+        
+        if (result.success) {
+            currentWeek = result.week;
+            
+            // Ensure we have clean data from the API
+            const rawContent = result.weekContent || [];
+            console.log('Raw content from API:', rawContent.length, 'items');
+            
+            // Deduplicate content by ID before storing
+            weekContent = deduplicateContent(rawContent);
+            
+            // Log any duplicates found
+            if (rawContent.length !== weekContent.length) {
+                console.warn(`Found ${rawContent.length - weekContent.length} duplicate content items`);
+            }
+            
+            console.log('After deduplication:', weekContent.length, 'items');
+            console.log('Content IDs:', weekContent.map(c => c._id));
+            
+            updateWeekInfo();
+            renderContentList();
+        } else {
+            showError(result.message || 'Error loading week content');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showError('Error loading week content');
+    }
+}
+
+// Update week information
+function updateWeekInfo() {
+    // Deduplicate content by ID before calculating stats
+    const uniqueContent = deduplicateContent(weekContent);
+    
+    document.getElementById('weekTitle').textContent = `Week ${currentWeek.weekNumber}: ${currentWeek.title}`;
+    document.getElementById('totalTopics').textContent = uniqueContent.length;
+    
+    const totalStudyTime = uniqueContent.reduce((total, content) => total + (content.estimatedTime || 30), 0);
+    document.getElementById('totalStudyTime').textContent = Math.round(totalStudyTime / 60 * 10) / 10 + 'h';
+    
+    const fileCount = uniqueContent.filter(content => content.fileUrl || content.fileName).length;
+    document.getElementById('totalFiles').textContent = fileCount;
+    
+    const totalSize = uniqueContent.reduce((total, content) => total + (content.fileSize || 0), 0);
+    document.getElementById('totalSize').textContent = Math.round(totalSize / 1024 / 1024 * 10) / 10 + ' MB';
+}
+
+// Render content list
+function renderContentList() {
+    const contentList = document.getElementById('contentList');
+    
+    // Deduplicate content by ID before rendering
+    const uniqueContent = deduplicateContent(weekContent);
+    
+    console.log('Rendering content list with', uniqueContent.length, 'items (after deduplication)');
+    console.log('Content items:', uniqueContent.map(c => ({ id: c._id, title: c.title, isWeekMaterial: c.isWeekMaterial })));
+    
+    if (uniqueContent.length === 0) {
+        contentList.innerHTML = `
+            <div class="admin-empty-state">
+                <i class="fas fa-file-alt"></i>
+                <h4>No Content Added</h4>
+                <p>Start by adding content to this week.</p>
+                <button class="admin-btn primary" onclick="openAddContentModal()">
+                    <i class="fas fa-plus"></i>
+                    Add Content
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
+    contentList.innerHTML = uniqueContent.map(content => `
+        <div class="admin-content-item border rounded p-3 mb-3">
+            <div class="row align-items-center">
+                <div class="col-md-1">
+                    <div class="admin-content-icon">
+                        <i class="fas fa-${getContentIcon(content.type)}"></i>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="mb-1">${content.title}</h5>
+                    <p class="text-muted mb-1">${content.description || 'No description'}</p>
+                    <div class="admin-content-meta">
+                        <span class="badge bg-primary me-2">${content.type}</span>
+                        <span class="text-muted">${content.estimatedTime || 30} min</span>
+                        ${content.fileName ? `<span class="text-muted ms-2">• ${content.fileName}</span>` : ''}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="admin-content-stats">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="fw-bold text-success">${content.maxScore || 100}</div>
+                                <small class="text-muted">Points</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="fw-bold text-warning">${content.isRequired ? 'Yes' : 'No'}</div>
+                                <small class="text-muted">Required</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="fw-bold text-info">${content.order || 0}</div>
+                                <small class="text-muted">Order</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="admin-content-actions">
+                        <button class="admin-btn-icon" onclick="viewContent('${content._id}')" title="View">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="admin-btn-icon" onclick="editContent('${content._id}')" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="admin-btn-icon danger" onclick="deleteContent('${content._id}')" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Get content icon
+function getContentIcon(type) {
+    const icons = {
+        homework: 'homework',
+        notes: 'sticky-note',
+        pdf: 'file-pdf',
+        'el-5olasa': 'file-contract'
+    };
+    return icons[type] || 'file';
+}
+
+// Toggle content fields based on type
+function toggleContentFields() {
+    const type = document.getElementById('contentType').value;
+    const textContentField = document.getElementById('textContentField');
+    const fileUploadField = document.getElementById('fileUploadField');
+    const fileUrlField = document.getElementById('fileUrlField');
+    const securityOptions = document.getElementById('securityOptions');
+    const dueDateField = document.getElementById('dueDateField');
+    
+    // Hide all fields first
+    textContentField.style.display = 'none';
+    fileUploadField.style.display = 'none';
+    fileUrlField.style.display = 'none';
+    securityOptions.style.display = 'none';
+    dueDateField.style.display = 'none';
+    
+    // Show relevant fields based on type
+    if (['notes'].includes(type)) {
+        textContentField.style.display = 'block';
+        // Reset label for notes
+        const textContentLabel = document.getElementById('textContentLabel');
+        if (textContentLabel) {
+            textContentLabel.textContent = 'Content';
+        }
+    } else if (type === 'el-5olasa') {
+        // For el-5olasa, show both text content and file upload options
+        textContentField.style.display = 'block';
+        fileUploadField.style.display = 'block';
+        fileUrlField.style.display = 'block';
+        securityOptions.style.display = 'block';
+        
+        // Update label for el-5olasa
+        const textContentLabel = document.getElementById('textContentLabel');
+        if (textContentLabel) {
+            textContentLabel.textContent = 'Summary Content (Optional - you can also upload a file below)';
+        }
+        
+        // Make file upload optional for el-5olasa
+        const fileInput = document.getElementById('fileInput');
+        const fileRequiredIndicator = document.getElementById('fileRequiredIndicator');
+        fileInput.required = false;
+        fileRequiredIndicator.style.display = 'none';
+    }
+    
+    if (['pdf', 'homework'].includes(type)) {
+        fileUploadField.style.display = 'block';
+        fileUrlField.style.display = 'block';
+        securityOptions.style.display = 'block';
+        
+        // Make file upload optional for homework
+        if (type === 'homework') {
+            const fileInput = document.getElementById('fileInput');
+            const fileRequiredIndicator = document.getElementById('fileRequiredIndicator');
+            fileInput.required = false;
+            fileRequiredIndicator.style.display = 'none';
+        } else {
+            const fileInput = document.getElementById('fileInput');
+            const fileRequiredIndicator = document.getElementById('fileRequiredIndicator');
+            fileInput.required = true;
+            fileRequiredIndicator.style.display = 'inline';
+        }
+    }
+    
+    // Show due date field only for homework
+    if (type === 'homework') {
+        dueDateField.style.display = 'block';
+        // Set default time to 23:59 if not set
+        const dueTimeInput = document.getElementById('dueTime');
+        if (dueTimeInput && !dueTimeInput.value) {
+            dueTimeInput.value = '23:59';
+        }
+        // Set default date to tomorrow if not set
+        const dueDateInput = document.getElementById('dueDateOnly');
+        if (dueDateInput && !dueDateInput.value) {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            dueDateInput.value = tomorrow.toISOString().split('T')[0];
+        }
+        updateDueDatePreview();
+    } else {
+        // Make due date not required for other types
+        const dueDateInputs = document.querySelectorAll('input[name="dueDateOnly"], input[name="dueTime"]');
+        dueDateInputs.forEach(input => {
+            input.required = false;
+        });
+    }
+}
+
+// Update due date preview
+function updateDueDatePreview() {
+    const dueDate = document.getElementById('dueDateOnly').value;
+    const dueTime = document.getElementById('dueTime').value;
+    const timezone = document.getElementById('timezone').value;
+    const preview = document.getElementById('dueDatePreview');
+    const previewText = document.getElementById('dueDatePreviewText');
+    
+    if (dueDate && dueTime) {
+        try {
+            const dueDateTime = new Date(`${dueDate}T${dueTime}`);
+            const options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: timezone
+            };
+            const formattedDate = dueDateTime.toLocaleString('en-US', options);
+            previewText.textContent = `${formattedDate} (${timezone})`;
+            preview.style.display = 'block';
+        } catch (error) {
+            console.error('Error formatting due date:', error);
+            preview.style.display = 'none';
+        }
+    } else {
+        preview.style.display = 'none';
+    }
+}
+
+// Toggle late penalty field
+function toggleLatePenalty() {
+    const allowLate = document.getElementById('allowLateSubmission').value === 'true';
+    const latePenaltyField = document.getElementById('latePenaltyField');
+    
+    if (allowLate) {
+        latePenaltyField.style.display = 'block';
+    } else {
+        latePenaltyField.style.display = 'none';
+        document.getElementById('latePenalty').value = '0';
+    }
+}
+
+// Open add content modal
+function openAddContentModal() {
+    console.log('Opening add content modal...');
+    const modal = document.getElementById('addContentModal');
+    if (modal) {
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        console.log('Modal displayed');
+    } else {
+        console.error('Modal not found');
+    }
+}
+
+// Close add content modal
+function closeAddContentModal() {
+    console.log('Closing add content modal...');
+    const modal = document.getElementById('addContentModal');
+    if (modal) {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+        console.log('Modal hidden');
+    }
+    const form = document.getElementById('addContentForm');
+    if (form) {
+        form.reset();
+    }
+    
+    // Reset editing state
+    window.editingContentId = null;
+    window.editingWeekMaterial = false;
+    
+    // Reset modal title and button
+    document.querySelector('#addContentModal .admin-modal-title').textContent = 'Add Content';
+    document.querySelector('#addContentModal .admin-btn-primary').textContent = 'Add Content';
+    
+    // Reset upload progress and file info
+    hideUploadProgress();
+    document.getElementById('fileInfo').style.display = 'none';
+    
+    toggleContentFields();
+}
+
+// Handle file selection
+function handleFileSelect(input) {
+    const file = input.files[0];
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    
+    if (file) {
+        fileName.textContent = file.name;
+        fileSize.textContent = formatFileSize(file.size);
+        fileInfo.style.display = 'block';
+    } else {
+        fileInfo.style.display = 'none';
+    }
+}
+
+// Format file size
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Show upload progress
+function showUploadProgress() {
+    const uploadProgress = document.getElementById('uploadProgress');
+    uploadProgress.style.display = 'block';
+}
+
+// Hide upload progress
+function hideUploadProgress() {
+    const uploadProgress = document.getElementById('uploadProgress');
+    uploadProgress.style.display = 'none';
+}
+
+// Update upload progress
+function updateUploadProgress(percent, status, speed = '') {
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const uploadSpeed = document.getElementById('uploadSpeed');
+    
+    if (progressBar && progressText && uploadStatus && uploadSpeed) {
+        progressBar.style.width = percent + '%';
+        progressBar.setAttribute('aria-valuenow', percent);
+        progressText.textContent = Math.round(percent) + '%';
+        uploadStatus.textContent = status;
+        uploadSpeed.textContent = speed;
+        
+        console.log('Progress updated:', percent + '%', status, speed);
+    } else {
+        console.error('Progress elements not found');
+    }
+}
+
+// Add content with upload progress
+async function addContent() {
+    const form = document.getElementById('addContentForm');
+    const formData = new FormData(form);
+    
+    // Add weekId to FormData
+    formData.append('weekId', currentWeekId);
+    
+    // Check if file is selected and show progress
+    const fileInput = document.getElementById('fileInput');
+    const hasFile = fileInput.files.length > 0;
+    
+        // Check file size if a file is selected
+        if (hasFile) {
+            const file = fileInput.files[0];
+            const fileSizeMB = file.size / (1024 * 1024);
+            
+            if (fileSizeMB > 80) {
+                showError(`File size (${fileSizeMB.toFixed(2)}MB) exceeds the 80MB limit`);
+                return;
+            }
+            
+            console.log('Starting upload for file:', file.name, 'Size:', fileSizeMB.toFixed(2) + 'MB');
+            showUploadProgress();
+            updateUploadProgress(0, 'Preparing upload...', '0 MB / ' + fileSizeMB.toFixed(2) + ' MB');
+        }
+    
+    try {
+        let url, method, successMessage;
+        
+        if (window.editingContentId) {
+            // Update existing content
+            if (window.editingWeekMaterial) {
+                // Update week material
+                url = `/admin/api/weeks/${currentWeekId}/materials/${window.editingContentId}`;
+                method = 'PUT';
+            } else {
+                // Update WeekContent
+                url = `/admin/api/content/${window.editingContentId}`;
+                method = 'PUT';
+            }
+            successMessage = 'Content updated successfully!';
+        } else {
+            // Create new content
+            url = `/admin/api/weeks/${currentWeekId}/content`;
+            method = 'POST';
+            successMessage = 'Content added successfully!';
+        }
+        
+        // Create XMLHttpRequest for progress tracking
+        const xhr = new XMLHttpRequest();
+        
+        return new Promise((resolve, reject) => {
+            let lastProgressTime = 0;
+            let lastProgressPercent = 0;
+            let progressInterval = null;
+            let simulatedProgress = 0;
+            
+            // Add loadstart event to show initial progress
+            xhr.upload.addEventListener('loadstart', function() {
+                console.log('Upload started');
+                updateUploadProgress(0, 'Starting upload...', '0 MB / ' + formatFileSize(fileInput.files[0].size));
+                lastProgressTime = Date.now();
+                
+                // Start simulated progress as fallback
+                simulatedProgress = 0;
+                progressInterval = setInterval(() => {
+                    if (simulatedProgress < 90) {
+                        simulatedProgress += Math.random() * 15;
+                        if (simulatedProgress > 90) simulatedProgress = 90;
+                        
+                        const fileSize = fileInput.files[0].size;
+                        const uploadedMB = ((simulatedProgress / 100) * fileSize / 1024 / 1024).toFixed(2);
+                        const totalMB = (fileSize / 1024 / 1024).toFixed(2);
+                        
+                        updateUploadProgress(Math.round(simulatedProgress), 'Uploading...', uploadedMB + ' MB / ' + totalMB + ' MB');
+                    }
+                }, 200);
+            });
+            
+            // Add progress event listener before opening the request
+            xhr.upload.addEventListener('progress', function(e) {
+                const now = Date.now();
+                console.log('Progress event fired:', e.loaded, '/', e.total, 'lengthComputable:', e.lengthComputable);
+                
+                if (e.lengthComputable && e.total > 0) {
+                    const percentComplete = Math.round((e.loaded / e.total) * 100);
+                    const uploadedMB = (e.loaded / 1024 / 1024).toFixed(2);
+                    const totalMB = (e.total / 1024 / 1024).toFixed(2);
+                    
+                    // Only update if progress has actually changed and enough time has passed
+                    if (percentComplete !== lastProgressPercent && (now - lastProgressTime > 100 || percentComplete === 100)) {
+                        updateUploadProgress(percentComplete, 'Uploading...', uploadedMB + ' MB / ' + totalMB + ' MB');
+                        lastProgressPercent = percentComplete;
+                        lastProgressTime = now;
+                    }
+                    
+                    console.log('Upload progress:', percentComplete + '%', uploadedMB + 'MB / ' + totalMB + 'MB');
+                } else {
+                    console.log('Progress not computable or total is 0');
+                    // Show a simulated progress for small files
+                    if (e.loaded > 0) {
+                        updateUploadProgress(50, 'Processing...', 'Uploading...');
+                    }
+                }
+            });
+            
+            // Add load event to handle upload completion
+            xhr.upload.addEventListener('load', function() {
+                console.log('Upload load event - file transfer complete');
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
+                updateUploadProgress(95, 'Processing file...', 'Almost done...');
+            });
+            
+            xhr.addEventListener('load', function() {
+                console.log('XHR load event fired, status:', xhr.status);
+                
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const result = JSON.parse(xhr.responseText);
+                        console.log('Upload response:', result);
+                        
+                        if (result.success) {
+                            // Clear any remaining progress interval
+                            if (progressInterval) {
+                                clearInterval(progressInterval);
+                            }
+                            
+                            // Show completion progress
+                            updateUploadProgress(100, 'Upload complete!', 'Success!');
+                            
+                            // Add a delay to show completion
+                            setTimeout(() => {
+                                hideUploadProgress();
+                                showSuccess(successMessage);
+                                closeAddContentModal();
+                                
+                                // Ensure we reload content properly
+                                console.log('Content operation successful, reloading content...');
+                                weekContent = []; // Clear existing content to force a clean reload
+                                loadWeekContent(); // Reload content
+                                
+                                resolve(result);
+                            }, 2000); // Increased timeout to show completion
+                        } else {
+                            hideUploadProgress();
+                            showError(result.message || 'Error saving content');
+                            reject(new Error(result.message));
+                        }
+                    } catch (error) {
+                        console.error('Error parsing response:', error);
+                        hideUploadProgress();
+                        showError('Error parsing response');
+                        reject(error);
+                    }
+                } else {
+                    console.error('Upload failed with status:', xhr.status);
+                    hideUploadProgress();
+                    showError('Upload failed');
+                    reject(new Error('Upload failed'));
+                }
+            });
+            
+            xhr.addEventListener('error', function() {
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
+                hideUploadProgress();
+                showError('Upload failed');
+                reject(new Error('Upload failed'));
+            });
+            
+            xhr.addEventListener('timeout', function() {
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
+                hideUploadProgress();
+                showError('Upload timed out. Please try again.');
+                reject(new Error('Upload timed out'));
+            });
+            
+            // Set timeout for the request
+            xhr.timeout = 300000; // 5 minutes timeout
+            
+            xhr.open(method, url);
+            xhr.send(formData);
+        });
+        
+    } catch (error) {
+        console.error('Error:', error);
+        hideUploadProgress();
+        showError('Error saving content');
+    }
+}
+
+// View content
+function viewContent(contentId) {
+    const content = weekContent.find(c => c._id === contentId);
+    if (content) {
+        // Open content in new tab or modal
+        if (content.fileUrl) {
+            window.open(content.fileUrl, '_blank');
+        } else {
+            alert('Content: ' + content.title + '\n\n' + (content.content || content.description || 'No content available'));
+        }
+    }
+}
+
+// Edit content
+function editContent(contentId) {
+    const content = weekContent.find(c => c._id === contentId);
+    if (content) {
+        // Populate the add content form with existing data
+        document.getElementById('contentType').value = content.type;
+        document.querySelector('input[name="title"]').value = content.title;
+        document.querySelector('textarea[name="description"]').value = content.description || '';
+        document.querySelector('textarea[name="content"]').value = content.content || '';
+        document.querySelector('input[name="fileUrl"]').value = content.fileUrl || '';
+        document.querySelector('input[name="fileName"]').value = content.fileName || '';
+        document.querySelector('input[name="fileType"]').value = content.fileType || '';
+        document.querySelector('input[name="fileSize"]').value = content.fileSize || '';
+        document.querySelector('input[name="isSecure"]').checked = content.isSecure || false;
+        document.querySelector('input[name="allowDownload"]').checked = content.allowDownload !== false;
+        document.querySelector('input[name="previewUrl"]').value = content.previewUrl || '';
+        document.querySelector('input[name="cloudinaryPublicId"]').value = content.cloudinaryPublicId || '';
+        document.querySelector('input[name="isRequired"]').checked = content.isRequired || false;
+        document.querySelector('input[name="dueDate"]').value = content.dueDate ? new Date(content.dueDate).toISOString().split('T')[0] : '';
+        document.querySelector('input[name="maxScore"]').value = content.maxScore || 100;
+        document.querySelector('input[name="estimatedTime"]').value = content.estimatedTime || 30;
+        document.querySelector('input[name="order"]').value = content.order || 0;
+        
+        // Toggle fields based on content type
+        toggleContentFields();
+        
+        // Open the modal
+        openAddContentModal();
+        
+        // Store the content ID for update
+        window.editingContentId = contentId;
+        
+        // Store whether it's a week material
+        window.editingWeekMaterial = content.isWeekMaterial || false;
+        
+        // Change the modal title and button
+        document.querySelector('#addContentModal .admin-modal-title').textContent = 'Edit Content';
+        document.querySelector('#addContentModal .admin-btn-primary').textContent = 'Update Content';
+    }
+}
+
+// Delete content
+async function deleteContent(contentId) {
+    if (confirm('Are you sure you want to delete this content?')) {
+        try {
+            let url = `/admin/api/content/${contentId}`;
+            
+            // Always add weekId as query parameter for fallback checking
+            url += `?weekId=${currentWeekId}`;
+            
+            console.log('Deleting content with URL:', url);
+            console.log('Content ID:', contentId);
+            console.log('Week ID:', currentWeekId);
+            
+            const response = await fetch(url, {
+                method: 'DELETE'
+            });
+            
+            const result = await response.json();
+            console.log('Delete result:', result);
+            
+            if (result.success) {
+                showSuccess('Content deleted successfully!');
+                loadWeekContent(); // Reload content
+            } else {
+                showError(result.message || 'Error deleting content');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showError('Error deleting content');
+        }
+    }
+}
+
+// Go back to weeks
+function goBack() {
+    window.location.href = '/admin/manage-weeks';
+}
+
+// Notification functions
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show`;
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.zIndex = '9999';
+    notification.style.minWidth = '300px';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 5000);
+}
+
+function showSuccess(message) {
+    showNotification(message, 'success');
+}
+
+function showError(message) {
+    showNotification(message, 'error');
+}
+</script>

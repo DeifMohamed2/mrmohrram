@@ -1,0 +1,65 @@
+<!-- Admin Header -->
+<header class="admin-header">
+    <div class="admin-header-left">
+        <button class="admin-sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div>
+            <h1 class="admin-page-title"><%= title %></h1>
+            <nav class="admin-breadcrumb">
+                <a href="/admin/dashboard" class="admin-breadcrumb-item">Admin</a>
+                <span class="admin-breadcrumb-separator">/</span>
+                <span class="admin-breadcrumb-item"><%= title %></span>
+            </nav>
+        </div>
+    </div>
+
+    <div class="admin-header-right">
+        <!-- Search Box -->
+        <div class="admin-search-box">
+            <i class="fas fa-search admin-search-icon"></i>
+            <input type="text" class="admin-search-input" placeholder="Search students, weeks, homework...">
+        </div>
+
+        <!-- Notifications -->
+        <button class="admin-notifications" onclick="showNotifications()">
+            <i class="fas fa-bell"></i>
+            <span class="admin-notification-badge" id="notificationBadge">3</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button class="admin-theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-sun" id="themeIcon"></i>
+        </button>
+
+        <!-- User Menu -->
+        <div class="admin-user-menu" onclick="toggleUserMenu()">
+            <div class="admin-user-avatar">
+                <%= user.name.charAt(0).toUpperCase() %>
+            </div>
+            <div class="admin-user-info">
+                <div class="admin-user-name"><%= user.name %></div>
+                <div class="admin-user-role">Administrator</div>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+            
+            <!-- User Dropdown Menu -->
+            <div class="admin-user-dropdown" id="userDropdown">
+                <div class="admin-dropdown-item" onclick="viewProfile()">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </div>
+                <div class="admin-dropdown-item" onclick="openSettings()">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="admin-dropdown-divider"></div>
+                <div class="admin-dropdown-item logout-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

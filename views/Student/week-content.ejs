@@ -1,0 +1,348 @@
+<%- include('partials/header', { title: 'Week Content', student: student }) %>
+
+<!-- Floating Math Background -->
+<div class="math-background-container">
+  <div class="floating-math-elements">
+    <div class="math-element" data-equation="π">π</div>
+    <div class="math-element" data-equation="∑">∑</div>
+    <div class="math-element" data-equation="∫">∫</div>
+    <div class="math-element" data-equation="√">√</div>
+    <div class="math-element" data-equation="∞">∞</div>
+    <div class="math-element" data-equation="α">α</div>
+    <div class="math-element" data-equation="β">β</div>
+    <div class="math-element" data-equation="θ">θ</div>
+    <div class="math-element" data-equation="Δ">Δ</div>
+    <div class="math-element" data-equation="λ">λ</div>
+    <div class="math-element" data-equation="∂">∂</div>
+    <div class="math-element" data-equation="≈">≈</div>
+    <div class="math-element" data-equation="≠">≠</div>
+    <div class="math-element" data-equation="≤">≤</div>
+    <div class="math-element" data-equation="≥">≥</div>
+  </div>
+</div>
+
+<div class="week-content-container">
+  <!-- Header Section -->
+  <section class="week-header-section" data-aos="fade-down">
+    <div class="container">
+      <div class="week-header-content">
+        <div class="week-header-info">
+          <div class="breadcrumb">
+            <a href="/student/dashboard" class="breadcrumb-link">
+              <i class="fas fa-home"></i>
+              Dashboard
+            </a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Week Content</span>
+          </div>
+          <h1 class="week-title">
+            Week <%= week.weekNumber %>: <%= week.title %>
+          </h1>
+          <p class="week-description"><%= week.description %></p>
+          <div class="week-meta">
+            <div class="meta-item">
+              <i class="fas fa-calendar-alt"></i>
+              <span><%= new Date(week.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) %> - <%= new Date(week.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) %></span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-clock"></i>
+              <span id="totalStudyTime">0h</span> Study Time
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-file-alt"></i>
+              <span id="totalMaterials">0</span> Materials
+            </div>
+          </div>
+        </div>
+        <div class="week-progress-card">
+          <div class="progress-header">
+            <h3 class="progress-title">Week Progress</h3>
+            <div class="progress-badge" id="progressBadge">
+              <span class="badge-text">Not Started</span>
+            </div>
+          </div>
+          
+          <div class="progress-circle">
+            <svg class="progress-ring" width="140" height="140">
+              <circle class="progress-ring-circle" stroke="rgba(255,255,255,0.2)" stroke-width="10" fill="transparent" r="60" cx="70" cy="70"/>
+              <circle class="progress-ring-circle progress-ring-fill" stroke="#ffffff" stroke-width="10" fill="transparent" r="60" cx="70" cy="70" style="stroke-dasharray: 376.99; stroke-dashoffset: 376.99;"/>
+            </svg>
+            <div class="progress-text">
+              <span class="progress-percentage" id="progressPercentage">0%</span>
+              <span class="progress-label">Complete</span>
+            </div>
+          </div>
+          
+          <div class="progress-details">
+            <div class="progress-item">
+              <div class="progress-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="progress-info">
+                <span class="progress-number" id="completedMaterials">0</span>
+                <span class="progress-desc">Completed</span>
+              </div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-icon">
+                <i class="fas fa-list"></i>
+              </div>
+              <div class="progress-info">
+                <span class="progress-number" id="totalMaterials">0</span>
+                <span class="progress-desc">Total Materials</span>
+              </div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="progress-info">
+                <span class="progress-number" id="totalStudyTime">0h</span>
+                <span class="progress-desc">Study Time</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="progress-message" id="progressMessage">
+            <i class="fas fa-info-circle"></i>
+            <span>Start by viewing the materials below</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content Section -->
+  <section class="week-content-section">
+    <div class="container">
+      <div class="content-grid">
+        <!-- Main Content Area -->
+        <div class="main-content">
+          <div class="content-header">
+            <h2 class="content-title">Learning Materials</h2>
+            <div class="content-filters">
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="notes">Notes</button>
+              <button class="filter-btn" data-filter="homework">Homework</button>
+              <button class="filter-btn" data-filter="pdf">PDFs</button>
+              <button class="filter-btn" data-filter="el-5olasa">El-5olasa</button>
+            </div>
+          </div>
+
+          <div class="materials-list" id="materialsList">
+            <!-- Materials will be loaded here -->
+            <div class="loading-state">
+              <div class="loading-spinner"></div>
+              <p>Loading materials...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="content-sidebar">
+          <!-- Quick Stats -->
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">Quick Stats</h3>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-icon">
+                  <i class="fas fa-book"></i>
+                </div>
+                <div class="stat-content">
+                  <span class="stat-number" id="notesCount">0</span>
+                  <span class="stat-label">Notes</span>
+                </div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-icon">
+                  <i class="fas fa-homework"></i>
+                </div>
+                <div class="stat-content">
+                  <span class="stat-number" id="homeworkCount">0</span>
+                  <span class="stat-label">Homework</span>
+                </div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-icon">
+                  <i class="fas fa-file-pdf"></i>
+                </div>
+                <div class="stat-content">
+                  <span class="stat-number" id="pdfCount">0</span>
+                  <span class="stat-label">PDFs</span>
+                </div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-icon">
+                  <i class="fas fa-file-contract"></i>
+                </div>
+                <div class="stat-content">
+                  <span class="stat-number" id="summaryCount">0</span>
+                  <span class="stat-label">Summaries</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Homework Submissions -->
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">Homework Status</h3>
+            <div class="homework-status" id="homeworkStatus">
+              <div class="status-item">
+                <i class="fas fa-check-circle text-success"></i>
+                <span>Submitted: <span id="submittedCount">0</span></span>
+              </div>
+              <div class="status-item">
+                <i class="fas fa-clock text-warning"></i>
+                <span>Pending: <span id="pendingCount">0</span></span>
+              </div>
+              <div class="status-item">
+                <i class="fas fa-exclamation-triangle text-danger"></i>
+                <span>Overdue: <span id="overdueCount">0</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upcoming Deadlines -->
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">Upcoming Deadlines</h3>
+            <div class="deadlines-list" id="deadlinesList">
+              <!-- Deadlines will be loaded here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Homework Upload Modal -->
+<div class="modal-overlay" id="homeworkModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Submit Homework</h3>
+      <button class="modal-close" onclick="closeHomeworkModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="homeworkForm" enctype="multipart/form-data">
+        <input type="hidden" id="homeworkWeekId" name="weekId">
+        <input type="hidden" id="homeworkMaterialId" name="materialId">
+        
+        <div class="form-group">
+          <label class="form-label">Homework Title</label>
+          <input type="text" class="form-input" id="homeworkTitle" name="title" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" id="homeworkDescription" name="description" rows="3" placeholder="Add any comments or notes about your submission..."></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Upload File *</label>
+          <div class="file-upload-area" id="fileUploadArea">
+            <input type="file" class="file-input" id="homeworkFile" name="file" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png" required>
+            <div class="file-upload-content">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <p>Click to upload or drag and drop</p>
+              <small>PDF, DOC, DOCX, TXT, Images (Max 10MB)</small>
+            </div>
+          </div>
+          <div class="file-preview" id="filePreview" style="display: none;">
+            <div class="file-info">
+              <i class="fas fa-file"></i>
+              <span class="file-name"></span>
+              <span class="file-size"></span>
+            </div>
+            <button type="button" class="remove-file" onclick="removeFile()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Due Date</label>
+          <input type="text" class="form-input" id="homeworkDueDate" readonly>
+        </div>
+        
+        <!-- Upload Progress Bar -->
+        <div class="upload-progress" id="uploadProgress" style="display: none;">
+          <div class="progress-label">Uploading homework...</div>
+          <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">0%</div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeHomeworkModal()" id="cancelBtn">Cancel</button>
+      <button type="button" class="btn btn-primary" onclick="submitHomework()" id="submitBtn">
+        <i class="fas fa-upload"></i>
+        Submit Homework
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Content Preview Modal -->
+<div class="modal-overlay" id="contentModal">
+  <div class="modal-content large">
+    <div class="modal-header">
+      <h3 class="modal-title" id="contentModalTitle">Content Preview</h3>
+      <button class="modal-close" onclick="closeContentModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div id="contentModalBody">
+        <!-- Content will be loaded here -->
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeContentModal()">Close</button>
+      <button type="button" class="btn btn-primary" id="contentModalAction" style="display: none;">
+        <i class="fas fa-download"></i>
+        Download
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Import CSS and JavaScript -->
+<link rel="stylesheet" href="/css/student-dashboard-new.css">
+<link rel="stylesheet" href="/css/student-week-content.css">
+
+<!-- PDF.js for secure PDF viewing -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  // Configure PDF.js
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+</script>
+
+<script src="/js/student-week-content.js"></script>
+
+<!-- Store week data for JavaScript -->
+<script>
+  window.weekData = {
+    id: '<%= week._id %>',
+    weekNumber: <%= week.weekNumber %>,
+    title: '<%- JSON.stringify(week.title) %>',
+    description: '<%- JSON.stringify(week.description) %>',
+    startDate: '<%= week.startDate %>',
+    endDate: '<%= week.endDate %>'
+  };
+  
+  window.studentData = {
+    id: '<%= student._id %>',
+    name: '<%- JSON.stringify(student.name) %>',
+    email: '<%- JSON.stringify(student.email) %>',
+    year: '<%- JSON.stringify(student.year) %>',
+    studentType: '<%- JSON.stringify(student.studentType) %>'
+  };
+</script>
+
+<%- include('partials/footer') %>

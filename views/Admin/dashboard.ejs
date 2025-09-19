@@ -1,0 +1,644 @@
+<%- include('partials/header', { title: 'Dashboard' }) %>
+
+<!-- Admin Layout -->
+<div class="admin-layout">
+    <%- include('partials/sidebar') %>
+    
+    <!-- Main Content -->
+    <main class="admin-main-content">
+        <%- include('partials/header-bar', { title: 'Dashboard' }) %>
+        
+        <!-- Content Area -->
+        <div class="admin-content">
+            <!-- Welcome Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up">
+                        <div class="admin-card-header">
+                            <div>
+                                <h2 class="admin-card-title">Welcome back, <%= user.name %>!</h2>
+                                <p class="text-muted mb-0">Here's what's happening with your education platform today.</p>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">Last updated: <%= new Date().toLocaleString() %></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="admin-stats-grid" data-aos="fade-up" data-aos-delay="100">
+                <!-- Total Students -->
+                <div class="admin-stat-card">
+                    <div class="admin-stat-header">
+                        <div class="admin-stat-icon primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="admin-stat-trend up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+12%</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-value"><%= stats ? stats.totalStudents : 0 %></div>
+                    <div class="admin-stat-label">Total Students</div>
+                </div>
+
+                <!-- Total Weeks -->
+                <div class="admin-stat-card">
+                    <div class="admin-stat-header">
+                        <div class="admin-stat-icon success">
+                            <i class="fas fa-calendar-week"></i>
+                        </div>
+                        <div class="admin-stat-trend up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+5%</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-value"><%= stats ? stats.totalWeeks : 0 %></div>
+                    <div class="admin-stat-label">Active Weeks</div>
+                </div>
+
+                <!-- Pending Homework -->
+                <div class="admin-stat-card">
+                    <div class="admin-stat-header">
+                        <div class="admin-stat-icon warning">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="admin-stat-trend down">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>-8%</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-value"><%= stats ? stats.pendingHomework : 0 %></div>
+                    <div class="admin-stat-label">Pending Homework</div>
+                </div>
+
+                <!-- Completed Homework -->
+                <div class="admin-stat-card">
+                    <div class="admin-stat-header">
+                        <div class="admin-stat-icon info">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="admin-stat-trend up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+15%</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-value"><%= stats ? stats.completedHomework : 0 %></div>
+                    <div class="admin-stat-label">Completed Homework</div>
+                </div>
+
+                <!-- Pending Users -->
+                <div class="admin-stat-card">
+                    <div class="admin-stat-header">
+                        <div class="admin-stat-icon warning">
+                            <i class="fas fa-user-clock"></i>
+                        </div>
+                        <div class="admin-stat-trend neutral">
+                            <i class="fas fa-minus"></i>
+                            <span>0%</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-value"><%= stats ? stats.pendingUsers : 0 %></div>
+                    <div class="admin-stat-label">Pending Approval</div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="row">
+                <!-- Recent Students -->
+                <div class="col-lg-8 mb-4">
+                    <div class="admin-table-container" data-aos="fade-up" data-aos-delay="200">
+                        <div class="admin-table-header">
+                            <h3 class="admin-table-title">Recent Students</h3>
+                            <div class="admin-table-actions">
+                                <a href="/admin/manage-users" class="admin-btn admin-btn-primary admin-btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                    View All
+                                </a>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Year</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Joined</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (recentStudents && recentStudents.length > 0) { %>
+                                        <% recentStudents.forEach(student => { %>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="admin-user-avatar me-3" style="width: 35px; height: 35px; font-size: 14px;">
+                                                            <%= student.name.charAt(0).toUpperCase() %>
+                                                        </div>
+                                                        <div>
+                                                            <div class="fw-semibold"><%= student.name %></div>
+                                                            <small class="text-muted"><%= student.email %></small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td><%= student.year || 'Not Set' %></td>
+                                                <td><%= student.studentType || 'Not Set' %></td>
+                                                <td>
+                                                    <span class="admin-status-badge <%= student.isActive ? 'active' : 'inactive' %>">
+                                                        <%= student.isActive ? 'Active' : 'Inactive' %>
+                                                    </span>
+                                                </td>
+                                                <td><%= new Date(student.createdAt).toLocaleDateString() %></td>
+                                                <td>
+                                                    <div class="d-flex gap-2">
+                                                        <button class="admin-btn admin-btn-secondary admin-btn-sm" onclick="viewStudent('<%= student._id %>')">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <button class="admin-btn admin-btn-<%= student.isActive ? 'warning' : 'success' %> admin-btn-sm toggle-user-btn" 
+                                                                data-user-id="<%= student._id %>" 
+                                                                data-action="<%= student.isActive ? 'deactivate' : 'activate' %>">
+                                                            <i class="fas fa-<%= student.isActive ? 'ban' : 'check' %>"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="6" class="text-center py-4">
+                                                <div class="admin-empty-state">
+                                                    <div class="admin-empty-icon">
+                                                        <i class="fas fa-users"></i>
+                                                    </div>
+                                                    <div class="admin-empty-title">No Students Yet</div>
+                                                    <div class="admin-empty-description">Start by adding your first student to the platform.</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="col-lg-4 mb-4">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="admin-card-header">
+                            <h3 class="admin-card-title">Recent Activity</h3>
+                        </div>
+                        <div class="admin-card-body">
+                            <% if (recentActivity && recentActivity.length > 0) { %>
+                                <div class="activity-list">
+                                    <% recentActivity.forEach((activity, index) => { %>
+                                        <div class="activity-item d-flex align-items-start mb-3">
+                                            <div class="activity-icon me-3">
+                                                <div class="admin-user-avatar" style="width: 35px; height: 35px; font-size: 14px;">
+                                                    <%= activity.user.name.charAt(0).toUpperCase() %>
+                                                </div>
+                                            </div>
+                                            <div class="activity-content flex-grow-1">
+                                                <div class="activity-text">
+                                                    <strong><%= activity.user.name %></strong> <%= activity.action %>
+                                                </div>
+                                                <div class="activity-details text-muted small">
+                                                    <%= activity.details %>
+                                                </div>
+                                                <div class="activity-time text-muted small">
+                                                    <%= new Date(activity.timestamp).toLocaleString() %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }); %>
+                                </div>
+                            <% } else { %>
+                                <div class="admin-empty-state">
+                                    <div class="admin-empty-icon">
+                                        <i class="fas fa-history"></i>
+                                    </div>
+                                    <div class="admin-empty-title">No Recent Activity</div>
+                                    <div class="admin-empty-description">Activity will appear here as students interact with the platform.</div>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="400">
+                        <div class="admin-card-header">
+                            <h3 class="admin-card-title">Quick Actions</h3>
+                        </div>
+                        <div class="admin-card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <button class="admin-btn admin-btn-primary w-100" onclick="openCreateUserModal()">
+                                        <i class="fas fa-user-plus me-2"></i>
+                                        Add Student
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <button class="admin-btn admin-btn-success w-100" onclick="openCreateWeekModal()">
+                                        <i class="fas fa-calendar-plus me-2"></i>
+                                        Create Week
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <button class="admin-btn admin-btn-info w-100" onclick="window.location.href='/admin/reports'">
+                                        <i class="fas fa-chart-bar me-2"></i>
+                                        View Reports
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <button class="admin-btn admin-btn-warning w-100" onclick="window.location.href='/admin/manage-users?status=pending'">
+                                        <i class="fas fa-user-clock me-2"></i>
+                                        Pending Users
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <button class="admin-btn admin-btn-secondary w-100" onclick="window.location.href='/admin/settings'">
+                                        <i class="fas fa-cog me-2"></i>
+                                        Settings
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Create User Modal -->
+<div class="admin-modal-overlay" id="createUserModal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">Add New Student</h3>
+            <button class="admin-modal-close" onclick="closeCreateUserModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <form id="createUserForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Full Name</label>
+                        <input type="text" class="admin-form-input" name="name" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Email</label>
+                        <input type="email" class="admin-form-input" name="email" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Password</label>
+                        <input type="password" class="admin-form-input" name="password" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Age</label>
+                        <input type="number" class="admin-form-input" name="age" min="10" max="100" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">School Name</label>
+                        <input type="text" class="admin-form-input" name="schoolName" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Student Phone</label>
+                        <input type="tel" class="admin-form-input" name="studentPhoneNumber" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="admin-form-label">Parent Phone</label>
+                    <input type="tel" class="admin-form-input" name="parentPhoneNumber" required>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Year</label>
+                        <select class="admin-form-select" name="year" required>
+                            <option value="">Select Year</option>
+                            <option value="Year 8">Year 8</option>
+                            <option value="Year 9">Year 9</option>
+                            <option value="Year 10">Year 10</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Curriculum</label>
+                        <select class="admin-form-select" name="curriculum" required>
+                            <option value="">Select Curriculum</option>
+                            <option value="Cambridge">Cambridge</option>
+                            <option value="Edexcel">Edexcel</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Student Type</label>
+                        <select class="admin-form-select" name="studentType" required>
+                            <option value="">Select Type</option>
+                            <option value="School">School</option>
+                            <option value="Center">Center</option>
+                            <option value="Online">Online</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">School Name</label>
+                        <input type="text" class="admin-form-input" name="schoolName" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Student Phone</label>
+                        <input type="tel" class="admin-form-input" name="studentPhoneNumber" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="admin-form-label">Parent Phone</label>
+                    <input type="tel" class="admin-form-input" name="parentPhoneNumber" required>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" name="isActive" id="isActive" checked>
+                    <label class="form-check-label" for="isActive">
+                        Activate student account immediately
+                    </label>
+                </div>
+            </form>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="admin-btn admin-btn-secondary" onclick="closeCreateUserModal()">Cancel</button>
+            <button class="admin-btn admin-btn-primary" onclick="createUser()">Create Student</button>
+        </div>
+    </div>
+</div>
+
+<!-- Create Week Modal -->
+<div class="admin-modal-overlay" id="createWeekModal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">Create New Week</h3>
+            <button class="admin-modal-close" onclick="closeCreateWeekModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <form id="createWeekForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Week Number</label>
+                        <input type="number" class="admin-form-input" name="weekNumber" min="1" max="52" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Title</label>
+                        <input type="text" class="admin-form-input" name="title" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="admin-form-label">Description</label>
+                    <textarea class="admin-form-textarea" name="description" rows="3" required></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Year</label>
+                        <select class="admin-form-select" name="year" required>
+                            <option value="">Select Year</option>
+                            <option value="Year 8">Year 8</option>
+                            <option value="Year 9">Year 9</option>
+                            <option value="Year 10">Year 10</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Curriculum</label>
+                        <select class="admin-form-select" name="curriculum" required>
+                            <option value="">Select Curriculum</option>
+                            <option value="Cambridge">Cambridge</option>
+                            <option value="Edexcel">Edexcel</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Student Type</label>
+                        <select class="admin-form-select" name="studentType" required>
+                            <option value="">Select Type</option>
+                            <option value="School">School</option>
+                            <option value="Center">Center</option>
+                            <option value="Online">Online</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Start Date</label>
+                        <input type="date" class="admin-form-input" name="startDate" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">End Date</label>
+                        <input type="date" class="admin-form-input" name="endDate" required>
+                    </div>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" name="isActive" id="weekIsActive" checked>
+                    <label class="form-check-label" for="weekIsActive">
+                        Activate week immediately
+                    </label>
+                </div>
+            </form>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="admin-btn admin-btn-secondary" onclick="closeCreateWeekModal()">Cancel</button>
+            <button class="admin-btn admin-btn-primary" onclick="createWeek()">Create Week</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Modal functions for dashboard
+function openCreateUserModal() {
+    const modal = document.getElementById('createUserModal');
+    if (modal) {
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeCreateUserModal() {
+    const modal = document.getElementById('createUserModal');
+    if (modal) {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+}
+
+function openCreateWeekModal() {
+    const modal = document.getElementById('createWeekModal');
+    if (modal) {
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeCreateWeekModal() {
+    const modal = document.getElementById('createWeekModal');
+    if (modal) {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+}
+
+// Create user function
+async function createUser() {
+    const form = document.getElementById('createUserForm');
+    const formData = new FormData(form);
+    
+    try {
+        const response = await fetch('/admin/users/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(Object.fromEntries(formData))
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+            showSuccess('Student created successfully!');
+            closeCreateUserModal();
+            form.reset();
+            // Reload the page to show the new user
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            showError(result.message || 'Failed to create student');
+        }
+    } catch (error) {
+        console.error('Error creating user:', error);
+        showError('An error occurred while creating the student');
+    }
+}
+
+// Create week function
+async function createWeek() {
+    const form = document.getElementById('createWeekForm');
+    const formData = new FormData(form);
+    
+    try {
+        const response = await fetch('/admin/weeks/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(Object.fromEntries(formData))
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+            showSuccess('Week created successfully!');
+            closeCreateWeekModal();
+            form.reset();
+            // Reload the page to show the new week
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            showError(result.message || 'Failed to create week');
+        }
+    } catch (error) {
+        console.error('Error creating week:', error);
+        showError('An error occurred while creating the week');
+    }
+}
+
+// Toggle user status (approve/activate or deactivate)
+async function toggleUserStatus(userId, action) {
+    try {
+        const response = await fetch(`/admin/users/${userId}/toggle-status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ action: action })
+        });
+
+        if (response.ok) {
+            showSuccess(`${action === 'activate' ? 'User approved' : 'User deactivated'} successfully!`);
+            // Reload the page to show updated status
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            const result = await response.json();
+            showError(result.error || 'Failed to update user status');
+        }
+    } catch (error) {
+        console.error('Error toggling user status:', error);
+        showError('An error occurred while updating user status');
+    }
+}
+
+// View student function
+function viewStudent(studentId) {
+    // Redirect to manage users page with the specific user
+    window.location.href = `/admin/manage-users?search=${studentId}`;
+}
+
+// Add event listeners when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners for toggle user buttons
+    const toggleButtons = document.querySelectorAll('.toggle-user-btn');
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.getAttribute('data-user-id');
+            const action = this.getAttribute('data-action');
+            toggleUserStatus(userId, action);
+        });
+    });
+});
+
+// Notification functions
+function showSuccess(message) {
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-success alert-dismissible fade show position-fixed';
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        <i class="fas fa-check-circle me-2"></i>${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 3000);
+}
+
+function showError(message) {
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-danger alert-dismissible fade show position-fixed';
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        <i class="fas fa-exclamation-triangle me-2"></i>${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+</script>
+
+<%- include('partials/footer') %>

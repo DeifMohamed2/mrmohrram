@@ -1,0 +1,765 @@
+<%- include('partials/header', { title: 'Manage Users' }) %>
+
+<!-- Admin Layout -->
+<div class="admin-layout">
+    <%- include('partials/sidebar') %>
+    
+    <!-- Main Content -->
+    <main class="admin-main-content">
+        <%- include('partials/header-bar', { title: 'Manage Users' }) %>
+        
+        <!-- Content Area -->
+        <div class="admin-content">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up">
+                        <div class="admin-card-header">
+                            <div>
+                                <h2 class="admin-card-title">Student Management</h2>
+                                <p class="text-muted mb-0">Manage all student accounts, view progress, and control access.</p>
+                            </div>
+                            <div class="admin-table-actions">
+                                <button class="admin-btn admin-btn-primary" onclick="openCreateUserModal()">
+                                    <i class="fas fa-user-plus me-2"></i>
+                                    Add Student
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters and Search -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="admin-card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 mb-3">
+                                    <label class="admin-form-label">Filter by Year</label>
+                                    <select class="admin-form-select" id="yearFilter" onchange="filterUsers()">
+                                        <option value="">All Years</option>
+                                        <option value="Year 8">Year 8</option>
+                                        <option value="Year 9">Year 9</option>
+                                        <option value="Year 10">Year 10</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="admin-form-label">Filter by Type</label>
+                                    <select class="admin-form-select" id="typeFilter" onchange="filterUsers()">
+                                        <option value="">All Types</option>
+                                        <option value="School">School</option>
+                                        <option value="Center">Center</option>
+                                        <option value="Online">Online</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="admin-form-label">Filter by Status</label>
+                                    <select class="admin-form-select" id="statusFilter" onchange="filterUsers()">
+                                        <option value="">All Status</option>
+                                        <option value="active">Active</option>
+                                        <option value="pending">Pending Approval</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="admin-form-label">Search</label>
+                                    <input type="text" class="admin-form-input" id="userSearch" placeholder="Search students..." onkeyup="filterUsers()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="admin-table-container" data-aos="fade-up" data-aos-delay="200">
+                        <div class="admin-table-header">
+                            <h3 class="admin-table-title">Students (<%= totalUsers %> total)</h3>
+                            <div class="admin-table-actions">
+                                <button class="admin-btn admin-btn-secondary admin-btn-sm" onclick="exportUsers()">
+                                    <i class="fas fa-download me-2"></i>
+                                    Export
+                                </button>
+                                <button class="admin-btn admin-btn-info admin-btn-sm" onclick="refreshUsers()">
+                                    <i class="fas fa-sync-alt me-2"></i>
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="admin-table" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                                        </th>
+                                        <th>Student</th>
+                                        <th>Year</th>
+                                        <th>Type</th>
+                                        <th>Progress</th>
+                                        <th>Status</th>
+                                        <th>Last Active</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (users && users.length > 0) { %>
+                                        <% users.forEach(user => { %>
+                                            <tr data-user-id="<%= user._id %>">
+                                                <td>
+                                                    <input type="checkbox" class="user-checkbox" value="<%= user._id %>">
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="admin-user-avatar me-3" style="width: 40px; height: 40px; font-size: 16px;">
+                                                            <%= user.name.charAt(0).toUpperCase() %>
+                                                        </div>
+                                                        <div>
+                                                            <div class="fw-semibold"><%= user.name %></div>
+                                                            <small class="text-muted"><%= user.email %></small>
+                                                            <br>
+                                                            <small class="text-muted">Code: <%= user.studentCode %></small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-primary"><%= user.year || 'Not Set' %></span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-info"><%= user.studentType || 'Not Set' %></span>
+                                                </td>
+                                                <td>
+                                                    <div class="progress" style="height: 8px; width: 100px;">
+                                                        <div class="progress-bar" role="progressbar" 
+                                                             style="width: <%= user.totalProgress || 0 %>%" 
+                                                             aria-valuenow="<%= user.totalProgress || 0 %>" 
+                                                             aria-valuemin="0" aria-valuemax="100">
+                                                        </div>
+                                                    </div>
+                                                    <small class="text-muted"><%= user.totalProgress || 0 %>%</small>
+                                                </td>
+                                                <td>
+                                                    <span class="admin-status-badge <%= user.isActive ? 'active' : 'pending' %>">
+                                                        <%= user.isActive ? 'Active' : 'Pending' %>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted">
+                                                        <%= user.lastActivity ? new Date(user.lastActivity).toLocaleDateString() : 'Never' %>
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex gap-2">
+                                                        <button class="admin-btn admin-btn-secondary admin-btn-sm" 
+                                                                onclick="viewUserDetails('<%= user._id %>')" 
+                                                                title="View Details">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <button class="admin-btn admin-btn-info admin-btn-sm" 
+                                                                onclick="editUser('<%= user._id %>')" 
+                                                                title="Edit">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="admin-btn admin-btn-<%= user.isActive ? 'warning' : 'success' %> admin-btn-sm" 
+                                                                onclick="toggleUserStatus('<%= user._id %>', '<%= user.isActive ? 'deactivate' : 'activate' %>')" 
+                                                                title="<%= user.isActive ? 'Deactivate' : 'Approve' %>">
+                                                            <i class="fas fa-<%= user.isActive ? 'ban' : 'check' %>"></i>
+                                                        </button>
+                                                        <button class="admin-btn admin-btn-danger admin-btn-sm" 
+                                                                onclick="deleteUser('<%= user._id %>')" 
+                                                                title="Delete">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="8" class="text-center py-5">
+                                                <div class="admin-empty-state">
+                                                    <div class="admin-empty-icon">
+                                                        <i class="fas fa-users"></i>
+                                                    </div>
+                                                    <div class="admin-empty-title">No Students Found</div>
+                                                    <div class="admin-empty-description">Start by adding your first student to the platform.</div>
+                                                    <button class="admin-btn admin-btn-primary mt-3" onclick="openCreateUserModal()">
+                                                        <i class="fas fa-user-plus me-2"></i>
+                                                        Add First Student
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <% if (totalPages > 1) { %>
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <nav aria-label="Users pagination">
+                            <ul class="pagination justify-content-center">
+                                <% if (currentPage > 1) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                                    </li>
+                                <% } %>
+                                
+                                <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+                                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                    </li>
+                                <% } %>
+                                
+                                <% if (currentPage < totalPages) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </main>
+</div>
+
+<!-- User Details Modal -->
+<div class="admin-modal-overlay" id="userDetailsModal">
+    <div class="admin-modal" style="max-width: 800px;">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">Student Details</h3>
+            <button class="admin-modal-close" onclick="closeUserDetailsModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body" id="userDetailsContent">
+            <div class="admin-loading">
+                <div class="admin-spinner"></div>
+                Loading student details...
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="admin-btn admin-btn-secondary" onclick="closeUserDetailsModal()">Close</button>
+            <button class="admin-btn admin-btn-primary" onclick="editUserFromModal()">Edit Student</button>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Actions Modal -->
+<div class="admin-modal-overlay" id="bulkActionsModal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">Bulk Actions</h3>
+            <button class="admin-modal-close" onclick="closeBulkActionsModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <p>You have selected <span id="selectedCount">0</span> students.</p>
+            <div class="d-grid gap-2">
+                <button class="admin-btn admin-btn-success" onclick="bulkActivate()">
+                    <i class="fas fa-check me-2"></i>
+                    Approve Selected
+                </button>
+                <button class="admin-btn admin-btn-warning" onclick="bulkDeactivate()">
+                    <i class="fas fa-ban me-2"></i>
+                    Deactivate Selected
+                </button>
+                <button class="admin-btn admin-btn-info" onclick="bulkExport()">
+                    <i class="fas fa-download me-2"></i>
+                    Export Selected
+                </button>
+                <button class="admin-btn admin-btn-danger" onclick="bulkDelete()">
+                    <i class="fas fa-trash me-2"></i>
+                    Delete Selected
+                </button>
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="admin-btn admin-btn-secondary" onclick="closeBulkActionsModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Create User Modal (reused from dashboard) -->
+<div class="admin-modal-overlay" id="createUserModal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">Add New Student</h3>
+            <button class="admin-modal-close" onclick="closeCreateUserModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <form id="createUserForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Full Name</label>
+                        <input type="text" class="admin-form-input" name="name" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Email</label>
+                        <input type="email" class="admin-form-input" name="email" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Password</label>
+                        <input type="password" class="admin-form-input" name="password" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Age</label>
+                        <input type="number" class="admin-form-input" name="age" min="10" max="100" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Year</label>
+                        <select class="admin-form-select" name="year" required>
+                            <option value="">Select Year</option>
+                            <option value="Year 8">Year 8</option>
+                            <option value="Year 9">Year 9</option>
+                            <option value="Year 10">Year 10</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Curriculum</label>
+                        <select class="admin-form-select" name="curriculum" required>
+                            <option value="">Select Curriculum</option>
+                            <option value="Cambridge">Cambridge</option>
+                            <option value="Edexcel">Edexcel</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Student Type</label>
+                        <select class="admin-form-select" name="studentType" required>
+                            <option value="">Select Type</option>
+                            <option value="School">School</option>
+                            <option value="Center">Center</option>
+                            <option value="Online">Online</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">School Name</label>
+                        <input type="text" class="admin-form-input" name="schoolName" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Student Phone</label>
+                        <input type="tel" class="admin-form-input" name="studentPhoneNumber" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="admin-form-label">Parent Phone</label>
+                    <input type="tel" class="admin-form-input" name="parentPhoneNumber" required>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" name="isActive" id="isActive" checked>
+                    <label class="form-check-label" for="isActive">
+                        Activate student account immediately
+                    </label>
+                </div>
+            </form>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="admin-btn admin-btn-secondary" onclick="closeCreateUserModal()">Cancel</button>
+            <button class="admin-btn admin-btn-primary" onclick="createUser()">Create Student</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Additional JavaScript for users page
+let currentUserId = null;
+
+// Filter users
+function filterUsers() {
+    const yearFilter = document.getElementById('yearFilter').value;
+    const typeFilter = document.getElementById('typeFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+    
+    const rows = document.querySelectorAll('#usersTable tbody tr');
+    
+    rows.forEach(row => {
+        const year = row.querySelector('td:nth-child(3)').textContent.trim();
+        const type = row.querySelector('td:nth-child(4)').textContent.trim();
+        const status = row.querySelector('td:nth-child(6)').textContent.trim();
+        const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+        
+        const yearMatch = !yearFilter || year.includes(yearFilter);
+        const typeMatch = !typeFilter || type.includes(typeFilter);
+        const statusMatch = !statusFilter || (statusFilter === 'active' && status === 'Active') || (statusFilter === 'pending' && status === 'Pending') || (statusFilter === 'inactive' && status === 'Inactive');
+        const searchMatch = !searchTerm || name.includes(searchTerm);
+        
+        row.style.display = (yearMatch && typeMatch && statusMatch && searchMatch) ? '' : 'none';
+    });
+}
+
+// Toggle select all
+function toggleSelectAll() {
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.user-checkbox');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+    });
+    
+    updateBulkActions();
+}
+
+// Update bulk actions
+function updateBulkActions() {
+    const selectedCheckboxes = document.querySelectorAll('.user-checkbox:checked');
+    const selectedCount = selectedCheckboxes.length;
+    
+    document.getElementById('selectedCount').textContent = selectedCount;
+    
+    // Show/hide bulk actions button
+    const bulkActionsBtn = document.querySelector('.bulk-actions-btn');
+    if (bulkActionsBtn) {
+        bulkActionsBtn.style.display = selectedCount > 0 ? 'block' : 'none';
+    }
+}
+
+// View user details
+async function viewUserDetails(userId) {
+    currentUserId = userId;
+    const modal = document.getElementById('userDetailsModal');
+    const content = document.getElementById('userDetailsContent');
+    
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    
+    try {
+        const response = await fetch(`/admin/api/users/${userId}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            content.innerHTML = generateUserDetailsHTML(result.user, result.progress, result.submissions);
+        } else {
+            content.innerHTML = '<div class="text-center text-danger">Error loading user details</div>';
+        }
+    } catch (error) {
+        content.innerHTML = '<div class="text-center text-danger">Error loading user details</div>';
+    }
+}
+
+// Generate user details HTML
+function generateUserDetailsHTML(user, progress, submissions) {
+    return `
+        <div class="row">
+            <div class="col-md-4">
+                <div class="text-center mb-4">
+                    <div class="admin-user-avatar mx-auto mb-3" style="width: 80px; height: 80px; font-size: 32px;">
+                        ${user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <h4>${user.name}</h4>
+                    <p class="text-muted">${user.email}</p>
+                    <span class="admin-status-badge ${user.isActive ? 'active' : 'pending'}">
+                        ${user.isActive ? 'Active' : 'Pending'}
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <strong>Student Code:</strong><br>
+                        <span class="text-muted">${user.studentCode}</span>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <strong>Year:</strong><br>
+                        <span class="badge bg-primary">${user.year || 'Not Set'}</span>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <strong>Type:</strong><br>
+                        <span class="badge bg-info">${user.studentType || 'Not Set'}</span>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <strong>Progress:</strong><br>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" style="width: ${user.totalProgress || 0}%"></div>
+                        </div>
+                        <small class="text-muted">${user.totalProgress || 0}%</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Close user details modal
+function closeUserDetailsModal() {
+    const modal = document.getElementById('userDetailsModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+// Edit user from modal
+function editUserFromModal() {
+    if (currentUserId) {
+        editUser(currentUserId);
+        closeUserDetailsModal();
+    }
+}
+
+// Edit user
+function editUser(userId) {
+    // For now, just show a message that this feature is coming soon
+    showError('Edit user functionality is coming soon. Please use the view details option for now.');
+}
+
+// Toggle user status (approve/activate or deactivate)
+async function toggleUserStatus(userId, action) {
+    try {
+        const response = await fetch(`/admin/users/${userId}/toggle-status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ action: action })
+        });
+
+        if (response.ok) {
+            showSuccess(`${action === 'activate' ? 'User approved' : 'User deactivated'} successfully!`);
+            // Reload the page to show updated status
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            const result = await response.json();
+            showError(result.error || 'Failed to update user status');
+        }
+    } catch (error) {
+        console.error('Error toggling user status:', error);
+        showError('An error occurred while updating user status');
+    }
+}
+
+// Delete user
+async function deleteUser(userId) {
+    if (confirm('Are you sure you want to delete this student? This action cannot be undone.')) {
+        try {
+            const response = await fetch(`/admin/api/users/${userId}`, {
+                method: 'DELETE'
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showSuccess('Student deleted successfully!');
+                window.location.reload();
+            } else {
+                showError(result.message || 'Failed to delete student');
+            }
+        } catch (error) {
+            showError('An error occurred while deleting the student');
+        }
+    }
+}
+
+// Export users
+function exportUsers() {
+    // Implementation for exporting users
+    console.log('Exporting users');
+}
+
+// Refresh users
+function refreshUsers() {
+    window.location.reload();
+}
+
+// Bulk actions
+async function bulkActivate() {
+    const selectedIds = getSelectedUserIds();
+    if (selectedIds.length > 0) {
+        try {
+            let successCount = 0;
+            let errorCount = 0;
+            
+            for (const userId of selectedIds) {
+                try {
+                    const response = await fetch(`/admin/users/${userId}/toggle-status`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ action: 'activate' })
+                    });
+                    
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        errorCount++;
+                    }
+                } catch (error) {
+                    errorCount++;
+                }
+            }
+            
+            if (successCount > 0) {
+                showSuccess(`${successCount} users approved successfully!`);
+            }
+            if (errorCount > 0) {
+                showError(`Failed to approve ${errorCount} users`);
+            }
+            
+            // Reload the page to show updated status
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } catch (error) {
+            showError('An error occurred during bulk approval');
+        }
+    } else {
+        showError('Please select users to approve');
+    }
+}
+
+async function bulkDeactivate() {
+    const selectedIds = getSelectedUserIds();
+    if (selectedIds.length > 0) {
+        try {
+            let successCount = 0;
+            let errorCount = 0;
+            
+            for (const userId of selectedIds) {
+                try {
+                    const response = await fetch(`/admin/users/${userId}/toggle-status`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ action: 'deactivate' })
+                    });
+                    
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        errorCount++;
+                    }
+                } catch (error) {
+                    errorCount++;
+                }
+            }
+            
+            if (successCount > 0) {
+                showSuccess(`${successCount} users deactivated successfully!`);
+            }
+            if (errorCount > 0) {
+                showError(`Failed to deactivate ${errorCount} users`);
+            }
+            
+            // Reload the page to show updated status
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } catch (error) {
+            showError('An error occurred during bulk deactivation');
+        }
+    } else {
+        showError('Please select users to deactivate');
+    }
+}
+
+function bulkExport() {
+    const selectedIds = getSelectedUserIds();
+    if (selectedIds.length > 0) {
+        // Implementation for bulk export
+        console.log('Bulk exporting:', selectedIds);
+    }
+}
+
+function bulkDelete() {
+    const selectedIds = getSelectedUserIds();
+    if (selectedIds.length > 0) {
+        if (confirm(`Are you sure you want to delete ${selectedIds.length} students? This action cannot be undone.`)) {
+            // Implementation for bulk delete
+            console.log('Bulk deleting:', selectedIds);
+        }
+    }
+}
+
+function getSelectedUserIds() {
+    const checkboxes = document.querySelectorAll('.user-checkbox:checked');
+    return Array.from(checkboxes).map(cb => cb.value);
+}
+
+// Close bulk actions modal
+function closeBulkActionsModal() {
+    const modal = document.getElementById('bulkActionsModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+// Notification functions
+function showSuccess(message) {
+    // Create a simple success notification
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-success alert-dismissible fade show position-fixed';
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        <i class="fas fa-check-circle me-2"></i>${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notification);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 3000);
+}
+
+function showError(message) {
+    // Create a simple error notification
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-danger alert-dismissible fade show position-fixed';
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        <i class="fas fa-exclamation-triangle me-2"></i>${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+// Add event listeners for checkboxes
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.user-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateBulkActions);
+    });
+
+    // Set default filter based on URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const statusFilter = urlParams.get('status');
+    if (statusFilter) {
+        const statusSelect = document.getElementById('statusFilter');
+        if (statusSelect) {
+            statusSelect.value = statusFilter;
+        }
+    }
+});
+</script>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,96 @@
+/* Theme Toggle Button - Enhanced for auth pages */
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 0;
+  transition: all 0.3s ease;
+  box-shadow: none;
+  outline: none !important;
+  opacity: 0.9;
+}
+
+/* Default hide both then show appropriate - HIGHEST PRIORITY */
+.theme-toggle .light-icon,
+.theme-toggle .dark-icon {
+  display: none !important;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+/* Light theme shows moon icon (to switch to dark) */
+.light-theme .theme-toggle .dark-icon {
+  display: inline-block !important;
+  color: #1e293b;
+}
+
+/* Dark theme shows sun icon (to switch to light) */
+.dark-theme .theme-toggle .light-icon {
+  display: inline-block !important;
+  color: #facc15;
+}
+
+/* Navbar specific overrides */
+.light-theme .navbar .theme-toggle .dark-icon {
+  display: inline-block !important;
+  color: #1e293b;
+}
+
+.dark-theme .navbar .theme-toggle .light-icon {
+  display: inline-block !important;
+  color: #facc15;
+}
+
+/* Specific styling for auth pages */
+.auth-container .theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+.light-theme .auth-container .theme-toggle {
+  background: rgba(30, 41, 59, 0.1);
+}
+
+.dark-theme .auth-container .theme-toggle {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+/* Pulse animation for hover */
+.theme-toggle:hover:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  animation: pulse-ring 1.5s ease-out infinite;
+  z-index: -1;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}

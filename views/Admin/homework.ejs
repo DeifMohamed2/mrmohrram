@@ -1,0 +1,666 @@
+<%- include('partials/header', { title: 'Homework Management' }) %>
+
+<!-- Admin Layout -->
+<div class="admin-layout">
+    <%- include('partials/sidebar') %>
+    
+    <!-- Main Content -->
+    <main class="admin-main-content">
+        <%- include('partials/header-bar', { title: 'Homework Management' }) %>
+        
+        <!-- Content Area -->
+        <div class="admin-content">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up">
+                        <div class="admin-card-header">
+                            <div>
+                                <h2 class="admin-card-title">Homework Submissions</h2>
+                                <p class="text-muted mb-0">Review and manage student homework submissions across all weeks.</p>
+                            </div>
+                            <div class="admin-table-actions">
+                                <button class="admin-btn admin-btn-info admin-btn-sm" onclick="exportHomework()">
+                                    <i class="fas fa-download me-2"></i>
+                                    Export
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="admin-stats-grid mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="admin-stat-card">
+                    <div class="admin-stat-header">
+                        <div class="admin-stat-icon primary">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="admin-stat-trend up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+5%</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-value" id="totalSubmissions"><%= statistics.totalSubmissions %></div>
+                    <div class="admin-stat-label">Total Submissions</div>
+                </div>
+
+                <div class="admin-stat-card">
+                    <div class="admin-stat-header">
+                        <div class="admin-stat-icon warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="admin-stat-trend down">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>-2%</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-value" id="pendingSubmissions"><%= statistics.pendingSubmissions %></div>
+                    <div class="admin-stat-label">Pending Review</div>
+                </div>
+
+                <div class="admin-stat-card">
+                    <div class="admin-stat-header">
+                        <div class="admin-stat-icon success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="admin-stat-trend up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+8%</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-value" id="gradedSubmissions"><%= statistics.gradedSubmissions %></div>
+                    <div class="admin-stat-label">Graded</div>
+                </div>
+
+                <div class="admin-stat-card">
+                    <div class="admin-stat-header">
+                        <div class="admin-stat-icon info">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="admin-stat-trend up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+12%</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-value" id="averageScore"><%= statistics.averageScore %>%</div>
+                    <div class="admin-stat-label">Average Score</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="admin-card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 mb-3">
+                                    <label class="admin-form-label">Filter by Status</label>
+                                    <select class="admin-form-select" id="statusFilter" onchange="filterHomework()">
+                                        <option value="">All Status</option>
+                                        <option value="submitted">Submitted</option>
+                                        <option value="graded">Graded</option>
+                                        <option value="late">Late</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label class="admin-form-label">Filter by Week</label>
+                                    <select class="admin-form-select" id="weekFilter" onchange="filterHomework()">
+                                        <option value="">All Weeks</option>
+                                        <!-- Weeks will be populated dynamically -->
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label class="admin-form-label">Filter by Year</label>
+                                    <select class="admin-form-select" id="yearFilter" onchange="filterHomework()">
+                                        <option value="">All Years</option>
+                                        <option value="Year 8">Year 8</option>
+                                        <option value="Year 9">Year 9</option>
+                                        <option value="Year 10">Year 10</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="admin-form-label">Date Range</label>
+                                    <input type="date" class="admin-form-input" id="dateFrom" onchange="filterHomework()">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="admin-form-label">To</label>
+                                    <input type="date" class="admin-form-input" id="dateTo" onchange="filterHomework()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Homework Table -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="admin-table-container" data-aos="fade-up" data-aos-delay="300">
+                        <div class="admin-table-header">
+                            <h3 class="admin-table-title">Homework Submissions</h3>
+                            <div class="admin-table-actions">
+                                <button class="admin-btn admin-btn-secondary admin-btn-sm" onclick="refreshHomework()">
+                                    <i class="fas fa-sync-alt me-2"></i>
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="admin-table" id="homeworkTable">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Week</th>
+                                        <th>Submission Date</th>
+                                        <th>Status</th>
+                                        <th>Score</th>
+                                        <th>Feedback</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (homework && homework.length > 0) { %>
+                                        <% homework.forEach(submission => { %>
+                                            <tr data-submission-id="<%= submission._id %>">
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="admin-user-avatar me-3" style="width: 35px; height: 35px; font-size: 14px;">
+                                                            <%= submission.student.name.charAt(0).toUpperCase() %>
+                                                        </div>
+                                                        <div>
+                                                            <div class="fw-semibold"><%= submission.student.name %></div>
+                                                            <small class="text-muted"><%= submission.student.email %></small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <% if (submission.week) { %>
+                                                            <div class="fw-semibold">Week <%= submission.week.weekNumber %></div>
+                                                            <small class="text-muted"><%= submission.week.title %></small>
+                                                        <% } else { %>
+                                                            <div class="fw-semibold text-warning">Week Not Found</div>
+                                                            <small class="text-muted">Referenced week has been deleted</small>
+                                                        <% } %>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <% if (submission.submittedAt) { %>
+                                                            <div><%= new Date(submission.submittedAt).toLocaleDateString('en-GB') %></div>
+                                                            <small class="text-muted"><%= new Date(submission.submittedAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) %></small>
+                                                        <% } else { %>
+                                                            <div class="text-muted">No date</div>
+                                                        <% } %>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="admin-status-badge <%= 
+                                                        submission.status === 'submitted' ? 'pending' : 
+                                                        submission.status === 'graded' ? 'completed' : 
+                                                        submission.status === 'late' ? 'warning' : 'inactive' 
+                                                    %>">
+                                                        <%= submission.status.charAt(0).toUpperCase() + submission.status.slice(1) %>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <% if (submission.score !== undefined && submission.score !== null) { %>
+                                                        <div class="fw-bold text-primary"><%= submission.score %>/100</div>
+                                                    <% } else { %>
+                                                        <span class="text-muted">Not graded</span>
+                                                    <% } %>
+                                                </td>
+                                                <td>
+                                                    <% if (submission.feedback) { %>
+                                                        <div class="text-truncate" style="max-width: 200px;" title="<%= submission.feedback %>">
+                                                            <%= submission.feedback %>
+                                                        </div>
+                                                    <% } else { %>
+                                                        <span class="text-muted">No feedback</span>
+                                                    <% } %>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex gap-2">
+                                                        <button class="admin-btn admin-btn-secondary admin-btn-sm" 
+                                                                onclick="viewSubmission('<%= submission._id %>')" 
+                                                                title="View Submission">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <% if (submission.status === 'submitted' || submission.status === 'late') { %>
+                                                            <button class="admin-btn admin-btn-primary admin-btn-sm" 
+                                                                    onclick="gradeSubmission('<%= submission._id %>')" 
+                                                                    title="Grade Submission">
+                                                                <i class="fas fa-check"></i>
+                                                            </button>
+                                                        <% } else if (submission.status === 'graded') { %>
+                                                            <button class="admin-btn admin-btn-info admin-btn-sm" 
+                                                                    onclick="editGrade('<%= submission._id %>')" 
+                                                                    title="Edit Grade">
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
+                                                        <% } %>
+                                                        <button class="admin-btn admin-btn-danger admin-btn-sm" 
+                                                                onclick="deleteSubmission('<%= submission._id %>')" 
+                                                                title="Delete Submission">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="7" class="text-center py-5">
+                                                <div class="admin-empty-state">
+                                                    <div class="admin-empty-icon">
+                                                        <i class="fas fa-file-alt"></i>
+                                                    </div>
+                                                    <div class="admin-empty-title">No Homework Submissions</div>
+                                                    <div class="admin-empty-description">Homework submissions will appear here as students submit their work.</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Grade Submission Modal -->
+<div class="admin-modal-overlay" id="gradeSubmissionModal">
+    <div class="admin-modal" style="max-width: 1000px; width: 95%;">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">Grade Homework Submission</h3>
+            <button class="admin-modal-close" onclick="closeGradeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body" id="gradeSubmissionContent" style="max-height: 70vh; overflow-y: auto;">
+            <div class="admin-loading">
+                <div class="admin-spinner"></div>
+                Loading submission details...
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="admin-btn admin-btn-secondary" onclick="closeGradeModal()">Cancel</button>
+            <button class="admin-btn admin-btn-primary" onclick="saveGrade()">Save Grade</button>
+        </div>
+    </div>
+</div>
+
+<!-- View Submission Modal -->
+<div class="admin-modal-overlay" id="viewSubmissionModal">
+    <div class="admin-modal" style="max-width: 800px;">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">View Homework Submission</h3>
+            <button class="admin-modal-close" onclick="closeViewModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body" id="viewSubmissionContent">
+            <div class="admin-loading">
+                <div class="admin-spinner"></div>
+                Loading submission details...
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="admin-btn admin-btn-secondary" onclick="closeViewModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Additional JavaScript for homework page
+let currentSubmissionId = null;
+
+// Filter homework
+function filterHomework() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const weekFilter = document.getElementById('weekFilter').value;
+    const yearFilter = document.getElementById('yearFilter').value;
+    const dateFrom = document.getElementById('dateFrom').value;
+    const dateTo = document.getElementById('dateTo').value;
+    
+    const rows = document.querySelectorAll('#homeworkTable tbody tr');
+    
+    rows.forEach(row => {
+        const status = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+        const week = row.querySelector('td:nth-child(2)').textContent.trim();
+        const dateText = row.querySelector('td:nth-child(3)').textContent.trim();
+        
+        // Handle date parsing more safely
+        let submissionDate = null;
+        if (dateText && dateText !== 'No date') {
+            try {
+                submissionDate = new Date(dateText);
+            } catch (e) {
+                console.warn('Invalid date:', dateText);
+            }
+        }
+        
+        const statusMatch = !statusFilter || status.includes(statusFilter);
+        const weekMatch = !weekFilter || week.includes(weekFilter);
+        const yearMatch = !yearFilter || week.includes(yearFilter);
+        const dateMatch = !submissionDate || (!dateFrom || submissionDate >= new Date(dateFrom)) && (!dateTo || submissionDate <= new Date(dateTo));
+        
+        row.style.display = (statusMatch && weekMatch && yearMatch && dateMatch) ? '' : 'none';
+    });
+}
+
+// View submission
+async function viewSubmission(submissionId) {
+    currentSubmissionId = submissionId;
+    const modal = document.getElementById('viewSubmissionModal');
+    const content = document.getElementById('viewSubmissionContent');
+    
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    
+    try {
+        const response = await fetch(`/admin/api/homework/${submissionId}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            content.innerHTML = generateSubmissionViewHTML(result.submission);
+        } else {
+            content.innerHTML = '<div class="text-center text-danger">Error loading submission details</div>';
+        }
+    } catch (error) {
+        content.innerHTML = '<div class="text-center text-danger">Error loading submission details</div>';
+    }
+}
+
+// Generate submission view HTML
+function generateSubmissionViewHTML(submission) {
+    return `
+        <div class="row">
+            <div class="col-md-8">
+                <h4>${submission.student.name} - ${submission.week ? `Week ${submission.week.weekNumber}` : 'Week Not Found'}</h4>
+                <p class="text-muted">${submission.week ? submission.week.title : 'Referenced week has been deleted'}</p>
+                
+                <div class="mb-4">
+                    <h5>Submission Details</h5>
+                    <div class="admin-card">
+                        <div class="admin-card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Submitted:</strong> ${new Date(submission.submittedAt).toLocaleString()}<br>
+                                    <strong>Status:</strong> <span class="admin-status-badge ${submission.status === 'pending' ? 'pending' : 'completed'}">${submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}</span>
+                                </div>
+                                <div class="col-md-6">
+                                    ${submission.score !== undefined ? `<strong>Score:</strong> ${submission.score}/100<br>` : ''}
+                                    ${submission.feedback ? `<strong>Feedback:</strong> ${submission.feedback}` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h5>Submission Content</h5>
+                    <div class="admin-card">
+                        <div class="admin-card-body">
+                            ${submission.content ? `<p>${submission.content}</p>` : '<p class="text-muted">No text content provided.</p>'}
+                            ${submission.attachments && submission.attachments.length > 0 ? `
+                                <h6>Attachments:</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    ${submission.attachments.map(attachment => `
+                                        <a href="${attachment.url}" class="admin-btn admin-btn-secondary admin-btn-sm" target="_blank">
+                                            <i class="fas fa-download me-2"></i>
+                                            ${attachment.name}
+                                        </a>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h5 class="admin-card-title">Student Info</h5>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="text-center mb-3">
+                            <div class="admin-user-avatar mx-auto mb-2" style="width: 60px; height: 60px; font-size: 24px;">
+                                ${submission.student.name.charAt(0).toUpperCase()}
+                            </div>
+                            <h6>${submission.student.name}</h6>
+                            <p class="text-muted small">${submission.student.email}</p>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="fw-bold text-primary">${submission.student.year || 'N/A'}</div>
+                                <small class="text-muted">Year</small>
+                            </div>
+                            <div class="col-6">
+                                <div class="fw-bold text-info">${submission.student.studentType || 'N/A'}</div>
+                                <small class="text-muted">Type</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Close view modal
+function closeViewModal() {
+    const modal = document.getElementById('viewSubmissionModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+// Grade submission
+async function gradeSubmission(submissionId) {
+    currentSubmissionId = submissionId;
+    const modal = document.getElementById('gradeSubmissionModal');
+    const content = document.getElementById('gradeSubmissionContent');
+    
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    
+    try {
+        const response = await fetch(`/admin/api/homework/${submissionId}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            content.innerHTML = generateGradeFormHTML(result.submission);
+        } else {
+            content.innerHTML = '<div class="text-center text-danger">Error loading submission details</div>';
+        }
+    } catch (error) {
+        content.innerHTML = '<div class="text-center text-danger">Error loading submission details</div>';
+    }
+}
+
+// Generate grade form HTML
+function generateGradeFormHTML(submission) {
+    return `
+        <div class="row">
+            <div class="col-md-8">
+                <h4>Grade: ${submission.student.name} - ${submission.week ? `Week ${submission.week.weekNumber}` : 'Week Not Found'}</h4>
+                <p class="text-muted">${submission.week ? submission.week.title : 'Referenced week has been deleted'}</p>
+                
+                <div class="mb-4">
+                    <h5>Submission Content</h5>
+                    <div class="admin-card">
+                        <div class="admin-card-body">
+                            ${submission.content ? `<p>${submission.content}</p>` : '<p class="text-muted">No text content provided.</p>'}
+                        </div>
+                    </div>
+                </div>
+                
+                <form id="gradeForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="admin-form-label">Score (0-100)</label>
+                            <input type="number" class="admin-form-input" name="score" min="0" max="100" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="admin-form-label">Status</label>
+                            <select class="admin-form-select" name="status" required>
+                                <option value="graded">Graded</option>
+                                <option value="needs_revision">Needs Revision</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="admin-form-label">Feedback</label>
+                        <textarea class="admin-form-textarea" name="feedback" rows="4" placeholder="Provide detailed feedback to the student..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-4">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h5 class="admin-card-title">Grading Guidelines</h5>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="mb-3">
+                            <strong>90-100:</strong> Excellent work<br>
+                            <strong>80-89:</strong> Good work<br>
+                            <strong>70-79:</strong> Satisfactory<br>
+                            <strong>60-69:</strong> Needs improvement<br>
+                            <strong>Below 60:</strong> Unsatisfactory
+                        </div>
+                        <div class="alert alert-info">
+                            <small>
+                                <i class="fas fa-info-circle me-2"></i>
+                                Provide constructive feedback to help students improve.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Save grade
+async function saveGrade() {
+    const form = document.getElementById('gradeForm');
+    const formData = new FormData(form);
+    const gradeData = Object.fromEntries(formData.entries());
+    
+    try {
+        const response = await fetch(`/admin/api/homework/${currentSubmissionId}/grade`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(gradeData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showSuccess('Grade saved successfully!');
+            closeGradeModal();
+            window.location.reload();
+        } else {
+            showError(result.message || 'Failed to save grade');
+        }
+    } catch (error) {
+        showError('An error occurred while saving the grade');
+    }
+}
+
+// Close grade modal
+function closeGradeModal() {
+    const modal = document.getElementById('gradeSubmissionModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+// Edit grade
+function editGrade(submissionId) {
+    // Implementation for editing existing grade
+    console.log('Editing grade for submission:', submissionId);
+}
+
+// Delete submission
+async function deleteSubmission(submissionId) {
+    if (confirm('Are you sure you want to delete this submission? This action cannot be undone.')) {
+        try {
+            const response = await fetch(`/admin/api/homework/${submissionId}`, {
+                method: 'DELETE'
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showSuccess('Submission deleted successfully!');
+                window.location.reload();
+            } else {
+                showError(result.message || 'Failed to delete submission');
+            }
+        } catch (error) {
+            showError('An error occurred while deleting the submission');
+        }
+    }
+}
+
+// Export homework
+function exportHomework() {
+    // Implementation for exporting homework data
+    console.log('Exporting homework data');
+}
+
+// Refresh homework
+function refreshHomework() {
+    window.location.reload();
+}
+
+// Update statistics
+function updateStatistics() {
+    const rows = document.querySelectorAll('#homeworkTable tbody tr');
+    const totalSubmissions = rows.length;
+    
+    let pendingSubmissions = 0;
+    let gradedSubmissions = 0;
+    let totalScore = 0;
+    let scoredCount = 0;
+    
+    rows.forEach(row => {
+        const status = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+        const scoreText = row.querySelector('td:nth-child(5)').textContent.trim();
+        
+        if (status === 'submitted' || status === 'late') {
+            pendingSubmissions++;
+        } else if (status === 'graded') {
+            gradedSubmissions++;
+        }
+        
+        // Extract score from "XX/100" format
+        const scoreMatch = scoreText.match(/(\d+)\/100/);
+        if (scoreMatch) {
+            totalScore += parseInt(scoreMatch[1]);
+            scoredCount++;
+        }
+    });
+    
+    const averageScore = scoredCount > 0 ? Math.round(totalScore / scoredCount) : 0;
+    
+    document.getElementById('totalSubmissions').textContent = totalSubmissions;
+    document.getElementById('pendingSubmissions').textContent = pendingSubmissions;
+    document.getElementById('gradedSubmissions').textContent = gradedSubmissions;
+    document.getElementById('averageScore').textContent = averageScore + '%';
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    updateStatistics();
+});
+</script>
+
+<%- include('partials/footer') %>

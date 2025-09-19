@@ -1,0 +1,870 @@
+/**
+ * Authentication Pages Styles for Mr Mohrr7am
+ */
+
+/* Auth Container */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* add top padding so card not hidden under fixed navbar */
+  padding: 110px 0 50px; /* navbar ~70px + spacing */
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
+/* Auth Background - Light/Dark Theme Support */
+.light-theme .math-auth-bg {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.dark-theme .math-auth-bg {
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+}
+
+/* Fallback for when theme class is not applied */
+.math-auth-bg {
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+}
+
+.auth-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.auth-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Auth Card */
+.auth-card {
+  width: 100%;
+  max-width: 800px; /* Increased from 500px for wider form */
+  border-radius: 25px; /* Slightly more rounded corners */
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: none;
+  position: relative;
+  z-index: 1050; /* Higher than navbar z-index: 1000 */
+  transition: all 0.4s ease;
+  transform: translateY(0);
+  margin-bottom: 30px;
+}
+
+/* Theme-based card styling */
+.light-theme .auth-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.dark-theme .auth-card {
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.auth-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
+}
+
+.card-body {
+  padding: 50px 60px !important; /* Increased padding for more cozy feel */
+}
+
+/* Auth Header */
+.auth-header {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.auth-icon-container {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(58, 146, 98, 0.3);
+}
+
+.auth-icon-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: rotate(45deg);
+  animation: shine 3s infinite;
+}
+
+.math-icon-animated {
+  font-size: 2.5rem;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+  animation: pulse 2s infinite alternate;
+}
+
+/* Light theme header styling */
+.light-theme .auth-header h2 {
+  color: #333;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.light-theme .auth-header p {
+  color: rgba(33, 37, 41, 0.7) !important;
+  font-size: 1.1rem;
+}
+
+/* Dark theme header styling */
+.dark-theme .auth-header h2 {
+  color: #fff;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.dark-theme .auth-header p {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 1.1rem;
+}
+
+/* Auth Form */
+.auth-form {
+  margin-bottom: 25px;
+}
+
+/* Light theme form styling */
+.light-theme .form-label {
+  color: rgba(33, 37, 41, 0.9);
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.light-theme .form-control {
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #333;
+  border-radius: 10px;
+  padding: 12px 15px;
+  transition: all 0.3s ease;
+}
+
+.light-theme .form-control:focus {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 114, 255, 0.5);
+  color: #333;
+  box-shadow: 0 0 0 0.25rem rgba(0, 114, 255, 0.15);
+}
+
+.light-theme .form-control::placeholder {
+  color: rgba(33, 37, 41, 0.5);
+}
+
+/* Dark theme form styling */
+.dark-theme .form-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.dark-theme .form-control {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 10px;
+  padding: 12px 15px;
+  transition: all 0.3s ease;
+}
+
+.dark-theme .form-control:focus {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(0, 198, 255, 0.5);
+  color: #fff;
+  box-shadow: 0 0 0 0.25rem rgba(0, 198, 255, 0.25);
+}
+
+.dark-theme .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Light theme input group */
+.light-theme .input-group-text {
+  background-color: rgba(0, 114, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #333;
+  border-radius: 10px 0 0 10px;
+}
+
+.light-theme .btn-outline-secondary {
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #333;
+  border-radius: 0 10px 10px 0;
+  background-color: rgba(0, 114, 255, 0.1);
+}
+
+.light-theme .btn-outline-secondary:hover {
+  background-color: rgba(0, 114, 255, 0.2);
+  border-color: rgba(0, 0, 0, 0.2);
+  color: #333;
+}
+
+/* Dark theme input group */
+.dark-theme .input-group-text {
+  background-color: rgba(0, 114, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 10px 0 0 10px;
+}
+
+.dark-theme .btn-outline-secondary {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 0 10px 10px 0;
+  background-color: rgba(0, 114, 255, 0.2);
+}
+
+.dark-theme .btn-outline-secondary:hover {
+  background-color: rgba(0, 114, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+/* Input group focus effect */
+.input-focused .input-group-text {
+  border-color: rgba(0, 198, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+.form-text {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+/* Light theme checkboxes */
+.light-theme .form-check-label {
+  color: rgba(33, 37, 41, 0.8);
+  font-size: 0.95rem;
+}
+
+.light-theme .form-check-input {
+  background-color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.light-theme .form-check-input:checked {
+  background-color: #0072ff;
+  border-color: #0072ff;
+}
+
+/* Dark theme checkboxes */
+.dark-theme .form-check-label {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+}
+
+.dark-theme .form-check-input {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.dark-theme .form-check-input:checked {
+  background-color: #00c6ff;
+  border-color: #00c6ff;
+}
+
+/* Improved checkbox visual effect */
+.form-check-input {
+  width: 1.2em;
+  height: 1.2em;
+  margin-top: 0.15em;
+  transition: all 0.2s ease;
+}
+
+.form-check-input:checked {
+  transform: scale(1.05);
+}
+
+.form-check-label a {
+  color: #00c6ff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.form-check-label a:hover {
+  color: #0072ff;
+  text-decoration: underline;
+}
+
+.float-end {
+  color: #00c6ff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.float-end:hover {
+  color: #0072ff;
+  text-decoration: underline;
+}
+
+.invalid-feedback {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+}
+
+/* Auth Buttons */
+.auth-card .btn-primary {
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 15px rgba(0, 114, 255, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-card .btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 20px rgba(0, 114, 255, 0.4);
+  background: linear-gradient(90deg, #0072ff, #00c6ff);
+}
+
+.auth-card .btn-primary:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: all 0.6s;
+}
+
+.auth-card .btn-primary:hover:before {
+  left: 100%;
+}
+
+.btn-lg {
+  font-size: 1.1rem;
+  padding: 15px 25px;
+}
+
+/* Auth Separator */
+.auth-separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 25px 0;
+}
+
+.auth-separator::before,
+.auth-separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.auth-separator-text {
+  padding: 0 15px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}
+
+/* Social Login Buttons */
+/* Light theme social buttons */
+.light-theme .auth-card .btn-outline-primary {
+  border: 1px solid rgba(0, 114, 255, 0.3);
+  color: #0072ff;
+  background-color: rgba(0, 114, 255, 0.05);
+  border-radius: 10px;
+  padding: 12px 15px;
+  transition: all 0.3s ease;
+}
+
+.light-theme .auth-card .btn-outline-primary:hover {
+  background-color: rgba(0, 114, 255, 0.1);
+  border-color: rgba(0, 114, 255, 0.5);
+  color: #0056b3;
+  transform: translateY(-3px);
+}
+
+/* Dark theme social buttons */
+.dark-theme .auth-card .btn-outline-primary {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 12px 15px;
+  transition: all 0.3s ease;
+}
+
+.dark-theme .auth-card .btn-outline-primary:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #fff;
+  transform: translateY(-3px);
+}
+
+/* Auth Footer */
+.auth-footer {
+  text-align: center;
+  margin-top: 25px;
+  padding: 15px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Light theme footer styling */
+.light-theme .auth-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.light-theme .auth-footer p {
+  color: rgba(33, 37, 41, 0.7);
+  font-size: 0.95rem;
+}
+
+.light-theme .auth-footer a {
+  color: #0072ff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.light-theme .auth-footer a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* Dark theme footer styling */
+.dark-theme .auth-footer p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+}
+
+.dark-theme .auth-footer a {
+  color: #00c6ff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.dark-theme .auth-footer a:hover {
+  color: #0072ff;
+  text-decoration: underline;
+}
+
+/* Floating Math Shapes */
+.math-shape-auth {
+  position: absolute;
+  opacity: 0.1;
+  z-index: 0;
+}
+
+.auth-shape1 {
+  top: 10%;
+  left: 5%;
+  width: 150px;
+  height: 150px;
+  background: #00c6ff;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  animation: float-shape-slow 15s infinite alternate ease-in-out;
+}
+
+.auth-shape2 {
+  bottom: 10%;
+  right: 5%;
+  width: 120px;
+  height: 120px;
+  background: #0072ff;
+  border-radius: 64% 36% 27% 73% / 55% 58% 42% 45%;
+  animation: float-shape-slow 12s infinite alternate-reverse ease-in-out;
+}
+
+.auth-shape3 {
+  top: 50%;
+  right: 15%;
+  width: 80px;
+  height: 80px;
+  background: #00c6ff;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+  animation: float-shape-slow 10s infinite alternate ease-in-out;
+}
+
+.auth-shape4 {
+  bottom: 30%;
+  left: 10%;
+  width: 100px;
+  height: 100px;
+  background: #0072ff;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  animation: float-shape-slow 13s infinite alternate-reverse ease-in-out;
+}
+
+/* Responsive Styles */
+@media (max-width: 576px) {
+  .auth-card {
+    margin: 0 15px 30px;
+  }
+
+  .card-body {
+    padding: 30px !important;
+  }
+
+  .auth-header h2 {
+    font-size: 1.8rem;
+  }
+}
+
+/* Additional safe area top spacing for very small heights */
+@media (max-height: 650px) {
+  .auth-container {
+    padding-top: 90px;
+  }
+}
+
+/* Bottom margin and footer fixes */
+.auth-container .container {
+  padding-bottom: 30px;
+}
+
+/* Fix for EJS footer */
+.auth-container + footer,
+.auth-container ~ footer {
+  margin-top: 0;
+  background: transparent;
+}
+
+/* Enhanced Registration Form Styles */
+.auth-form .row {
+  margin-bottom: 1rem;
+}
+
+.auth-form .col-md-6 .mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+/* Form info box for student code explanation */
+.form-info-box {
+  display: flex;
+  align-items: flex-start;
+  padding: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 114, 255, 0.1),
+    rgba(0, 198, 255, 0.1)
+  );
+  border-radius: 12px;
+  border: 1px solid rgba(0, 114, 255, 0.2);
+  height: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.light-theme .form-info-box {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 114, 255, 0.08),
+    rgba(0, 198, 255, 0.08)
+  );
+  border-color: rgba(0, 114, 255, 0.15);
+}
+
+.dark-theme .form-info-box {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 114, 255, 0.15),
+    rgba(0, 198, 255, 0.15)
+  );
+  border-color: rgba(0, 114, 255, 0.3);
+}
+
+.form-info-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.form-info-box i {
+  font-size: 1.5rem;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.form-info-box div {
+  flex: 1;
+}
+
+.form-info-box strong {
+  color: #0072ff;
+  display: block;
+  margin-bottom: 5px;
+  font-size: 1rem;
+}
+
+.light-theme .form-info-box strong {
+  color: #0056b3;
+}
+
+.dark-theme .form-info-box strong {
+  color: #4dabf7;
+}
+
+.form-info-box p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 0;
+}
+
+.light-theme .form-info-box p {
+  color: #6c757d;
+}
+
+.dark-theme .form-info-box p {
+  color: #adb5bd;
+}
+
+/* Form field styling for wider layout */
+.auth-form .form-label {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.light-theme .auth-form .form-label {
+  color: #333;
+}
+
+.dark-theme .auth-form .form-label {
+  color: #fff;
+}
+
+/* Enhanced input group styling */
+.auth-form .input-group {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.auth-form .input-group:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.auth-form .input-group:focus-within {
+  box-shadow: 0 0 0 3px rgba(0, 198, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Enhanced select styling */
+.auth-form .form-select {
+  background-size: 16px 12px;
+  background-position: right 12px center;
+  padding-right: 40px;
+}
+
+/* Better spacing for password fields in register form */
+.auth-form .row:last-of-type .col-md-6:first-child {
+  padding-right: 15px;
+}
+
+.auth-form .row:last-of-type .col-md-6:last-child {
+  padding-left: 15px;
+}
+
+/* Enhanced button styling */
+.auth-form .btn-lg {
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.auth-form .btn-lg:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 114, 255, 0.3);
+}
+
+/* Alert enhancements */
+.alert {
+  border-radius: 12px;
+  border: none;
+  margin-bottom: 2rem;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #ff6b6b, #ff5252);
+  color: white;
+}
+
+.alert-success {
+  background: linear-gradient(135deg, #51cf66, #40c057);
+  color: white;
+}
+
+.alert ul {
+  margin-bottom: 0;
+  padding-left: 1.2rem;
+}
+
+.alert li {
+  margin-bottom: 0.5rem;
+}
+
+.alert li:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive adjustments for wider card */
+@media (max-width: 992px) {
+  .auth-card {
+    max-width: 700px;
+  }
+
+  .card-body {
+    padding: 40px 50px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-card {
+    max-width: 95%;
+    margin: 0 2.5%;
+  }
+
+  .card-body {
+    padding: 30px 25px !important;
+  }
+
+  .auth-form .row:last-of-type .col-md-6:first-child,
+  .auth-form .row:last-of-type .col-md-6:last-child {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .auth-card {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .card-body {
+    padding: 25px 20px !important;
+  }
+}
+
+/* Floating Flash Messages */
+.floating-flash-message {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.floating-flash-message .alert {
+  margin-bottom: 0;
+  border: none;
+  border-radius: 12px;
+  position: relative;
+}
+
+.light-theme .floating-flash-message .alert-warning {
+  background: rgba(255, 193, 7, 0.9);
+  color: #664d03;
+  border-left: 4px solid #ffc107;
+}
+
+.dark-theme .floating-flash-message .alert-warning {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+  border-left: 4px solid #ffc107;
+}
+
+.light-theme .floating-flash-message .alert-success {
+  background: rgba(25, 135, 84, 0.9);
+  color: #0a3622;
+  border-left: 4px solid #198754;
+}
+
+.dark-theme .floating-flash-message .alert-success {
+  background: rgba(25, 135, 84, 0.15);
+  color: #198754;
+  border-left: 4px solid #198754;
+}
+
+/* Slide in animation */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Auto-hide animation */
+.floating-flash-message {
+  animation: slideInLeft 0.5s ease-out, fadeOut 0.5s ease-in 4s forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+/* Responsive adjustments for floating messages */
+@media (max-width: 768px) {
+  .floating-flash-message {
+    left: 10px !important;
+    right: 10px !important;
+    max-width: calc(100% - 20px) !important;
+  }
+}

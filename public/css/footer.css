@@ -1,0 +1,332 @@
+/**
+ * Footer Styles for Mr Mohrr7am
+ */
+
+/* Footer Section */
+.footer-section {
+  position: relative;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, rgb(0, 150, 70) 100%);
+  color: #fff;
+  overflow: hidden;
+  padding-top: 50px;
+  transition: background 0.5s ease, color 0.3s ease;
+}
+
+/* Light theme footer variant */
+.light-theme .footer-section {
+  background: linear-gradient(135deg, #f0f8f4 0%, #e6f2ec 50%, #f0f8f4 100%);
+  color: #1e293b;
+}
+
+.light-theme .footer-section .footer-wave path {
+  fill: #f0f8f4;
+}
+
+.light-theme .footer-logo {
+  box-shadow: 0 5px 15px rgba(58, 146, 98, 0.25);
+}
+
+.light-theme .footer-description,
+.light-theme .footer-link,
+.light-theme .contact-text,
+.light-theme .copyright,
+.light-theme .footer-links-secondary a {
+  color: rgba(30, 41, 59, 0.65);
+}
+
+.light-theme .footer-heading {
+  color: #1e293b;
+}
+
+.light-theme .footer-link:hover,
+.light-theme .footer-links-secondary a:hover {
+  color: var(--primary-color);
+}
+
+.light-theme .contact-icon {
+  color: var(--primary-color);
+}
+
+.light-theme .footer-bottom {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.light-theme .social-icon {
+  background: rgba(30, 41, 59, 0.1);
+  color: #1e293b;
+}
+
+.light-theme .social-icon:hover {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: #fff;
+}
+
+/* Footer Wave */
+.footer-wave {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  line-height: 0;
+  z-index: 1;
+}
+
+/* Footer Content */
+.footer-content {
+  position: relative;
+  z-index: 2;
+  padding: 50px 0 30px;
+}
+
+/* Footer Brand */
+.footer-brand {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.footer-logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(58, 146, 98, 0.3);
+}
+
+.footer-logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  animation: footer-logo-float 6s ease-in-out infinite;
+}
+
+@keyframes footer-logo-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-6px) rotate(5deg);
+  }
+  50% {
+    transform: translateY(0) rotate(0deg);
+  }
+  75% {
+    transform: translateY(6px) rotate(-5deg);
+  }
+}
+
+.footer-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+  font-family: 'Cambria Math', 'STIX Two Math', serif;
+}
+
+.footer-description {
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Social Icons */
+.social-icons {
+  display: flex;
+  gap: 12px;
+}
+
+.social-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  transform: translateY(-3px);
+  color: #fff;
+}
+
+/* Footer Headings */
+.footer-heading {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.footer-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  border-radius: 3px;
+}
+
+/* Footer Links */
+.footer-links li {
+  margin-bottom: 12px;
+}
+
+.footer-link {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.footer-link i {
+  margin-right: 8px;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.footer-link:hover {
+  color: var(--secondary-color);
+  transform: translateX(5px);
+}
+
+.footer-link:hover i {
+  color: var(--secondary-color);
+}
+
+/* Footer Contact */
+.footer-contact li {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.contact-icon {
+  width: 35px;
+  height: 35px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  color: var(--secondary-color);
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.contact-text {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+}
+
+.footer-contact li:hover .contact-icon {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: #fff;
+  transform: rotate(360deg);
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 20px 0;
+  position: relative;
+  z-index: 2;
+}
+
+.copyright {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}
+
+.footer-links-secondary {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-end;
+}
+
+.footer-links-secondary a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.footer-links-secondary a:hover {
+  color: var(--secondary-color);
+}
+
+/* Floating Shapes */
+.floating-shape {
+  position: absolute;
+  opacity: 0.05;
+  z-index: 0;
+}
+
+.footer-shape1 {
+  top: 20%;
+  left: 5%;
+  width: 200px;
+  height: 200px;
+  background: var(--primary-color);
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  animation: float-shape-slow 15s infinite alternate ease-in-out;
+}
+
+.footer-shape2 {
+  bottom: 10%;
+  right: 5%;
+  width: 150px;
+  height: 150px;
+  background: var(--secondary-color);
+  border-radius: 64% 36% 27% 73% / 55% 58% 42% 45%;
+  animation: float-shape-slow 12s infinite alternate-reverse ease-in-out;
+}
+
+/* Back to Top Button */
+.back-to-top {
+  position: fixed;
+  bottom: -50px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 5px 15px rgba(58, 146, 98, 0.3);
+  z-index: 999;
+  opacity: 0;
+  transition: all 0.5s ease;
+  text-decoration: none;
+}
+
+.back-to-top.active {
+  bottom: 30px;
+  opacity: 1;
+}
+
+.back-to-top:hover {
+  transform: translateY(-5px);
+  color: #fff;
+}
+
+

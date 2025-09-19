@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | Mr Moharram - Student Portal</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- AOS Animation Library -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;800&family=Cambria+Math&display=swap" rel="stylesheet">
+
+  <!-- Custom CSS - Use same theme as index -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/theme-toggle.css">
+  <link rel="stylesheet" href="/css/animations.css">
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg sticky-top modern-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <div class="logo-container">
+          <div class="logo-image-wrapper">
+            <img src="/images/logo.png" alt="Mr Moharram Logo" class="logo-image">
+            <span class="math-symbol math-symbol-1">∫</span>
+            <span class="math-symbol math-symbol-2">π</span>
+            <span class="math-symbol math-symbol-3">√</span>
+            <span class="math-symbol math-symbol-4">∑</span>
+          </div>
+          <div class="logo-text-container">
+            <span class="logo-text">Mr Moharram</span>
+            <span class="logo-tagline">Mathematics Excellence</span>
+          </div>
+        </div>
+      </a>
+      <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item">
+            <a class="nav-link nav-link-animated" href="/">
+              <span class="nav-icon-wrapper">
+                <i class="fas fa-home nav-icon"></i>
+              </span>
+              <span>Home</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-animated" href="#features">
+              <span class="nav-icon-wrapper">
+                <i class="fas fa-star nav-icon"></i>
+              </span>
+              <span>Features</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-animated" href="#testimonials">
+              <span class="nav-icon-wrapper">
+                <i class="fas fa-comment nav-icon"></i>
+              </span>
+              <span>Testimonials</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link nav-link-animated dropdown-toggle" href="#" id="resourcesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="nav-icon-wrapper">
+                <i class="fas fa-book nav-icon"></i>
+              </span>
+              <span>Resources</span>
+            </a>
+            <ul class="dropdown-menu modern-dropdown" aria-labelledby="resourcesDropdown">
+              <li class="dropdown-header">Learning Materials</li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-file-pdf me-2"></i> Worksheets</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-video me-2"></i> Video Tutorials</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-calculator me-2"></i> Interactive Tools</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li class="dropdown-header">Premium Content</li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-crown me-2"></i> Practice Tests</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-animated" href="#contact">
+              <span class="nav-icon-wrapper">
+                <i class="fas fa-envelope nav-icon"></i>
+              </span>
+              <span>Contact</span>
+            </a>
+          </li>
+        </ul>
+        <div class="d-flex align-items-center">
+          <button class="theme-toggle me-3" id="themeToggle" aria-label="Toggle theme" title="Toggle light/dark">
+            <i class="fas fa-sun light-icon" aria-hidden="true"></i>
+            <i class="fas fa-moon dark-icon" aria-hidden="true"></i>
+          </button>
+          <% if (locals.user) { %>
+          <div class="dropdown">
+            <button class="btn dropdown-toggle user-btn" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="user-avatar">
+                <i class="fas fa-user-circle"></i>
+              </div>
+              <span class="user-name"><%= user.name %></span>
+            </button>
+            <ul class="dropdown-menu modern-dropdown user-dropdown" aria-labelledby="userDropdown">
+              <li class="dropdown-header">Account</li>
+              <li><a class="dropdown-item" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+              <li><a class="dropdown-item" href="/profile"><i class="fas fa-user-edit me-2"></i>Profile</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item logout-item" href="/auth/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+            </ul>
+          </div>
+          <% } else { %>
+          <div class="auth-buttons">
+            <a href="/auth/login" class="btn btn-outline-light btn-glow-secondary me-2">Login</a>
+            <a href="/auth/register" class="btn btn-glow">Register</a>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <!-- Flash Messages -->
+  <% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 70px;">
+    <i class="fas fa-check-circle me-2"></i>
+    <%= success_msg %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <% } %>
+
+  <% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 70px;">
+    <i class="fas fa-times-circle me-2"></i>
+    <%= error_msg %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <% } %>
+
+  <% if (typeof error !== 'undefined' && error.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 70px;">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    <%= error %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <% } %>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- AOS Animation -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <!-- Custom Scripts -->
+  <script src="/js/theme-manager.js"></script>
+  <script src="/js/animations.js"></script>
+
+  <!-- Initialize AOS -->
+  <script>
+    // Initialize AOS
+    AOS.init({
+      duration: 800,
+      easing: 'ease-out-cubic',
+      once: true,
+      offset: 100
+    });
+  </script>

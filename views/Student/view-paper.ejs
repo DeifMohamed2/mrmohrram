@@ -1,0 +1,1504 @@
+<%- include('partials/header', { title: paper.title + ' - Past Paper' }) %>
+
+<!-- Import student dashboard styles -->
+<link rel="stylesheet" href="/css/student-dashboard-new.css">
+
+<!-- PDF.js for secure PDF viewing -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  // Configure PDF.js
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+</script>
+
+<!-- Student Layout -->
+<div class="student-layout">
+    <!-- Simple Header -->
+    <header class="simple-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-logo">
+                    <h2>Mr Moharram STUDENT PORTAL</h2>
+                </div>
+                <div class="header-actions">
+                    <a href="/student/dashboard" class="header-btn">
+                        <i class="fas fa-th-large"></i>
+                        Dashboard
+                    </a>
+                    <a href="/auth/logout" class="header-btn logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="student-main mt">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header" data-aos="fade-up">
+                <div class="page-header-content">
+                    <div class="page-title-section">
+                        <div class="breadcrumb-nav">
+                            <a href="/student/dashboard" class="breadcrumb-link">
+                                <i class="fas fa-home"></i>
+                                Dashboard
+                            </a>
+                            <span class="breadcrumb-separator">/</span>
+                            <a href="/student/dashboard#pastPapersSection" class="breadcrumb-link">
+                                <i class="fas fa-file-alt"></i>
+                                Past Papers
+                            </a>
+                            <span class="breadcrumb-separator">/</span>
+                            <span class="breadcrumb-current"><%= paper.paperType %></span>
+                        </div>
+                        <h1 class="page-title">Past Paper Viewer</h1>
+                        <p class="page-subtitle">Review and download past examination papers</p>
+                    </div>
+                    <div class="page-actions">
+                        <a href="/student/dashboard#pastPapersSection" class="back-btn">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back to Papers</span>
+                        </a>
+                        <button class="action-btn secondary" onclick="downloadPaper()">
+                            <i class="fas fa-download"></i>
+                            <span>Download PDF</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paper Information Card -->
+            <div class="paper-info-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="paper-info-header">
+                    <div class="paper-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="paper-info-content">
+                        <h2 class="paper-title"><%= paper.title %></h2>
+                        <p class="paper-description"><%= paper.description %></p>
+                        <div class="paper-badges">
+                            <span class="paper-badge year"><%= paper.year %></span>
+                            <span class="paper-badge type"><%= paper.paperType %></span>
+                            <span class="paper-badge difficulty <%= paper.difficulty.toLowerCase() %>"><%= paper.difficulty %></span>
+                        </div>
+                    </div>
+                    <div class="paper-actions">
+                        <div class="paper-status">
+                            <span class="status-badge <%= paper.difficulty.toLowerCase() %>">
+                                <i class="fas fa-signal"></i>
+                                <%= paper.difficulty %> Difficulty
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Paper Details Grid -->
+                <div class="paper-details-grid">
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="detail-label">Exam Year</span>
+                            <span class="detail-value"><%= paper.examYear %></span>
+                        </div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="detail-label">Duration</span>
+                            <span class="detail-value"><%= paper.duration %> min</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="detail-label">Total Marks</span>
+                            <span class="detail-value"><%= paper.totalMarks %> marks</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="detail-label">Calculator</span>
+                            <span class="detail-value"><%= paper.calculatorAllowed ? 'Allowed' : 'Not Allowed' %></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Topics Section -->
+                <% if (paper.topics && paper.topics.length > 0) { %>
+                <div class="paper-topics-section">
+                    <h4 class="topics-title">Topics Covered</h4>
+                    <div class="topics-list">
+                        <% paper.topics.forEach(topic => { %>
+                            <span class="topic-tag"><%= topic %></span>
+                        <% }); %>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+
+            <!-- PDF Viewer Section -->
+            <div class="pdf-viewer-section" data-aos="fade-up" data-aos-delay="200">
+                <div class="viewer-header">
+                    <h3 class="viewer-title">Paper Preview</h3>
+                    <div class="viewer-controls">
+                        <button class="control-btn" onclick="zoomIn()" title="Zoom In">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button class="control-btn" onclick="zoomOut()" title="Zoom Out">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button class="control-btn" onclick="resetZoom()" title="Reset Zoom">
+                            <i class="fas fa-expand-arrows-alt"></i>
+                        </button>
+                        <button class="control-btn" onclick="toggleFullscreen()" title="Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="pdf-container">
+                    <div class="pdf-wrapper">
+                    <div id="pdfViewerContainer" class="pdf-viewer-container">
+                        <div id="pdfViewer" class="pdf-viewer"></div>
+                        <div class="pdf-loading" id="pdfLoading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading PDF...</p>
+                        </div>
+                        <div class="pdf-error" id="pdfError" style="display: none;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Error loading PDF. Please try downloading instead.</p>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Section -->
+            <div class="paper-stats-section" data-aos="fade-up" data-aos-delay="300">
+                <div class="stats-card">
+                    <div class="stats-header">
+                        <h3 class="stats-title">Paper Statistics</h3>
+                        <div class="stats-actions">
+                            <button class="stats-action-btn" id="shareButton" title="Share Paper">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                            <button class="stats-action-btn" id="favoriteButton" title="Add to Favorites">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="stats-content">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-number"><%= paper.downloadCount || 0 %></span>
+                            <span class="stat-label">Downloads</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-number"><%= paper.viewCount || 0 %></span>
+                            <span class="stat-label">Views</span>
+                        </div>
+                    </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-number"><%= new Date(paper.createdAt || Date.now()).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
+                                <span class="stat-label">Added On</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<style>
+/* Paper Viewer Styles - Modern Design */
+
+/* Ensure smooth transitions for all elements */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.simple-header {
+    background: var(--math-gradient);
+    padding: 1rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 100;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-logo h2 {
+    color: white;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.header-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.header-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+}
+
+.header-btn.logout {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.header-btn.logout:hover {
+    background: rgba(255, 0, 0, 0.2);
+}
+
+.student-main.mt {
+    margin-top: 2rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    background: var(--math-gradient);
+    border-radius: 16px;
+    color: white;
+    box-shadow: 0 8px 32px rgba(58, 146, 98, 0.3);
+}
+
+.breadcrumb-nav {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.breadcrumb-link {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+    color: white;
+    text-decoration: none;
+}
+
+.breadcrumb-link i {
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.breadcrumb-separator {
+    margin: 0 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+}
+
+.breadcrumb-current {
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.page-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+}
+
+/* Paper Information Card */
+.paper-info-card {
+    background: var(--math-surface);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    border: 1px solid var(--math-border);
+    transition: all 0.3s ease;
+}
+
+.dark-theme .paper-info-card {
+    background: var(--math-surface);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.paper-info-header {
+    display: flex;
+    align-items: flex-start;
+    padding: 2rem;
+    background: var(--math-surface);
+    border-bottom: 1px solid var(--math-border);
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.dark-theme .paper-info-header {
+    background: var(--math-surface);
+}
+
+.paper-icon {
+    width: 70px;
+    height: 70px;
+    background: var(--math-gradient);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    box-shadow: 0 8px 24px rgba(58, 146, 98, 0.3);
+    flex-shrink: 0;
+}
+
+.paper-info-content {
+    flex: 1;
+}
+
+.paper-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--math-text);
+    margin: 0 0 0.5rem 0;
+    line-height: 1.2;
+}
+
+.paper-description {
+    color: var(--math-text-light);
+    font-size: 1.1rem;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.6;
+}
+
+.paper-badges {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.paper-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.paper-badge.year {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    color: #1976d2;
+}
+
+.paper-badge.type {
+    background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+    color: #7b1fa2;
+}
+
+.paper-badge.difficulty.easy {
+    background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+    color: #2e7d32;
+}
+
+.paper-badge.difficulty.medium {
+    background: linear-gradient(135deg, #fff3e0, #ffcc02);
+    color: #f57c00;
+}
+
+.paper-badge.difficulty.hard {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    color: #c62828;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-badge i {
+    margin-right: 0.5rem;
+}
+
+.status-badge.easy {
+    background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+    color: #2e7d32;
+}
+
+.status-badge.medium {
+    background: linear-gradient(135deg, #fff3e0, #ffcc02);
+    color: #f57c00;
+}
+
+.status-badge.hard {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    color: #c62828;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.action-btn.primary {
+    background: var(--math-gradient);
+    color: white;
+    box-shadow: 0 4px 16px rgba(58, 146, 98, 0.3);
+}
+
+.action-btn.primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(58, 146, 98, 0.4);
+}
+
+.action-btn.secondary {
+    background: white;
+    color: var(--math-primary);
+    border: 1px solid var(--math-primary);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.action-btn.secondary:hover {
+    background: var(--math-primary);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(58, 146, 98, 0.2);
+}
+
+/* Paper Details Grid */
+.paper-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+    background: var(--math-surface);
+    transition: all 0.3s ease;
+}
+
+.dark-theme .paper-details-grid {
+    background: var(--math-surface);
+}
+
+.detail-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--math-bg);
+    border-radius: 12px;
+    border: 1px solid var(--math-border);
+    transition: all 0.3s ease;
+}
+
+.dark-theme .detail-card {
+    background: var(--math-bg);
+}
+
+.detail-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.dark-theme .detail-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.detail-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--math-gradient);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.detail-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-label {
+    font-size: 0.85rem;
+    color: var(--math-text-light);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+
+.detail-value {
+    font-size: 1.1rem;
+    color: var(--math-text);
+    font-weight: 600;
+}
+
+/* Topics Section */
+.paper-topics-section {
+    padding: 2rem;
+    background: var(--math-surface);
+    border-top: 1px solid var(--math-border);
+    transition: all 0.3s ease;
+}
+
+.dark-theme .paper-topics-section {
+    background: var(--math-surface);
+}
+
+.topics-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--math-text);
+    margin: 0 0 1.5rem 0;
+}
+
+.topics-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.topic-tag {
+    background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+    color: #2e7d32;
+    padding: 0.75rem 1.25rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid rgba(46, 125, 50, 0.2);
+}
+
+/* PDF Viewer Section */
+.pdf-viewer-section {
+    background: var(--math-surface);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    border: 1px solid var(--math-border);
+    transition: all 0.3s ease;
+}
+
+.dark-theme .pdf-viewer-section {
+    background: var(--math-surface);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.viewer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: var(--math-surface);
+    border-bottom: 1px solid var(--math-border);
+    transition: all 0.3s ease;
+}
+
+.dark-theme .viewer-header {
+    background: var(--math-surface);
+}
+
+.viewer-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--math-text);
+    margin: 0;
+}
+
+.viewer-controls {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.control-btn {
+    width: 45px;
+    height: 45px;
+    border: 1px solid var(--math-border);
+    background: var(--math-bg);
+    color: var(--math-text);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.control-btn:hover {
+    background: var(--math-primary);
+    color: white;
+    border-color: var(--math-primary);
+    transform: translateY(-2px);
+}
+
+.pdf-container {
+    padding: 1.5rem;
+    background: var(--math-bg);
+    transition: all 0.3s ease;
+}
+
+.dark-theme .pdf-container {
+    background: var(--math-bg);
+}
+
+.pdf-wrapper {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    background: white;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.dark-theme .pdf-wrapper {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.pdf-viewer-container {
+    position: relative;
+    width: 100%;
+    min-height: 600px;
+    background: var(--math-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.dark-theme .pdf-viewer-container {
+    background: var(--math-bg);
+}
+
+.pdf-viewer-container.fullscreen {
+    min-height: 100vh;
+    background: var(--math-bg);
+}
+
+.dark-theme .pdf-viewer-container.fullscreen {
+    background: var(--math-bg);
+}
+
+.pdf-viewer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: auto;
+    padding: 20px;
+}
+
+.pdf-viewer canvas {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: white;
+}
+
+.pdf-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--math-surface);
+    z-index: 5;
+    transition: all 0.3s ease;
+}
+
+.dark-theme .pdf-loading {
+    background: var(--math-surface);
+}
+
+.pdf-error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--math-surface);
+    z-index: 5;
+    color: var(--math-danger);
+    transition: all 0.3s ease;
+}
+
+.dark-theme .pdf-error {
+    background: var(--math-surface);
+}
+
+.pdf-error i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(58, 146, 98, 0.2);
+    border-left-color: var(--math-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+.pdf-page-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    background: var(--math-surface);
+    border-top: 1px solid var(--math-border);
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.dark-theme .pdf-page-controls {
+    background: var(--math-surface);
+}
+
+.page-control-btn {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--math-border);
+    background: var(--math-surface);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0 10px;
+}
+
+.dark-theme .page-control-btn {
+    background: var(--math-surface);
+    border-color: var(--math-border);
+}
+
+.page-control-btn:hover {
+    background: var(--math-primary);
+    color: white;
+    border-color: var(--math-primary);
+}
+
+.page-indicator {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--math-text);
+    padding: 0 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Statistics Section */
+.paper-stats-section {
+    margin-bottom: 2rem;
+}
+
+.stats-card {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    background: var(--math-surface);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--math-border);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.dark-theme .stats-card {
+    background: var(--math-surface);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: var(--math-gradient);
+    color: white;
+}
+
+.stats-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.stats-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.stats-action-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.stats-action-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.stats-content {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    padding: 2.5rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--math-gradient);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 16px rgba(58, 146, 98, 0.3);
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--math-text);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: var(--math-text-light);
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .header-btn {
+        flex: 1;
+        justify-content: center;
+    }
+    
+    .page-header-content {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .paper-info-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    .paper-icon {
+        margin: 0 auto;
+    }
+    
+    .paper-details-grid {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+    }
+    
+    .viewer-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .viewer-controls {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .stats-card {
+        flex-direction: column;
+        gap: 2rem;
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .pdf-wrapper iframe {
+        height: 400px;
+    }
+    
+    .paper-badges {
+        justify-content: center;
+    }
+    
+    .topics-list {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .paper-title {
+        font-size: 1.5rem;
+    }
+    
+    .paper-details-grid {
+        padding: 1rem;
+    }
+    
+    .detail-card {
+        padding: 1rem;
+    }
+    
+    .pdf-wrapper iframe {
+        height: 300px;
+    }
+    
+    .stats-card {
+        padding: 1.5rem;
+    }
+}
+</style>
+
+<script>
+// Implement PDF.js for secure PDF viewing
+document.addEventListener('DOMContentLoaded', function() {
+    const pdfViewer = document.getElementById('pdfViewer');
+    const pdfLoading = document.getElementById('pdfLoading');
+    const pdfError = document.getElementById('pdfError');
+    const pdfUrl = '<%= paper.fileUrl %>';
+    let pdfDoc = null;
+    let pageNum = 1;
+    let pageRendering = false;
+    let pageNumPending = null;
+    let scale = 1.0;
+    
+    /**
+     * Load and render PDF using PDF.js
+     */
+    function loadPDF() {
+        pdfLoading.style.display = 'flex';
+        pdfError.style.display = 'none';
+        
+        // Using PDF.js to fetch and render the PDF
+        pdfjsLib.getDocument(pdfUrl).promise
+            .then(function(pdf) {
+                pdfDoc = pdf;
+                console.log('PDF loaded successfully. Total pages:', pdf.numPages);
+                
+                // Initial render of the first page
+                renderPage(pageNum);
+                
+                // Create page navigation controls
+                createPageControls(pdf.numPages);
+                
+                // Update view count
+                updateViewCount();
+            })
+            .catch(function(error) {
+                console.error('Error loading PDF:', error);
+                pdfLoading.style.display = 'none';
+                pdfError.style.display = 'flex';
+        showNotification('Error loading PDF. Please try downloading the file.', 'error');
+            });
+    }
+    
+    /**
+     * Render a specific page of the PDF
+     */
+    function renderPage(num) {
+        pageRendering = true;
+        
+        // Show loading state
+        pdfLoading.style.display = 'flex';
+        
+        // Using getPage to get the page
+        pdfDoc.getPage(num).then(function(page) {
+            const viewport = page.getViewport({ scale: scale });
+            
+            // Set canvas dimensions to match the viewport
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            
+            // Clear previous content
+            pdfViewer.innerHTML = '';
+            pdfViewer.appendChild(canvas);
+            
+            // Render the page
+            const renderContext = {
+                canvasContext: context,
+                viewport: viewport
+            };
+            
+            const renderTask = page.render(renderContext);
+            
+            // Wait for rendering to finish
+            renderTask.promise.then(function() {
+                pageRendering = false;
+                pdfLoading.style.display = 'none';
+                
+                // If there's a page pending, render it
+                if (pageNumPending !== null) {
+                    renderPage(pageNumPending);
+                    pageNumPending = null;
+                }
+                
+                // Update current page indicator
+                document.getElementById('currentPage').textContent = num;
+            });
+        });
+    }
+    
+    /**
+     * Create page navigation controls
+     */
+    function createPageControls(numPages) {
+        // Create page navigation container
+        const pageControls = document.createElement('div');
+        pageControls.className = 'pdf-page-controls';
+        
+        // Previous page button
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'page-control-btn';
+        prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevBtn.addEventListener('click', function() {
+            if (pageNum <= 1) return;
+            queueRenderPage(pageNum - 1);
+        });
+        
+        // Page indicator
+        const pageIndicator = document.createElement('div');
+        pageIndicator.className = 'page-indicator';
+        pageIndicator.innerHTML = `<span id="currentPage">1</span> / <span>${numPages}</span>`;
+        
+        // Next page button
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'page-control-btn';
+        nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextBtn.addEventListener('click', function() {
+            if (pageNum >= numPages) return;
+            queueRenderPage(pageNum + 1);
+        });
+        
+        // Add elements to container
+        pageControls.appendChild(prevBtn);
+        pageControls.appendChild(pageIndicator);
+        pageControls.appendChild(nextBtn);
+        
+        // Add to viewer container
+        const container = document.getElementById('pdfViewerContainer');
+        container.appendChild(pageControls);
+    }
+    
+    /**
+     * Queue rendering of a page if another page is currently rendering
+     */
+    function queueRenderPage(num) {
+        if (pageRendering) {
+            pageNumPending = num;
+        } else {
+            renderPage(num);
+        }
+        pageNum = num;
+    }
+    
+    /**
+     * Update zoom level
+     */
+    window.zoomIn = function() {
+        scale += 0.25;
+        queueRenderPage(pageNum);
+        showNotification(`Zoomed in to ${scale.toFixed(2)}x`, 'info');
+    };
+    
+    window.zoomOut = function() {
+        if (scale > 0.5) {
+            scale -= 0.25;
+            queueRenderPage(pageNum);
+            showNotification(`Zoomed out to ${scale.toFixed(2)}x`, 'info');
+        }
+    };
+    
+    window.resetZoom = function() {
+        scale = 1.0;
+        queueRenderPage(pageNum);
+        showNotification('Zoom reset to default', 'info');
+    };
+    
+    /**
+     * Update view count via API
+     */
+    function updateViewCount() {
+        fetch(`/student/api/past-papers/<%= paper._id %>/view`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update view count in UI if needed
+                const viewCountElement = document.querySelector('.stat-number');
+                if (viewCountElement) {
+                    viewCountElement.textContent = data.viewCount;
+                }
+            }
+        })
+        .catch(error => console.error('Error updating view count:', error));
+    }
+    
+    // Initialize PDF loading
+    loadPDF();
+    
+    // Setup share and favorite buttons
+    setupActionButtons();
+});
+
+/**
+ * Set up share and favorite buttons
+ */
+function setupActionButtons() {
+    const shareButton = document.getElementById('shareButton');
+    const favoriteButton = document.getElementById('favoriteButton');
+    
+    if (shareButton) {
+        shareButton.addEventListener('click', function() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '<%= paper.title %>',
+                    text: 'Check out this past paper: <%= paper.title %>',
+                    url: window.location.href
+                })
+                .then(() => showNotification('Paper shared successfully!', 'success'))
+                .catch(error => console.log('Error sharing:', error));
+            } else {
+                // Fallback for browsers that don't support the Web Share API
+                const url = window.location.href;
+                navigator.clipboard.writeText(url)
+                    .then(() => showNotification('Link copied to clipboard!', 'success'))
+                    .catch(err => showNotification('Failed to copy link', 'error'));
+            }
+        });
+    }
+    
+    if (favoriteButton) {
+        favoriteButton.addEventListener('click', function() {
+            const icon = favoriteButton.querySelector('i');
+            
+            if (icon.classList.contains('far')) {
+                // Add to favorites
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                icon.style.color = '#ff6b6b';
+                showNotification('Added to favorites!', 'success');
+                
+                // Here you would typically make an API call to save this to user's favorites
+                // For now, just store in localStorage
+                const favorites = JSON.parse(localStorage.getItem('favoritePapers') || '[]');
+                favorites.push('<%= paper._id %>');
+                localStorage.setItem('favoritePapers', JSON.stringify(favorites));
+            } else {
+                // Remove from favorites
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                icon.style.color = '';
+                showNotification('Removed from favorites', 'info');
+                
+                // Remove from localStorage
+                const favorites = JSON.parse(localStorage.getItem('favoritePapers') || '[]');
+                const index = favorites.indexOf('<%= paper._id %>');
+                if (index > -1) {
+                    favorites.splice(index, 1);
+                    localStorage.setItem('favoritePapers', JSON.stringify(favorites));
+                }
+            }
+        });
+        
+        // Check if already in favorites
+        const favorites = JSON.parse(localStorage.getItem('favoritePapers') || '[]');
+        if (favorites.includes('<%= paper._id %>')) {
+            const icon = favoriteButton.querySelector('i');
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            icon.style.color = '#ff6b6b';
+        }
+    }
+}
+
+function downloadPaper() {
+    try {
+        // Show notification first
+        showNotification('Starting download...', 'info');
+        
+        // Open the download URL directly in a new tab or trigger download
+        window.open(`/student/api/past-papers/<%= paper._id %>/download`, '_blank');
+        
+        // Show success notification after a short delay
+        setTimeout(() => {
+            showNotification('Download started!', 'success');
+        }, 1000);
+    } catch (error) {
+        console.error('Download error:', error);
+        showNotification('Error starting download. Please try again.', 'error');
+    }
+}
+
+function zoomIn() {
+    const iframe = document.getElementById('pdfViewer');
+    const currentHeight = parseInt(iframe.style.height) || 600;
+    const newHeight = Math.min(1000, currentHeight + 100);
+    
+    iframe.style.height = newHeight + 'px';
+    showNotification(`Zoomed in to ${newHeight}px height`, 'info');
+}
+
+function zoomOut() {
+    const iframe = document.getElementById('pdfViewer');
+    const currentHeight = parseInt(iframe.style.height) || 600;
+    const newHeight = Math.max(300, currentHeight - 100);
+    
+    iframe.style.height = newHeight + 'px';
+    showNotification(`Zoomed out to ${newHeight}px height`, 'info');
+}
+
+function resetZoom() {
+    const iframe = document.getElementById('pdfViewer');
+    iframe.style.height = '600px';
+    showNotification('Zoom reset to default', 'info');
+}
+
+function toggleFullscreen() {
+    const container = document.getElementById('pdfViewerContainer');
+    
+    if (!document.fullscreenElement) {
+        container.requestFullscreen().then(() => {
+            container.classList.add('fullscreen');
+            showNotification('Entered fullscreen mode', 'info');
+        }).catch(err => {
+            console.log('Error attempting to enable fullscreen:', err);
+            showNotification('Fullscreen not supported', 'error');
+        });
+    } else {
+        document.exitFullscreen().then(() => {
+            container.classList.remove('fullscreen');
+            showNotification('Exited fullscreen mode', 'info');
+        });
+    }
+}
+
+// Enhanced notification function
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notification => notification.remove());
+    
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+    `;
+    
+    // Set background color based on type
+    switch(type) {
+        case 'success':
+            notification.style.background = 'linear-gradient(135deg, #4caf50, #45a049)';
+            break;
+        case 'error':
+            notification.style.background = 'linear-gradient(135deg, #f44336, #d32f2f)';
+            break;
+        case 'info':
+        default:
+            notification.style.background = 'linear-gradient(135deg, #2196f3, #1976d2)';
+            break;
+    }
+    
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Show notification
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Hide and remove after 4 seconds
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 4000);
+}
+</script>
+
+<%- include('partials/footer') %>

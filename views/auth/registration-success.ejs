@@ -1,0 +1,685 @@
+<%- include('../partials/header') %>
+
+<div class="auth-container math-auth-bg" data-aos="fade">
+  <div class="auth-background"></div>
+  <div class="auth-particles" id="auth-particles-success"></div>
+  <div class="math-shape-auth auth-shape1 floating-element"></div>
+  <div class="math-shape-auth auth-shape2 floating-element"></div>
+  <div class="math-shape-auth auth-shape3 floating-element"></div>
+  <div class="math-shape-auth auth-shape4 floating-element"></div>
+
+  <div class="container">
+    <div class="card auth-card mx-auto" data-aos="fade-up" data-aos-delay="200">
+      <div class="card-body p-4 p-md-5 text-center">
+        <!-- Centered Success Icon -->
+        <div class="d-flex justify-content-center mb-4">
+          <div class="success-icon-container">
+            <i class="fas fa-check-circle"></i>
+          </div>
+        </div>
+
+        <h2 class="success-title mb-3">
+          <i class="fas fa-rocket me-2"></i>
+          Registration Successful!
+        </h2>
+
+        <p class="welcome-text mb-4">Welcome to Math Explorers, <strong><%= studentName %></strong>!</p>
+
+        <!-- Approval Notice -->
+        <div class="approval-notice mb-4">
+          <div class="alert alert-info d-flex align-items-center" role="alert">
+            <i class="fas fa-clock me-3 fs-4"></i>
+            <div>
+              <h6 class="alert-heading mb-1">Account Pending Approval</h6>
+              <p class="mb-0">Your account has been created successfully! However, it needs to be approved by an administrator before you can access the platform. You will receive an email notification once your account is approved.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student Code Display -->
+        <div class="student-code-display mb-4">
+          <h4 class="code-title mb-3">Your Student Code</h4>
+          <div class="code-box" id="studentCodeBox">
+            <span class="student-code-text" id="studentCodeText"><%= studentCode %></span>
+            <button class="btn btn-outline-primary btn-sm copy-btn" id="copyCodeBtn" onclick="copyStudentCode()">
+              <i class="fas fa-copy me-1"></i> Copy
+            </button>
+          </div>
+
+          <div class="code-warning mt-3">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Important:</strong> Please save this code! You'll need it for future reference.
+          </div>
+
+          <div class="code-actions mt-3">
+            <button class="btn btn-success me-2" onclick="takeScreenshot()">
+              <i class="fas fa-camera me-2"></i> Take Screenshot
+            </button>
+            <button class="btn btn-info me-2" onclick="downloadCode()">
+              <i class="fas fa-download me-2"></i> Download Code
+            </button>
+            <button class="btn btn-secondary" onclick="printCode()">
+              <i class="fas fa-print me-2"></i> Print Code
+            </button>
+          </div>
+        </div>
+
+        <!-- Next Steps - Simplified -->
+        <div class="next-steps mb-4">
+          <h5 class="next-steps-title mb-4">What's Next?</h5>
+          <div class="next-steps-content mb-4">
+            <div class="step-item">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h6>Save Your Student Code</h6>
+                <p>Keep your student code safe - you'll need it for future reference.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h6>Wait for Approval</h6>
+                <p>An administrator will review and approve your account within 24-48 hours.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h6>Start Learning</h6>
+                <p>Once approved, you can login and access all learning materials.</p>
+              </div>
+            </div>
+          </div>
+          <div class="action-buttons">
+            <a href="/" class="btn btn-primary btn-lg me-3">
+              <i class="fas fa-home me-2"></i> Go Home
+            </a>
+            <a href="/auth/login" class="btn btn-outline-primary btn-lg">
+              <i class="fas fa-sign-in-alt me-2"></i> Try Login (After Approval)
+            </a>
+          </div>
+        </div>
+
+        <!-- Student Code Modal -->
+        <div class="modal fade" id="codeModal" tabindex="-1" aria-labelledby="codeModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="codeModalLabel">
+                  <i class="fas fa-id-card me-2"></i> Student Code Saved
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body text-center">
+                <i class="fas fa-check-circle text-success fs-1 mb-3"></i>
+                <p class="mb-0">Your student code has been saved successfully!</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it!</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom JavaScript for Registration Success -->
+<script>
+  function copyStudentCode() {
+    const codeText = document.getElementById('studentCodeText').textContent;
+    navigator.clipboard.writeText(codeText).then(function() {
+      const copyBtn = document.getElementById('copyCodeBtn');
+      const originalText = copyBtn.innerHTML;
+      copyBtn.innerHTML = '<i class="fas fa-check me-1"></i> Copied!';
+      copyBtn.classList.remove('btn-outline-primary');
+      copyBtn.classList.add('btn-success');
+
+      setTimeout(function() {
+        copyBtn.innerHTML = originalText;
+        copyBtn.classList.remove('btn-success');
+        copyBtn.classList.add('btn-outline-primary');
+      }, 2000);
+
+      showSuccessToast('Student code copied to clipboard!');
+    }).catch(function(err) {
+      console.error('Could not copy text: ', err);
+      showErrorToast('Failed to copy code. Please copy manually.');
+    });
+  }
+
+  function takeScreenshot() {
+    // For modern browsers with Screen Capture API
+    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+      navigator.mediaDevices.getDisplayMedia({
+          video: true
+        })
+        .then(function(stream) {
+          showSuccessToast('Screenshot capture started! Please select this window.');
+          // Stop the stream after a few seconds
+          setTimeout(function() {
+            stream.getTracks().forEach(track => track.stop());
+          }, 5000);
+        })
+        .catch(function(err) {
+          showInfoToast('Please take a screenshot manually using your device\'s screenshot function.');
+        });
+    } else {
+      showInfoToast('Please take a screenshot manually using your device\'s screenshot function.');
+    }
+  }
+
+  function downloadCode() {
+    const studentCode = '<%= studentCode %>';
+    const studentName = '<%= studentName %>';
+    const content = `Math Explorers - Student Registration\n\nStudent Name: ${studentName}\nStudent Code: ${studentCode}\nDate: ${new Date().toLocaleDateString()}\n\nPlease keep this code safe for future reference.`;
+
+    const element = document.createElement('a');
+    const file = new Blob([content], {
+      type: 'text/plain'
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = `student-code-${studentCode}.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+
+    showSuccessToast('Student code downloaded successfully!');
+  }
+
+  function printCode() {
+    const studentCode = '<%= studentCode %>';
+    const studentName = '<%= studentName %>';
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+    <html>
+      <head>
+        <title>Student Code - Math Explorers</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 40px; text-align: center; }
+          .header { color: #0072ff; margin-bottom: 30px; }
+          .code-box { border: 2px solid #0072ff; padding: 20px; margin: 20px 0; background: #f8f9fa; }
+          .code { font-size: 24px; font-weight: bold; letter-spacing: 2px; }
+          .footer { margin-top: 30px; color: #666; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>Math Explorers</h1>
+          <h2>Student Registration Confirmation</h2>
+        </div>
+        <div class="content">
+          <p><strong>Student Name:</strong> ${studentName}</p>
+          <div class="code-box">
+            <p><strong>Student Code:</strong></p>
+            <div class="code">${studentCode}</div>
+          </div>
+          <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+        </div>
+        <div class="footer">
+          <p>Please keep this code safe for future reference.</p>
+        </div>
+      </body>
+    </html>
+  `);
+    printWindow.document.close();
+    printWindow.print();
+
+    showSuccessToast('Print dialog opened!');
+  }
+
+  function showSuccessToast(message) {
+    // Simple toast notification
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification success';
+    toast.innerHTML = `<i class="fas fa-check-circle me-2"></i>${message}`;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 100);
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 300);
+    }, 3000);
+  }
+
+  function showInfoToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification info';
+    toast.innerHTML = `<i class="fas fa-info-circle me-2"></i>${message}`;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 100);
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 300);
+    }, 4000);
+  }
+
+  function showErrorToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification error';
+    toast.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>${message}`;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 100);
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 3000);
+    }, 3000);
+  }
+
+  // Auto-focus on code for easy copying
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add some celebration effects
+    setTimeout(function() {
+      if (typeof confetti !== 'undefined') {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: {
+            y: 0.6
+          }
+        });
+      }
+    }, 500);
+  });
+</script>
+
+<!-- Toast Styles -->
+<style>
+  .toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+    z-index: 9999;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+  }
+
+  .toast-notification.show {
+    transform: translateX(0);
+  }
+
+  .toast-notification.success {
+    background: linear-gradient(135deg, #51cf66, #40c057);
+  }
+
+  .toast-notification.info {
+    background: linear-gradient(135deg, #339af0, #228be6);
+  }
+
+  .toast-notification.error {
+    background: linear-gradient(135deg, #ff6b6b, #ff5252);
+  }
+
+  /* Success Icon Container */
+  .success-icon-container {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #51cf66, #40c057);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: white;
+    box-shadow: 0 15px 40px rgba(81, 207, 102, 0.4);
+    animation: bounceIn 0.6s ease-out;
+    margin: 0 auto;
+  }
+
+  /* Dark mode support for success icon */
+  .dark-theme .success-icon-container {
+    box-shadow: 0 15px 40px rgba(81, 207, 102, 0.6);
+  }
+
+  /* Title styling with theme support */
+  .success-title {
+    color: #51cf66;
+    font-weight: 600;
+  }
+
+  .dark-theme .success-title {
+    color: #51cf66;
+  }
+
+  .light-theme .success-title {
+    color: #40c057;
+  }
+
+  /* Welcome text with theme support */
+  .welcome-text {
+    font-size: 1.1rem;
+  }
+
+  .light-theme .welcome-text {
+    color: #495057;
+  }
+
+  .dark-theme .welcome-text {
+    color: #e9ecef;
+  }
+
+  /* Student Code Display with theme support */
+  .student-code-display {
+    border-radius: 15px;
+    padding: 25px;
+    border: 2px solid #0072ff;
+    transition: all 0.3s ease;
+  }
+
+  .light-theme .student-code-display {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  }
+
+  .dark-theme .student-code-display {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border-color: #339af0;
+  }
+
+  /* Code title with theme support */
+  .code-title {
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .light-theme .code-title {
+    color: #0072ff;
+  }
+
+  .dark-theme .code-title {
+    color: #339af0;
+  }
+
+  /* Code box styling */
+  .code-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  /* Student code text with theme support */
+  .student-code-text {
+    font-size: 2.2rem;
+    font-weight: bold;
+    letter-spacing: 3px;
+    font-family: 'Courier New', monospace;
+    padding: 15px 25px;
+    border-radius: 12px;
+    border: 2px solid #0072ff;
+    min-width: 250px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .light-theme .student-code-text {
+    background: white;
+    color: #0072ff;
+    border-color: #0072ff;
+  }
+
+  .dark-theme .student-code-text {
+    background: rgba(255, 255, 255, 0.1);
+    color: #339af0;
+    border-color: #339af0;
+  }
+
+  /* Warning box with theme support */
+  .code-warning {
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+
+  .light-theme .code-warning {
+    background: rgba(255, 193, 7, 0.1);
+    color: #856404;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+  }
+
+  .dark-theme .code-warning {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.4);
+  }
+
+  /* Code actions buttons */
+  .code-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Next steps with theme support */
+  .next-steps {
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+  }
+
+  .light-theme .next-steps {
+    background: rgba(0, 114, 255, 0.05);
+    border: 1px solid rgba(0, 114, 255, 0.1);
+  }
+
+  .dark-theme .next-steps {
+    background: rgba(51, 154, 240, 0.1);
+    border: 1px solid rgba(51, 154, 240, 0.2);
+  }
+
+  .next-steps-title {
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  .light-theme .next-steps-title {
+    color: #0072ff;
+  }
+
+  .dark-theme .next-steps-title {
+    color: #339af0;
+  }
+
+  /* Next steps content styling */
+  .next-steps-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .light-theme .step-item {
+    background: rgba(0, 114, 255, 0.05);
+    border: 1px solid rgba(0, 114, 255, 0.1);
+  }
+
+  .dark-theme .step-item {
+    background: rgba(51, 154, 240, 0.1);
+    border: 1px solid rgba(51, 154, 240, 0.2);
+  }
+
+  .step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0072ff, #339af0);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .step-content h6 {
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+
+  .light-theme .step-content h6 {
+    color: #0072ff;
+  }
+
+  .dark-theme .step-content h6 {
+    color: #339af0;
+  }
+
+  .step-content p {
+    margin: 0;
+    font-size: 0.95rem;
+    opacity: 0.8;
+  }
+
+  /* Action buttons styling */
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .action-buttons .btn {
+    padding: 12px 30px;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .action-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Dark theme button adjustments */
+  .dark-theme .btn-outline-primary {
+    border-color: #339af0;
+    color: #339af0;
+  }
+
+  .dark-theme .btn-outline-primary:hover {
+    background-color: #339af0;
+    border-color: #339af0;
+    color: white;
+  }
+
+  /* Animations */
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    70% {
+      transform: scale(0.9);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .student-code-text {
+      font-size: 1.8rem;
+      letter-spacing: 2px;
+      min-width: auto;
+      padding: 12px 20px;
+    }
+
+    .code-box {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .action-buttons .btn {
+      width: 100%;
+      max-width: 250px;
+    }
+
+    .code-actions {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .code-actions .btn {
+      width: 100%;
+      max-width: 200px;
+    }
+
+    .toast-notification {
+      right: 10px;
+      left: 10px;
+      transform: translateY(-100px);
+    }
+
+    .toast-notification.show {
+      transform: translateY(0);
+    }
+
+    .success-icon-container {
+      width: 80px;
+      height: 80px;
+      font-size: 2.5rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .student-code-text {
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+    }
+
+    .code-actions .btn {
+      font-size: 0.9rem;
+      padding: 8px 15px;
+    }
+  }
+</style>
+
+<%- include('../partials/footer') %>

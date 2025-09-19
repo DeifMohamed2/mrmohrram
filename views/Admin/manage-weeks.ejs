@@ -1,0 +1,918 @@
+<%- include('partials/header', { title: 'Manage Weeks' }) %>
+
+<!-- Admin Layout -->
+<div class="admin-layout">
+    <%- include('partials/sidebar') %>
+    
+    <!-- Main Content -->
+    <main class="admin-main-content">
+        <%- include('partials/header-bar', { title: 'Manage Weeks' }) %>
+        
+        <!-- Content Area -->
+        <div class="admin-content">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up">
+                        <div class="admin-card-header">
+                            <div>
+                                <h2 class="admin-card-title">Week Management</h2>
+                                <p class="text-muted mb-0">Create and manage weekly learning content for students.</p>
+                            </div>
+                            <div class="admin-table-actions">
+                                <button class="admin-btn admin-btn-primary" onclick="openCreateWeekModal()">
+                                    <i class="fas fa-plus me-2"></i>
+                                    Create Week
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="admin-card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 mb-3">
+                                    <label class="admin-form-label">Filter by Year</label>
+                                    <select class="admin-form-select" id="yearFilter" onchange="filterWeeks()">
+                                        <option value="">All Years</option>
+                                        <option value="Year 8">Year 8</option>
+                                        <option value="Year 9">Year 9</option>
+                                        <option value="Year 10">Year 10</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="admin-form-label">Filter by Type</label>
+                                    <select class="admin-form-select" id="typeFilter" onchange="filterWeeks()">
+                                        <option value="">All Types</option>
+                                        <option value="School">School</option>
+                                        <option value="Center">Center</option>
+                                        <option value="Online">Online</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="admin-form-label">Filter by Status</label>
+                                    <select class="admin-form-select" id="statusFilter" onchange="filterWeeks()">
+                                        <option value="">All Status</option>
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="admin-form-label">Search</label>
+                                    <input type="text" class="admin-form-input" id="weekSearch" placeholder="Search weeks..." onkeyup="filterWeeks()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weeks Grid -->
+            <div class="row">
+                <% if (weeks && weeks.length > 0) { %>
+                    <% weeks.forEach(week => { %>
+                        <div class="col-lg-4 col-md-6 mb-4 week-card" 
+                             data-year="<%= week.year %>" 
+                             data-type="<%= week.studentType %>" 
+                             data-status="<%= week.isActive ? 'active' : 'inactive' %>"
+                             data-aos="fade-up" data-aos-delay="<%= week.weekNumber * 50 %>">
+                            <div class="admin-card h-100">
+                                <div class="admin-card-header">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <h4 class="admin-card-title mb-1">Week <%= week.weekNumber %></h4>
+                                            <small class="text-muted"><%= week.year %> • <%= week.studentType %></small>
+                                        </div>
+                                        <span class="admin-status-badge <%= week.isActive ? 'active' : 'inactive' %>">
+                                            <%= week.isActive ? 'Active' : 'Inactive' %>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="admin-card-body">
+                                    <h5 class="mb-3"><%= week.title %></h5>
+                                    <p class="text-muted mb-3"><%= week.description %></p>
+                                    
+                                    <div class="row text-center mb-3">
+                                        <div class="col-4">
+                                            <div class="fw-bold text-primary"><%= week.materials ? week.materials.length : 0 %></div>
+                                            <small class="text-muted">Materials</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="fw-bold text-success">
+                                                <%= week.startDate ? new Date(week.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'N/A' %>
+                                            </div>
+                                            <small class="text-muted">Start Date</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="fw-bold text-warning">
+                                                <%= week.endDate ? new Date(week.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'N/A' %>
+                                            </div>
+                                            <small class="text-muted">End Date</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <% if (week.materials && week.materials.length > 0) { %>
+                                        <div class="mb-3">
+                                            <small class="text-muted">Materials:</small>
+                                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                                <% week.materials.slice(0, 3).forEach(material => { %>
+                                                    <span class="badge bg-secondary"><%= material.type %></span>
+                                                <% }); %>
+                                                <% if (week.materials.length > 3) { %>
+                                                    <span class="badge bg-light text-dark">+<%= week.materials.length - 3 %> more</span>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                <div class="admin-card-footer bg-transparent border-0 pt-0">
+                                    <div class="d-flex gap-2">
+                                        <button class="admin-btn admin-btn-secondary admin-btn-sm flex-fill" 
+                                                onclick="viewWeekDetails('<%= week._id %>')">
+                                            <i class="fas fa-eye me-1"></i>
+                                            View
+                                        </button>
+                                        <button class="admin-btn admin-btn-primary admin-btn-sm flex-fill" 
+                                                onclick="manageContent('<%= week._id %>')">
+                                            <i class="fas fa-cog me-1"></i>
+                                            Content
+                                        </button>
+                                        <button class="admin-btn admin-btn-info admin-btn-sm flex-fill" 
+                                                onclick="editWeek('<%= week._id %>')">
+                                            <i class="fas fa-edit me-1"></i>
+                                            Edit
+                                        </button>
+                                        <button class="admin-btn admin-btn-<%= week.isActive ? 'warning' : 'success' %> admin-btn-sm" 
+                                                data-week-id="<%= week._id %>" 
+                                                data-action="<%= week.isActive ? 'deactivate' : 'activate' %>"
+                                                onclick="toggleWeekStatus(this.dataset.weekId, this.dataset.action)">
+                                            <i class="fas fa-<%= week.isActive ? 'ban' : 'check' %>"></i>
+                                        </button>
+                                        <button class="admin-btn admin-btn-danger admin-btn-sm" 
+                                                onclick="deleteWeek('<%= week._id %>')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="col-12">
+                        <div class="admin-card" data-aos="fade-up">
+                            <div class="admin-empty-state">
+                                <div class="admin-empty-icon">
+                                    <i class="fas fa-calendar-week"></i>
+                                </div>
+                                <div class="admin-empty-title">No Weeks Created</div>
+                                <div class="admin-empty-description">Start by creating your first week of content for students.</div>
+                                <button class="admin-btn admin-btn-primary mt-3" onclick="openCreateWeekModal()">
+                                    <i class="fas fa-plus me-2"></i>
+                                    Create First Week
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Week Details Modal -->
+<div class="admin-modal-overlay" id="weekDetailsModal">
+    <div class="admin-modal" style="max-width: 900px;">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">Week Details</h3>
+            <button class="admin-modal-close" onclick="closeWeekDetailsModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body" id="weekDetailsContent">
+            <div class="admin-loading">
+                <div class="admin-spinner"></div>
+                Loading week details...
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="admin-btn admin-btn-secondary" onclick="closeWeekDetailsModal()">Close</button>
+            <button class="admin-btn admin-btn-primary" onclick="editWeekFromModal()">Edit Week</button>
+        </div>
+    </div>
+</div>
+
+<!-- Create Week Modal -->
+<div class="admin-modal-overlay" id="createWeekModal">
+    <div class="admin-modal" style="max-width: 1200px; width: 95%; max-height: 90vh; overflow-y: auto;">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">Create New Week</h3>
+            <button class="admin-modal-close" onclick="closeCreateWeekModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body" style="max-height: 70vh; overflow-y: auto;">
+            <form id="createWeekForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Week Number</label>
+                        <input type="number" class="admin-form-input" name="weekNumber" min="1" max="52" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Title</label>
+                        <input type="text" class="admin-form-input" name="title" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="admin-form-label">Description</label>
+                    <textarea class="admin-form-textarea" name="description" rows="3" required></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Year</label>
+                        <select class="admin-form-select" name="year" required>
+                            <option value="">Select Year</option>
+                            <option value="Year 8">Year 8</option>
+                            <option value="Year 9">Year 9</option>
+                            <option value="Year 10">Year 10</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Curriculum</label>
+                        <select class="admin-form-select" name="curriculum" required>
+                            <option value="">Select Curriculum</option>
+                            <option value="Cambridge">Cambridge</option>
+                            <option value="Edexcel">Edexcel</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Student Type</label>
+                        <select class="admin-form-select" name="studentType" required>
+                            <option value="">Select Type</option>
+                            <option value="School">School</option>
+                            <option value="Center">Center</option>
+                            <option value="Online">Online</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Start Date</label>
+                        <input type="date" class="admin-form-input" name="startDate" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">End Date</label>
+                        <input type="date" class="admin-form-input" name="endDate" required>
+                    </div>
+                </div>
+
+                <!-- Week Dependency Controls -->
+                <div class="mb-4">
+                    <h5 class="mb-3">Week Dependency Controls</h5>
+                    <div class="border rounded p-3">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="unlockConditions.dependsOnPreviousWeek" id="dependsOnPreviousWeek" >
+                                    <label class="form-check-label" for="dependsOnPreviousWeek">
+                                        Depends on previous week completion
+                                    </label>
+                                    <small class="form-text text-muted d-block">If checked, students must complete the previous week before accessing this one.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="unlockConditions.manualUnlockOnly" id="manualUnlockOnly">
+                                    <label class="form-check-label" for="manualUnlockOnly">
+                                        Manual unlock only
+                                    </label>
+                                    <small class="form-text text-muted d-block">If checked, only admins can unlock this week for students.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="admin-form-label">Required completion percentage</label>
+                                <input type="number" class="admin-form-input" name="unlockConditions.requiredCompletionPercentage" min="0" max="100" value="100">
+                                <small class="form-text text-muted">Percentage of previous week that must be completed (0-100)</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="unlockConditions.autoUnlock" id="autoUnlock" checked>
+                                    <label class="form-check-label" for="autoUnlock">
+                                        Auto-unlock when conditions are met
+                                    </label>
+                                    <small class="form-text text-muted d-block">If checked, week will automatically unlock when all conditions are met.</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Specific Week Dependencies -->
+                        <div class="mb-3">
+                            <label class="admin-form-label">Specific Week Dependencies</label>
+                            <div id="specificDependenciesContainer">
+                                <!-- Dependencies will be added here -->
+                            </div>
+                            <button type="button" class="admin-btn admin-btn-secondary admin-btn-sm" onclick="addSpecificDependency()">
+                                <i class="fas fa-plus me-2"></i>
+                                Add Specific Week Dependency
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" name="isActive" id="weekIsActive" checked>
+                    <label class="form-check-label" for="weekIsActive">
+                        Activate week immediately
+                    </label>
+                </div>
+            </form>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="admin-btn admin-btn-secondary" onclick="closeCreateWeekModal()">Cancel</button>
+            <button class="admin-btn admin-btn-primary" onclick="createWeek()">Create Week</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Week Modal -->
+<div class="admin-modal-overlay" id="editWeekModal">
+    <div class="admin-modal" style="max-width: 1200px; width: 95%; max-height: 90vh; overflow-y: auto;">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">Edit Week</h3>
+            <button class="admin-modal-close" onclick="closeEditWeekModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body" style="max-height: 70vh; overflow-y: auto;">
+            <form id="editWeekForm">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="admin-form-label">Week Number *</label>
+                        <input type="number" class="admin-form-input" id="editWeekNumber" name="weekNumber" min="1" max="52" required>
+                    </div>
+                    <div class="col-md-9 mb-3">
+                        <label class="admin-form-label">Title *</label>
+                        <input type="text" class="admin-form-input" id="editTitle" name="title" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="admin-form-label">Description *</label>
+                    <textarea class="admin-form-textarea" id="editDescription" name="description" rows="3" required></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Year *</label>
+                        <select class="admin-form-select" id="editYear" name="year" required>
+                            <option value="">Select Year</option>
+                            <option value="Year 10">Year 10</option>
+                            <option value="Year 11">Year 11</option>
+                            <option value="AS Level">AS Level</option>
+                            <option value="A2 Level">A2 Level</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Curriculum *</label>
+                        <select class="admin-form-select" id="editCurriculum" name="curriculum" required>
+                            <option value="">Select Curriculum</option>
+                            <option value="IGCSE">IGCSE</option>
+                            <option value="AS">AS</option>
+                            <option value="A2">A2</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Student Type *</label>
+                        <select class="admin-form-select" id="editStudentType" name="studentType" required>
+                            <option value="">Select Type</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Advanced">Advanced</option>
+                            <option value="Remedial">Remedial</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Start Date *</label>
+                        <input type="date" class="admin-form-input" id="editStartDate" name="startDate" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">End Date *</label>
+                        <input type="date" class="admin-form-input" id="editEndDate" name="endDate" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Status</label>
+                        <select class="admin-form-select" id="editIsActive" name="isActive">
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Materials Section -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Materials</h5>
+                        <button type="button" class="admin-btn admin-btn-secondary admin-btn-sm" onclick="addEditMaterial()">
+                            <i class="fas fa-plus me-1"></i>
+                            Add Material
+                        </button>
+                    </div>
+                    <div id="editMaterialsContainer">
+                        <!-- Materials will be added here -->
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="admin-modal-footer">
+            <button type="button" class="admin-btn admin-btn-secondary" onclick="closeEditWeekModal()">Cancel</button>
+            <button type="button" class="admin-btn admin-btn-primary" onclick="updateWeek()">Update Week</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Additional JavaScript for weeks page
+let currentWeekId = null;
+let currentEditWeekId = null;
+let editMaterialCount = 0;
+
+// Filter weeks
+function filterWeeks() {
+    const yearFilter = document.getElementById('yearFilter').value;
+    const typeFilter = document.getElementById('typeFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    const searchTerm = document.getElementById('weekSearch').value.toLowerCase();
+    
+    const weekCards = document.querySelectorAll('.week-card');
+    
+    weekCards.forEach(card => {
+        const year = card.dataset.year;
+        const type = card.dataset.type;
+        const status = card.dataset.status;
+        const title = card.querySelector('.admin-card-title').textContent.toLowerCase();
+        
+        const yearMatch = !yearFilter || year === yearFilter;
+        const typeMatch = !typeFilter || type === typeFilter;
+        const statusMatch = !statusFilter || (statusFilter === 'active' && status === 'active') || (statusFilter === 'inactive' && status === 'inactive');
+        const searchMatch = !searchTerm || title.includes(searchTerm);
+        
+        card.style.display = (yearMatch && typeMatch && statusMatch && searchMatch) ? '' : 'none';
+    });
+}
+
+// View week details
+async function viewWeekDetails(weekId) {
+    currentWeekId = weekId;
+    const modal = document.getElementById('weekDetailsModal');
+    const content = document.getElementById('weekDetailsContent');
+    
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    
+    try {
+        const response = await fetch(`/admin/api/weeks/${weekId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            content.innerHTML = generateWeekDetailsHTML(result.week);
+        } else {
+            content.innerHTML = '<div class="text-center text-danger">Error loading week details: ' + (result.message || 'Unknown error') + '</div>';
+        }
+    } catch (error) {
+        console.error('Error loading week details:', error);
+        content.innerHTML = '<div class="text-center text-danger">Error loading week details: ' + error.message + '</div>';
+    }
+}
+
+// Generate week details HTML
+function generateWeekDetailsHTML(week) {
+    return `
+        <div class="row">
+            <div class="col-md-8">
+                <h4>Week ${week.weekNumber}: ${week.title}</h4>
+                <p class="text-muted">${week.description}</p>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <strong>Year:</strong> <span class="badge bg-primary">${week.year}</span><br>
+                        <strong>Type:</strong> <span class="badge bg-info">${week.studentType}</span><br>
+                        <strong>Curriculum:</strong> <span class="badge bg-secondary">${week.curriculum}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Start Date:</strong> ${new Date(week.startDate).toLocaleDateString()}<br>
+                        <strong>End Date:</strong> ${new Date(week.endDate).toLocaleDateString()}<br>
+                        <strong>Status:</strong> <span class="admin-status-badge ${week.isActive ? 'active' : 'inactive'}">${week.isActive ? 'Active' : 'Inactive'}</span>
+                    </div>
+                </div>
+                
+                ${week.materials && week.materials.length > 0 ? `
+                    <h5>Materials (${week.materials.length})</h5>
+                    <div class="row">
+                        ${week.materials.map(material => `
+                            <div class="col-md-6 mb-3">
+                                <div class="admin-card">
+                                    <div class="admin-card-body">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span class="badge bg-primary me-2">${material.type}</span>
+                                            <strong>${material.title}</strong>
+                                        </div>
+                                        ${material.description ? `<p class="text-muted small mb-2">${material.description}</p>` : ''}
+                                        ${material.dueDate ? `<small class="text-muted">Due: ${new Date(material.dueDate).toLocaleDateString()}</small>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : '<p class="text-muted">No materials added yet.</p>'}
+            </div>
+            <div class="col-md-4">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h5 class="admin-card-title">Week Statistics</h5>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="text-center">
+                            <div class="mb-3">
+                                <div class="fw-bold text-primary" style="font-size: 2rem;">${week.materials ? week.materials.length : 0}</div>
+                                <small class="text-muted">Materials</small>
+                            </div>
+                            <div class="mb-3">
+                                <div class="fw-bold text-success" style="font-size: 2rem;">0</div>
+                                <small class="text-muted">Students Enrolled</small>
+                            </div>
+                            <div class="mb-3">
+                                <div class="fw-bold text-warning" style="font-size: 2rem;">0%</div>
+                                <small class="text-muted">Completion Rate</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Close week details modal
+function closeWeekDetailsModal() {
+    const modal = document.getElementById('weekDetailsModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+// Edit week from modal
+function editWeekFromModal() {
+    if (currentWeekId) {
+        editWeek(currentWeekId);
+        closeWeekDetailsModal();
+    }
+}
+
+// Edit week
+async function editWeek(weekId) {
+    try {
+        // First, get the week details
+        const response = await fetch(`/admin/api/weeks/${weekId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            const week = result.week;
+            
+            // Populate the edit form with existing data
+            document.getElementById('editWeekNumber').value = week.weekNumber;
+            document.getElementById('editTitle').value = week.title;
+            document.getElementById('editDescription').value = week.description;
+            document.getElementById('editYear').value = week.year;
+            document.getElementById('editCurriculum').value = week.curriculum;
+            document.getElementById('editStudentType').value = week.studentType;
+            document.getElementById('editStartDate').value = new Date(week.startDate).toISOString().split('T')[0];
+            document.getElementById('editEndDate').value = new Date(week.endDate).toISOString().split('T')[0];
+            document.getElementById('editIsActive').value = week.isActive ? 'true' : 'false';
+            
+            // Clear existing materials
+            const materialsContainer = document.getElementById('editMaterialsContainer');
+            materialsContainer.innerHTML = '';
+            editMaterialCount = 0;
+            
+            // Add existing materials
+            if (week.materials && week.materials.length > 0) {
+                week.materials.forEach((material, index) => {
+                    addEditMaterial(material);
+                });
+            }
+            
+            // Store the week ID for the update
+            currentEditWeekId = weekId;
+            
+            // Show the edit modal
+            const editModal = document.getElementById('editWeekModal');
+            editModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        } else {
+            showError('Error loading week details: ' + (result.message || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error loading week for edit:', error);
+        showError('Error loading week details: ' + error.message);
+    }
+}
+
+// Delete week
+async function deleteWeek(weekId) {
+    if (confirm('Are you sure you want to delete this week? This action cannot be undone.')) {
+        try {
+            const response = await fetch(`/admin/api/weeks/${weekId}`, {
+                method: 'DELETE'
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showSuccess('Week deleted successfully!');
+                window.location.reload();
+            } else {
+                showError(result.message || 'Failed to delete week');
+            }
+        } catch (error) {
+            showError('An error occurred while deleting the week');
+        }
+    }
+}
+
+// Create week function
+async function createWeek() {
+    const form = document.getElementById('createWeekForm');
+    const formData = new FormData(form);
+    
+    // Convert FormData to object
+    const data = {};
+    for (let [key, value] of formData.entries()) {
+        data[key] = value;
+    }
+    
+    try {
+        const response = await fetch('/admin/api/weeks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('Week created successfully!', 'success');
+            closeCreateWeekModal();
+            location.reload();
+        } else {
+            showNotification(result.message || 'Error creating week', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Error creating week', 'error');
+    }
+}
+
+// Open create week modal
+function openCreateWeekModal() {
+    const modal = document.getElementById('createWeekModal');
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close create week modal
+function closeCreateWeekModal() {
+    const modal = document.getElementById('createWeekModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+    document.getElementById('createWeekForm').reset();
+}
+
+
+// Add specific week dependency
+let dependencyCount = 0;
+function addSpecificDependency() {
+    const container = document.getElementById('specificDependenciesContainer');
+    const dependencyHTML = `
+        <div class="dependency-item border rounded p-3 mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">Dependency ${dependencyCount + 1}</h6>
+                <button type="button" class="admin-btn admin-btn-danger admin-btn-sm" onclick="removeDependency(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="admin-form-label">Week Number</label>
+                    <input type="number" class="admin-form-input" name="unlockConditions.specificWeekDependencies[${dependencyCount}].weekNumber" min="1" max="52" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="admin-form-label">Required Completion %</label>
+                    <input type="number" class="admin-form-input" name="unlockConditions.specificWeekDependencies[${dependencyCount}].requiredCompletion" min="0" max="100" value="100">
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', dependencyHTML);
+    dependencyCount++;
+}
+
+// Remove dependency
+function removeDependency(button) {
+    button.closest('.dependency-item').remove();
+}
+
+// Manage content for a week
+function manageContent(weekId) {
+    window.location.href = `/admin/week-content?weekId=${weekId}`;
+}
+
+// Notification functions
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show`;
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.zIndex = '9999';
+    notification.style.minWidth = '300px';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 5000);
+}
+
+function showSuccess(message) {
+    showNotification(message, 'success');
+}
+
+function showError(message) {
+    showNotification(message, 'error');
+}
+
+// Edit Week Functions
+function closeEditWeekModal() {
+    const editModal = document.getElementById('editWeekModal');
+    editModal.classList.remove('show');
+    document.body.style.overflow = '';
+    document.getElementById('editWeekForm').reset();
+    editMaterialCount = 0;
+    document.getElementById('editMaterialsContainer').innerHTML = '';
+}
+
+function addEditMaterial(material = null) {
+    const container = document.getElementById('editMaterialsContainer');
+    const materialHTML = `
+        <div class="material-item border rounded p-3 mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">Material ${editMaterialCount + 1}</h6>
+                <button type="button" class="admin-btn admin-btn-danger admin-btn-sm" onclick="removeEditMaterial(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="admin-form-label">Type</label>
+                    <select class="admin-form-select" name="materials[${editMaterialCount}][type]" required>
+                        <option value="">Select Type</option>
+                        <option value="homework" ${material && material.type === 'homework' ? 'selected' : ''}>Homework</option>
+                        <option value="notes" ${material && material.type === 'notes' ? 'selected' : ''}>Notes</option>
+                        <option value="pdf" ${material && material.type === 'pdf' ? 'selected' : ''}>PDF Document</option>
+                        <option value="el-5olasa" ${material && material.type === 'el-5olasa' ? 'selected' : ''}>El-5olasa (Summary)</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="admin-form-label">Title</label>
+                    <input type="text" class="admin-form-input" name="materials[${editMaterialCount}][title]" value="${material ? material.title : ''}" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="admin-form-label">Required</label>
+                    <select class="admin-form-select" name="materials[${editMaterialCount}][isRequired]">
+                        <option value="true" ${material && material.isRequired ? 'selected' : ''}>Yes</option>
+                        <option value="false" ${material && !material.isRequired ? 'selected' : ''}>No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="admin-form-label">Description</label>
+                    <textarea class="admin-form-textarea" name="materials[${editMaterialCount}][description]" rows="2">${material ? material.description || '' : ''}</textarea>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="admin-form-label">Due Date</label>
+                    <input type="date" class="admin-form-input" name="materials[${editMaterialCount}][dueDate]" value="${material && material.dueDate ? new Date(material.dueDate).toISOString().split('T')[0] : ''}">
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', materialHTML);
+    editMaterialCount++;
+}
+
+function removeEditMaterial(button) {
+    button.closest('.material-item').remove();
+}
+
+async function updateWeek() {
+    const form = document.getElementById('editWeekForm');
+    const formData = new FormData(form);
+    
+    // Convert FormData to JSON object
+    const weekData = {
+        weekNumber: formData.get('weekNumber'),
+        title: formData.get('title'),
+        description: formData.get('description'),
+        year: formData.get('year'),
+        curriculum: formData.get('curriculum'),
+        studentType: formData.get('studentType'),
+        startDate: formData.get('startDate'),
+        endDate: formData.get('endDate'),
+        isActive: formData.get('isActive'),
+        materials: []
+    };
+    
+    // Process materials
+    const materialElements = document.querySelectorAll('#editMaterialsContainer .material-item');
+    materialElements.forEach((element, index) => {
+        const material = {
+            type: element.querySelector(`select[name="materials[${index}][type]"]`).value,
+            title: element.querySelector(`input[name="materials[${index}][title]"]`).value,
+            description: element.querySelector(`textarea[name="materials[${index}][description]"]`).value,
+            isRequired: element.querySelector(`select[name="materials[${index}][isRequired]"]`).value,
+            dueDate: element.querySelector(`input[name="materials[${index}][dueDate]"]`).value
+        };
+        weekData.materials.push(material);
+    });
+    
+    try {
+        const response = await fetch(`/admin/api/weeks/${currentEditWeekId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(weekData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showSuccess('Week updated successfully!');
+            closeEditWeekModal();
+            window.location.reload();
+        } else {
+            showError(result.message || 'Error updating week');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showError('Error updating week');
+    }
+}
+</script>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,715 @@
+<%- include('partials/header', { title: 'Student Progress' }) %>
+
+<!-- Admin Layout -->
+<div class="admin-layout">
+    <%- include('partials/sidebar') %>
+    
+    <!-- Main Content -->
+    <main class="admin-main-content">
+        <%- include('partials/header-bar', { title: 'Student Progress' }) %>
+        
+        <!-- Content Area -->
+        <div class="admin-content">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up">
+                        <div class="admin-card-header">
+                            <div>
+                                <h2 class="admin-card-title">Student Progress Overview</h2>
+                                <p class="text-muted mb-0">Monitor and track student progress across all weeks and activities.</p>
+                            </div>
+                            <div class="admin-table-actions">
+                                <button class="admin-btn admin-btn-info admin-btn-sm" onclick="exportProgress()">
+                                    <i class="fas fa-download me-2"></i>
+                                    Export
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="admin-stats-grid mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="admin-stat-card">
+                    <div class="admin-stat-header">
+                        <div class="admin-stat-icon primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="admin-stat-trend up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+3%</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-value" id="totalStudents">0</div>
+                    <div class="admin-stat-label">Total Students</div>
+                </div>
+
+                <div class="admin-stat-card">
+                    <div class="admin-stat-header">
+                        <div class="admin-stat-icon success">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="admin-stat-trend up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+7%</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-value" id="averageProgress">0%</div>
+                    <div class="admin-stat-label">Average Progress</div>
+                </div>
+
+                <div class="admin-stat-card">
+                    <div class="admin-stat-header">
+                        <div class="admin-stat-icon warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="admin-stat-trend down">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>-2%</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-value" id="behindStudents">0</div>
+                    <div class="admin-stat-label">Behind Schedule</div>
+                </div>
+
+                <div class="admin-stat-card">
+                    <div class="admin-stat-header">
+                        <div class="admin-stat-icon info">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="admin-stat-trend up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+5%</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-value" id="topPerformers">0</div>
+                    <div class="admin-stat-label">Top Performers</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="admin-card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 mb-3">
+                                    <label class="admin-form-label">Filter by Year</label>
+                                    <select class="admin-form-select" id="yearFilter" onchange="filterProgress()">
+                                        <option value="">All Years</option>
+                                        <option value="Year 8">Year 8</option>
+                                        <option value="Year 9">Year 9</option>
+                                        <option value="Year 10">Year 10</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label class="admin-form-label">Filter by Type</label>
+                                    <select class="admin-form-select" id="typeFilter" onchange="filterProgress()">
+                                        <option value="">All Types</option>
+                                        <option value="IGCSE">IGCSE</option>
+                                        <option value="AS">AS</option>
+                                        <option value="A2">A2</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label class="admin-form-label">Progress Range</label>
+                                    <select class="admin-form-select" id="progressFilter" onchange="filterProgress()">
+                                        <option value="">All Progress</option>
+                                        <option value="0-25">0-25%</option>
+                                        <option value="26-50">26-50%</option>
+                                        <option value="51-75">51-75%</option>
+                                        <option value="76-100">76-100%</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="admin-form-label">Search Student</label>
+                                    <input type="text" class="admin-form-input" id="studentSearch" placeholder="Search by name or email..." onkeyup="filterProgress()">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="admin-form-label">Sort By</label>
+                                    <select class="admin-form-select" id="sortFilter" onchange="filterProgress()">
+                                        <option value="progress">Progress</option>
+                                        <option value="name">Name</option>
+                                        <option value="week">Current Week</option>
+                                        <option value="score">Average Score</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Overview Chart -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="admin-card-header">
+                            <h3 class="admin-card-title">Progress Distribution</h3>
+                        </div>
+                        <div class="admin-card-body">
+                            <canvas id="progressChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Students Progress Table -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="admin-table-container" data-aos="fade-up" data-aos-delay="400">
+                        <div class="admin-table-header">
+                            <h3 class="admin-table-title">Student Progress Details</h3>
+                            <div class="admin-table-actions">
+                                <button class="admin-btn admin-btn-secondary admin-btn-sm" onclick="refreshProgress()">
+                                    <i class="fas fa-sync-alt me-2"></i>
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="admin-table" id="progressTable">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Year & Type</th>
+                                        <th>Current Week</th>
+                                        <th>Progress</th>
+                                        <th>Completed Weeks</th>
+                                        <th>Average Score</th>
+                                        <th>Last Activity</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (students && students.length > 0) { %>
+                                        <% students.forEach(student => { %>
+                                            <tr data-student-id="<%= student._id %>">
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="admin-user-avatar me-3" style="width: 35px; height: 35px; font-size: 14px;">
+                                                            <%= student.name.charAt(0).toUpperCase() %>
+                                                        </div>
+                                                        <div>
+                                                            <div class="fw-semibold"><%= student.name %></div>
+                                                            <small class="text-muted"><%= student.email %></small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <div class="fw-semibold"><%= student.year || 'N/A' %></div>
+                                                        <small class="text-muted"><%= student.studentType || 'N/A' %></small>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="fw-bold text-primary">Week <%= student.currentWeek || 1 %></div>
+                                                </td>
+                                                <td>
+                                                    <div class="progress" style="height: 8px; width: 100px;">
+                                                        <div class="progress-bar bg-primary" role="progressbar" 
+                                                             style="width: <%= student.totalProgress || 0 %>%" 
+                                                             aria-valuenow="<%= student.totalProgress || 0 %>" 
+                                                             aria-valuemin="0" aria-valuemax="100">
+                                                        </div>
+                                                    </div>
+                                                    <small class="text-muted"><%= student.totalProgress || 0 %>%</small>
+                                                </td>
+                                                <td>
+                                                    <div class="fw-bold text-success"><%= student.completedWeeks ? student.completedWeeks.length : 0 %></div>
+                                                </td>
+                                                <td>
+                                                    <% if (student.statistics && student.statistics.averageScore) { %>
+                                                        <div class="fw-bold text-info"><%= student.statistics.averageScore %>%</div>
+                                                    <% } else { %>
+                                                        <span class="text-muted">N/A</span>
+                                                    <% } %>
+                                                </td>
+                                                <td>
+                                                    <% if (student.lastLogin) { %>
+                                                        <div><%= new Date(student.lastLogin).toLocaleDateString() %></div>
+                                                        <small class="text-muted"><%= new Date(student.lastLogin).toLocaleTimeString() %></small>
+                                                    <% } else { %>
+                                                        <span class="text-muted">Never</span>
+                                                    <% } %>
+                                                </td>
+                                                <td>
+                                                    <% 
+                                                        const isActive = student.isActive;
+                                                        const isBehind = student.currentWeek < 5; // Example: assuming week 5 is expected
+                                                    %>
+                                                    <span class="admin-status-badge <%= isActive ? (isBehind ? 'warning' : 'completed') : 'inactive' %>">
+                                                        <%= isActive ? (isBehind ? 'Behind' : 'On Track') : 'Inactive' %>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex gap-2">
+                                                        <button class="admin-btn admin-btn-secondary admin-btn-sm" 
+                                                                onclick="viewStudentProgress('<%= student._id %>')" 
+                                                                title="View Detailed Progress">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <button class="admin-btn admin-btn-info admin-btn-sm" 
+                                                                onclick="sendReminder('<%= student._id %>')" 
+                                                                title="Send Reminder">
+                                                            <i class="fas fa-bell"></i>
+                                                        </button>
+                                                        <button class="admin-btn admin-btn-warning admin-btn-sm" 
+                                                                onclick="adjustProgress('<%= student._id %>')" 
+                                                                title="Adjust Progress">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="9" class="text-center py-5">
+                                                <div class="admin-empty-state">
+                                                    <div class="admin-empty-icon">
+                                                        <i class="fas fa-chart-line"></i>
+                                                    </div>
+                                                    <div class="admin-empty-title">No Student Progress Data</div>
+                                                    <div class="admin-empty-description">Student progress data will appear here as they engage with the platform.</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Student Progress Detail Modal -->
+<div class="admin-modal-overlay" id="studentProgressModal">
+    <div class="admin-modal" style="max-width: 1000px;">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">Student Progress Details</h3>
+            <button class="admin-modal-close" onclick="closeProgressModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body" id="studentProgressContent">
+            <div class="admin-loading">
+                <div class="admin-spinner"></div>
+                Loading student progress details...
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="admin-btn admin-btn-secondary" onclick="closeProgressModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Adjust Progress Modal -->
+<div class="admin-modal-overlay" id="adjustProgressModal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">Adjust Student Progress</h3>
+            <button class="admin-modal-close" onclick="closeAdjustModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body" id="adjustProgressContent">
+            <div class="admin-loading">
+                <div class="admin-spinner"></div>
+                Loading student details...
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="admin-btn admin-btn-secondary" onclick="closeAdjustModal()">Cancel</button>
+            <button class="admin-btn admin-btn-primary" onclick="saveProgressAdjustment()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Additional JavaScript for progress page
+let currentStudentId = null;
+
+// Filter progress
+function filterProgress() {
+    const yearFilter = document.getElementById('yearFilter').value;
+    const typeFilter = document.getElementById('typeFilter').value;
+    const progressFilter = document.getElementById('progressFilter').value;
+    const studentSearch = document.getElementById('studentSearch').value.toLowerCase();
+    const sortFilter = document.getElementById('sortFilter').value;
+    
+    const rows = Array.from(document.querySelectorAll('#progressTable tbody tr'));
+    
+    // Filter rows
+    rows.forEach(row => {
+        const studentName = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+        const year = row.querySelector('td:nth-child(2)').textContent.trim();
+        const progress = parseInt(row.querySelector('td:nth-child(4) small').textContent);
+        
+        const yearMatch = !yearFilter || year.includes(yearFilter);
+        const typeMatch = !typeFilter || year.includes(typeFilter);
+        const progressMatch = !progressFilter || checkProgressRange(progress, progressFilter);
+        const searchMatch = !studentSearch || studentName.includes(studentSearch);
+        
+        row.style.display = (yearMatch && typeMatch && progressMatch && searchMatch) ? '' : 'none';
+    });
+    
+    // Sort rows
+    if (sortFilter) {
+        sortTableRows(sortFilter);
+    }
+}
+
+// Check progress range
+function checkProgressRange(progress, range) {
+    switch(range) {
+        case '0-25': return progress >= 0 && progress <= 25;
+        case '26-50': return progress >= 26 && progress <= 50;
+        case '51-75': return progress >= 51 && progress <= 75;
+        case '76-100': return progress >= 76 && progress <= 100;
+        default: return true;
+    }
+}
+
+// Sort table rows
+function sortTableRows(sortBy) {
+    const tbody = document.querySelector('#progressTable tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => row.style.display !== 'none');
+    
+    rows.sort((a, b) => {
+        let aVal, bVal;
+        
+        switch(sortBy) {
+            case 'progress':
+                aVal = parseInt(a.querySelector('td:nth-child(4) small').textContent);
+                bVal = parseInt(b.querySelector('td:nth-child(4) small').textContent);
+                return bVal - aVal;
+            case 'name':
+                aVal = a.querySelector('td:nth-child(1) .fw-semibold').textContent;
+                bVal = b.querySelector('td:nth-child(1) .fw-semibold').textContent;
+                return aVal.localeCompare(bVal);
+            case 'week':
+                aVal = parseInt(a.querySelector('td:nth-child(3) .fw-bold').textContent.replace('Week ', ''));
+                bVal = parseInt(b.querySelector('td:nth-child(3) .fw-bold').textContent.replace('Week ', ''));
+                return bVal - aVal;
+            case 'score':
+                aVal = a.querySelector('td:nth-child(6) .fw-bold').textContent.replace('%', '') || '0';
+                bVal = b.querySelector('td:nth-child(6) .fw-bold').textContent.replace('%', '') || '0';
+                return parseInt(bVal) - parseInt(aVal);
+        }
+    });
+    
+    rows.forEach(row => tbody.appendChild(row));
+}
+
+// View student progress
+async function viewStudentProgress(studentId) {
+    currentStudentId = studentId;
+    const modal = document.getElementById('studentProgressModal');
+    const content = document.getElementById('studentProgressContent');
+    
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    
+    try {
+        const response = await fetch(`/admin/api/students/${studentId}/progress`);
+        const result = await response.json();
+        
+        if (result.success) {
+            content.innerHTML = generateStudentProgressHTML(result.student, result.progress);
+        } else {
+            content.innerHTML = '<div class="text-center text-danger">Error loading student progress</div>';
+        }
+    } catch (error) {
+        content.innerHTML = '<div class="text-center text-danger">Error loading student progress</div>';
+    }
+}
+
+// Generate student progress HTML
+function generateStudentProgressHTML(student, progress) {
+    return `
+        <div class="row">
+            <div class="col-md-4">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h5 class="admin-card-title">Student Information</h5>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="text-center mb-3">
+                            <div class="admin-user-avatar mx-auto mb-2" style="width: 80px; height: 80px; font-size: 32px;">
+                                ${student.name.charAt(0).toUpperCase()}
+                            </div>
+                            <h4>${student.name}</h4>
+                            <p class="text-muted">${student.email}</p>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="fw-bold text-primary">${student.year || 'N/A'}</div>
+                                <small class="text-muted">Year</small>
+                            </div>
+                            <div class="col-6">
+                                <div class="fw-bold text-info">${student.studentType || 'N/A'}</div>
+                                <small class="text-muted">Type</small>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="fw-bold text-success">Week ${student.currentWeek || 1}</div>
+                                <small class="text-muted">Current Week</small>
+                            </div>
+                            <div class="col-6">
+                                <div class="fw-bold text-warning">${student.totalProgress || 0}%</div>
+                                <small class="text-muted">Total Progress</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h5 class="admin-card-title">Weekly Progress</h5>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="row">
+                            ${generateWeeklyProgressCards(progress)}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="admin-card mt-3">
+                    <div class="admin-card-header">
+                        <h5 class="admin-card-title">Statistics</h5>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="row">
+                            <div class="col-md-3 text-center">
+                                <div class="fw-bold text-primary">${student.statistics?.homeworkSubmitted || 0}</div>
+                                <small class="text-muted">Homework Submitted</small>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <div class="fw-bold text-info">${student.statistics?.notesDownloaded || 0}</div>
+                                <small class="text-muted">Notes Downloaded</small>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <div class="fw-bold text-success">${student.statistics?.quizzesAttempted || 0}</div>
+                                <small class="text-muted">Quizzes Attempted</small>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <div class="fw-bold text-warning">${student.statistics?.totalTimeSpent || 0}m</div>
+                                <small class="text-muted">Time Spent</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Generate weekly progress cards
+function generateWeeklyProgressCards(progress) {
+    if (!progress || progress.length === 0) {
+        return '<div class="col-12 text-center text-muted">No progress data available</div>';
+    }
+    
+    return progress.map(week => `
+        <div class="col-md-4 mb-3">
+            <div class="admin-card">
+                <div class="admin-card-body text-center">
+                    <h6>Week ${week.weekNumber}</h6>
+                    <div class="progress mb-2" style="height: 8px;">
+                        <div class="progress-bar ${getProgressBarColor(week.status)}" 
+                             style="width: ${week.progress || 0}%"></div>
+                    </div>
+                    <small class="text-muted">${week.progress || 0}% Complete</small>
+                    <div class="mt-2">
+                        <span class="admin-status-badge ${week.status === 'completed' ? 'completed' : week.status === 'in_progress' ? 'pending' : 'inactive'}">
+                            ${week.status || 'Not Started'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Get progress bar color
+function getProgressBarColor(status) {
+    switch(status) {
+        case 'completed': return 'bg-success';
+        case 'in_progress': return 'bg-primary';
+        case 'not_started': return 'bg-secondary';
+        default: return 'bg-secondary';
+    }
+}
+
+// Close progress modal
+function closeProgressModal() {
+    const modal = document.getElementById('studentProgressModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+// Adjust progress
+async function adjustProgress(studentId) {
+    currentStudentId = studentId;
+    const modal = document.getElementById('adjustProgressModal');
+    const content = document.getElementById('adjustProgressContent');
+    
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    
+    try {
+        const response = await fetch(`/admin/api/students/${studentId}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            content.innerHTML = generateAdjustProgressForm(result.student);
+        } else {
+            content.innerHTML = '<div class="text-center text-danger">Error loading student details</div>';
+        }
+    } catch (error) {
+        content.innerHTML = '<div class="text-center text-danger">Error loading student details</div>';
+    }
+}
+
+// Generate adjust progress form
+function generateAdjustProgressForm(student) {
+    return `
+        <form id="adjustProgressForm">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="admin-form-label">Current Week</label>
+                    <input type="number" class="admin-form-input" name="currentWeek" 
+                           value="${student.currentWeek || 1}" min="1" max="52" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="admin-form-label">Total Progress (%)</label>
+                    <input type="number" class="admin-form-input" name="totalProgress" 
+                           value="${student.totalProgress || 0}" min="0" max="100" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="admin-form-label">Reason for Adjustment</label>
+                <textarea class="admin-form-textarea" name="reason" rows="3" 
+                          placeholder="Explain why you're adjusting this student's progress..."></textarea>
+            </div>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Note:</strong> Adjusting progress will affect the student's access to content and their learning path.
+            </div>
+        </form>
+    `;
+}
+
+// Save progress adjustment
+async function saveProgressAdjustment() {
+    const form = document.getElementById('adjustProgressForm');
+    const formData = new FormData(form);
+    const adjustmentData = Object.fromEntries(formData.entries());
+    
+    try {
+        const response = await fetch(`/admin/api/students/${currentStudentId}/progress`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(adjustmentData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showSuccess('Student progress updated successfully!');
+            closeAdjustModal();
+            window.location.reload();
+        } else {
+            showError(result.message || 'Failed to update student progress');
+        }
+    } catch (error) {
+        showError('An error occurred while updating student progress');
+    }
+}
+
+// Close adjust modal
+function closeAdjustModal() {
+    const modal = document.getElementById('adjustProgressModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+// Send reminder
+async function sendReminder(studentId) {
+    if (confirm('Send a progress reminder to this student?')) {
+        try {
+            const response = await fetch(`/admin/api/students/${studentId}/reminder`, {
+                method: 'POST'
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showSuccess('Reminder sent successfully!');
+            } else {
+                showError(result.message || 'Failed to send reminder');
+            }
+        } catch (error) {
+            showError('An error occurred while sending the reminder');
+        }
+    }
+}
+
+// Export progress
+function exportProgress() {
+    // Implementation for exporting progress data
+    console.log('Exporting progress data');
+}
+
+// Refresh progress
+function refreshProgress() {
+    window.location.reload();
+}
+
+// Update statistics
+function updateStatistics() {
+    const totalStudents = document.querySelectorAll('#progressTable tbody tr').length;
+    const averageProgress = 75; // This would be calculated from actual data
+    const behindStudents = document.querySelectorAll('#progressTable tbody tr').length; // This would be filtered
+    const topPerformers = document.querySelectorAll('#progressTable tbody tr').length; // This would be filtered
+    
+    document.getElementById('totalStudents').textContent = totalStudents;
+    document.getElementById('averageProgress').textContent = averageProgress + '%';
+    document.getElementById('behindStudents').textContent = behindStudents;
+    document.getElementById('topPerformers').textContent = topPerformers;
+}
+
+// Initialize progress chart
+function initializeProgressChart() {
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    
+    // This would be replaced with actual Chart.js implementation
+    // For now, we'll create a simple placeholder
+    ctx.fillStyle = '#f8f9fa';
+    ctx.fillRect(0, 0, 400, 200);
+    ctx.fillStyle = '#6c757d';
+    ctx.font = '16px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Progress Chart Placeholder', 200, 100);
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    updateStatistics();
+    initializeProgressChart();
+});
+</script>
+
+<%- include('partials/footer') %>
