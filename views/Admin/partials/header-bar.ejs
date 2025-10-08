@@ -8,9 +8,22 @@
         <div>
             <h1 class="admin-page-title"><%= title %></h1>
             <nav class="admin-breadcrumb">
-                <a href="/admin/dashboard" class="admin-breadcrumb-item">Admin</a>
-                <span class="admin-breadcrumb-separator">/</span>
-                <span class="admin-breadcrumb-item"><%= title %></span>
+                <% if (typeof breadcrumb !== 'undefined' && breadcrumb) { %>
+                    <% breadcrumb.forEach(function(item, index) { %>
+                        <% if (item.url && item.url !== '#') { %>
+                            <a href="<%= item.url %>" class="admin-breadcrumb-item"><%= item.title %></a>
+                        <% } else { %>
+                            <span class="admin-breadcrumb-item"><%= item.title %></span>
+                        <% } %>
+                        <% if (index < breadcrumb.length - 1) { %>
+                            <span class="admin-breadcrumb-separator">/</span>
+                        <% } %>
+                    <% }); %>
+                <% } else { %>
+                    <a href="/admin/dashboard" class="admin-breadcrumb-item">Admin</a>
+                    <span class="admin-breadcrumb-separator">/</span>
+                    <span class="admin-breadcrumb-item"><%= title %></span>
+                <% } %>
             </nav>
         </div>
     </div>

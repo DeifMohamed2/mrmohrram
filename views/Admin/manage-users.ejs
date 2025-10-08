@@ -160,7 +160,7 @@
                                                             <i class="fas fa-eye"></i>
                                                         </button>
                                                         <button class="admin-btn admin-btn-info admin-btn-sm" 
-                                                                onclick="editUser('<%= user._id %>')" 
+                                                                onclick="editUserDirect('<%= user._id %>')" 
                                                                 title="Edit">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
@@ -170,7 +170,7 @@
                                                             <i class="fas fa-<%= user.isActive ? 'ban' : 'check' %>"></i>
                                                         </button>
                                                         <button class="admin-btn admin-btn-danger admin-btn-sm" 
-                                                                onclick="deleteUser('<%= user._id %>')" 
+                                                                onclick="deleteUserDirect('<%= user._id %>')" 
                                                                 title="Delete">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
@@ -236,7 +236,7 @@
 
 <!-- User Details Modal -->
 <div class="admin-modal-overlay" id="userDetailsModal">
-    <div class="admin-modal" style="max-width: 800px;">
+    <div class="admin-modal" style="max-width: 900px;">
         <div class="admin-modal-header">
             <h3 class="admin-modal-title">Student Details</h3>
             <button class="admin-modal-close" onclick="closeUserDetailsModal()">
@@ -251,7 +251,136 @@
         </div>
         <div class="admin-modal-footer">
             <button class="admin-btn admin-btn-secondary" onclick="closeUserDetailsModal()">Close</button>
-            <button class="admin-btn admin-btn-primary" onclick="editUserFromModal()">Edit Student</button>
+            <button class="admin-btn admin-btn-info" onclick="editUserFromModal()">Edit Student</button>
+            <button class="admin-btn admin-btn-danger" onclick="deleteUserFromModal()">Delete Student</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="admin-modal-overlay" id="editUserModal">
+    <div class="admin-modal" style="max-width: 700px;">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">Edit Student</h3>
+            <button class="admin-modal-close" onclick="closeEditUserModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <form id="editUserForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Full Name *</label>
+                        <input type="text" class="admin-form-input" name="name" id="editName" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Email *</label>
+                        <input type="email" class="admin-form-input" name="email" id="editEmail" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Age</label>
+                        <input type="number" class="admin-form-input" name="age" id="editAge" min="10" max="100">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Year *</label>
+                        <select class="admin-form-select" name="year" id="editYear" required>
+                            <option value="">Select Year</option>
+                            <option value="Year 8">Year 8</option>
+                            <option value="Year 9">Year 9</option>
+                            <option value="Year 10">Year 10</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="admin-form-label">Student Type *</label>
+                        <select class="admin-form-select" name="studentType" id="editStudentType" required>
+                            <option value="">Select Type</option>
+                            <option value="School">School</option>
+                            <option value="Center">Center</option>
+                            <option value="Online">Online</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Curriculum</label>
+                        <select class="admin-form-select" name="curriculum" id="editCurriculum">
+                            <option value="">Select Curriculum</option>
+                            <option value="Cambridge">Cambridge</option>
+                            <option value="Edexcel">Edexcel</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">School Name</label>
+                        <input type="text" class="admin-form-input" name="schoolName" id="editSchoolName">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Student Phone</label>
+                        <input type="tel" class="admin-form-input" name="studentPhoneNumber" id="editStudentPhone">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="admin-form-label">Parent Phone</label>
+                        <input type="tel" class="admin-form-input" name="parentPhoneNumber" id="editParentPhone">
+                    </div>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" name="isActive" id="editIsActive">
+                    <label class="form-check-label" for="editIsActive">
+                        Active account
+                    </label>
+                </div>
+            </form>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="admin-btn admin-btn-secondary" onclick="closeEditUserModal()">Cancel</button>
+            <button class="admin-btn admin-btn-primary" onclick="saveUserChanges()">
+                <i class="fas fa-save me-2"></i>
+                Save Changes
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="admin-modal-overlay" id="deleteUserModal">
+    <div class="admin-modal" style="max-width: 500px;">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title text-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Confirm Deletion
+            </h3>
+            <button class="admin-modal-close" onclick="closeDeleteUserModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <div class="text-center">
+                <div class="mb-3">
+                    <i class="fas fa-user-times text-danger" style="font-size: 3rem;"></i>
+                </div>
+                <h5>Are you sure you want to delete this student?</h5>
+                <p class="text-muted">This action cannot be undone. All student data including:</p>
+                <ul class="text-muted text-start">
+                    <li>Progress records</li>
+                    <li>Homework submissions</li>
+                    <li>Account information</li>
+                </ul>
+                <p class="text-muted">will be permanently deleted.</p>
+                <div class="alert alert-warning mt-3">
+                    <strong>Student:</strong> <span id="deleteStudentName"></span><br>
+                    <strong>Email:</strong> <span id="deleteStudentEmail"></span>
+                </div>
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="admin-btn admin-btn-secondary" onclick="closeDeleteUserModal()">Cancel</button>
+            <button class="admin-btn admin-btn-danger" onclick="confirmDeleteUser()">
+                <i class="fas fa-trash me-2"></i>
+                Delete Student
+            </button>
         </div>
     </div>
 </div>
@@ -383,6 +512,7 @@
 <script>
 // Additional JavaScript for users page
 let currentUserId = null;
+let currentUserData = null;
 
 // Filter users
 function filterUsers() {
@@ -434,31 +564,13 @@ function updateBulkActions() {
     }
 }
 
-// View user details
-async function viewUserDetails(userId) {
-    currentUserId = userId;
-    const modal = document.getElementById('userDetailsModal');
-    const content = document.getElementById('userDetailsContent');
-    
-    modal.classList.add('show');
-    document.body.style.overflow = 'hidden';
-    
-    try {
-        const response = await fetch(`/admin/api/users/${userId}`);
-        const result = await response.json();
-        
-        if (result.success) {
-            content.innerHTML = generateUserDetailsHTML(result.user, result.progress, result.submissions);
-        } else {
-            content.innerHTML = '<div class="text-center text-danger">Error loading user details</div>';
-        }
-    } catch (error) {
-        content.innerHTML = '<div class="text-center text-danger">Error loading user details</div>';
-    }
+// View user details - redirect to dedicated page
+function viewUserDetails(userId) {
+    window.location.href = `/admin/student-details/${userId}`;
 }
 
-// Generate user details HTML
-function generateUserDetailsHTML(user, progress, submissions) {
+// Generate user details HTML - No longer used since we redirect to dedicated page
+/*function generateUserDetailsHTML(user, progress, submissions) {
     return `
         <div class="row">
             <div class="col-md-4">
@@ -477,7 +589,7 @@ function generateUserDetailsHTML(user, progress, submissions) {
                 <div class="row">
                     <div class="col-6 mb-3">
                         <strong>Student Code:</strong><br>
-                        <span class="text-muted">${user.studentCode}</span>
+                        <span class="text-muted">${user.studentCode || 'Not Set'}</span>
                     </div>
                     <div class="col-6 mb-3">
                         <strong>Year:</strong><br>
@@ -494,31 +606,307 @@ function generateUserDetailsHTML(user, progress, submissions) {
                         </div>
                         <small class="text-muted">${user.totalProgress || 0}%</small>
                     </div>
+                    ${user.age ? `<div class="col-6 mb-3"><strong>Age:</strong><br><span class="text-muted">${user.age}</span></div>` : ''}
+                    ${user.curriculum ? `<div class="col-6 mb-3"><strong>Curriculum:</strong><br><span class="badge bg-secondary">${user.curriculum}</span></div>` : ''}
+                    ${user.schoolName ? `<div class="col-6 mb-3"><strong>School:</strong><br><span class="text-muted">${user.schoolName}</span></div>` : ''}
+                    ${user.studentPhoneNumber ? `<div class="col-6 mb-3"><strong>Student Phone:</strong><br><span class="text-muted">${user.studentPhoneNumber}</span></div>` : ''}
+                    ${user.parentPhoneNumber ? `<div class="col-6 mb-3"><strong>Parent Phone:</strong><br><span class="text-muted">${user.parentPhoneNumber}</span></div>` : ''}
+                    <div class="col-6 mb-3">
+                        <strong>Joined:</strong><br>
+                        <span class="text-muted">${new Date(user.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <strong>Last Active:</strong><br>
+                        <span class="text-muted">${user.lastActivity ? new Date(user.lastActivity).toLocaleDateString() : 'Never'}</span>
+                    </div>
                 </div>
             </div>
         </div>
+        
+        ${progress && progress.length > 0 ? `
+        <div class="row mb-4">
+            <div class="col-12">
+                <h5 class="mb-3"><i class="fas fa-chart-line me-2"></i>Recent Progress</h5>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Week</th>
+                                <th>Title</th>
+                                <th>Completion</th>
+                                <th>Last Updated</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${progress.map(prog => `
+                                <tr>
+                                    <td>${prog.week ? prog.week.weekNumber : 'N/A'}</td>
+                                    <td>${prog.week ? prog.week.title : 'Unknown Week'}</td>
+                                    <td>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar" style="width: ${prog.completionPercentage || 0}%"></div>
+                                        </div>
+                                        <small>${prog.completionPercentage || 0}%</small>
+                                    </td>
+                                    <td>${new Date(prog.updatedAt).toLocaleDateString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        ` : ''}
+        
+        ${submissions && submissions.length > 0 ? `
+        <div class="row mb-4">
+            <div class="col-12">
+                <h5 class="mb-3"><i class="fas fa-file-alt me-2"></i>Recent Submissions</h5>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Week</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Submitted</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${submissions.map(submission => `
+                                <tr>
+                                    <td>${submission.week ? submission.week.weekNumber : 'N/A'}</td>
+                                    <td>${submission.week ? submission.week.title : 'Unknown Week'}</td>
+                                    <td>
+                                        <span class="badge bg-${submission.status === 'approved' ? 'success' : submission.status === 'rejected' ? 'danger' : 'warning'}">
+                                            ${submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
+                                        </span>
+                                    </td>
+                                    <td>${new Date(submission.submittedAt || submission.submissionDate).toLocaleDateString()}</td>
+                                    <td>
+                                        ${submission.score !== undefined && submission.score !== null ? 
+                                            `${submission.score}/${submission.totalScore || 100}` : 
+                                            '<span class="text-muted">Not graded</span>'}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        ` : ''}
     `;
+}*/
+
+// Close user details modal - No longer used
+/*function closeUserDetailsModal() {
+    const modal = document.getElementById('userDetailsModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+    currentUserId = null;
+    currentUserData = null;
+}*/
+
+// Edit user from modal - No longer used
+/*function editUserFromModal() {
+    if (currentUserId && currentUserData) {
+        openEditUserModal(currentUserData);
+        closeUserDetailsModal();
+    }
+}*/
+
+// Edit user directly from table
+async function editUserDirect(userId) {
+    currentUserId = userId;
+    
+    try {
+        const response = await fetch(`/admin/api/users/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            currentUserData = result.user;
+            openEditUserModal(result.user);
+        } else {
+            showError('Error loading user data for editing');
+        }
+    } catch (error) {
+        console.error('Error loading user data:', error);
+        showError('Error loading user data for editing');
+    }
 }
 
-// Close user details modal
-function closeUserDetailsModal() {
-    const modal = document.getElementById('userDetailsModal');
+// Open edit user modal
+function openEditUserModal(userData) {
+    const modal = document.getElementById('editUserModal');
+    
+    // Populate form fields
+    document.getElementById('editName').value = userData.name || '';
+    document.getElementById('editEmail').value = userData.email || '';
+    document.getElementById('editAge').value = userData.age || '';
+    document.getElementById('editYear').value = userData.year || '';
+    document.getElementById('editStudentType').value = userData.studentType || '';
+    document.getElementById('editCurriculum').value = userData.curriculum || '';
+    document.getElementById('editSchoolName').value = userData.schoolName || '';
+    document.getElementById('editStudentPhone').value = userData.studentPhoneNumber || '';
+    document.getElementById('editParentPhone').value = userData.parentPhoneNumber || '';
+    document.getElementById('editIsActive').checked = userData.isActive || false;
+    
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close edit user modal
+function closeEditUserModal() {
+    const modal = document.getElementById('editUserModal');
     modal.classList.remove('show');
     document.body.style.overflow = '';
 }
 
-// Edit user from modal
-function editUserFromModal() {
-    if (currentUserId) {
-        editUser(currentUserId);
-        closeUserDetailsModal();
+// Save user changes
+async function saveUserChanges() {
+    if (!currentUserId) {
+        showError('No user selected for editing');
+        return;
+    }
+
+    const form = document.getElementById('editUserForm');
+    const formData = new FormData(form);
+    
+    // Convert FormData to object
+    const updateData = {};
+    for (let [key, value] of formData.entries()) {
+        if (key === 'isActive') {
+            updateData[key] = true;
+        } else {
+            updateData[key] = value;
+        }
+    }
+
+    try {
+        const response = await fetch(`/admin/api/users/${currentUserId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showSuccess('User updated successfully!');
+            closeEditUserModal();
+            // Reload the page to show updated data
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            showError(result.message || 'Failed to update user');
+        }
+    } catch (error) {
+        console.error('Error updating user:', error);
+        showError('An error occurred while updating the user');
     }
 }
 
-// Edit user
-function editUser(userId) {
-    // For now, just show a message that this feature is coming soon
-    showError('Edit user functionality is coming soon. Please use the view details option for now.');
+// Delete user from modal - No longer used
+/*function deleteUserFromModal() {
+    if (currentUserData) {
+        openDeleteUserModal(currentUserData);
+        closeUserDetailsModal();
+    }
+}*/
+
+// Open delete confirmation modal
+function openDeleteUserModal(userData) {
+    const modal = document.getElementById('deleteUserModal');
+    
+    document.getElementById('deleteStudentName').textContent = userData.name;
+    document.getElementById('deleteStudentEmail').textContent = userData.email;
+    
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close delete user modal
+function closeDeleteUserModal() {
+    const modal = document.getElementById('deleteUserModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+// Confirm delete user
+async function confirmDeleteUser() {
+    if (!currentUserId) {
+        showError('No user selected for deletion');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/admin/api/users/${currentUserId}`, {
+            method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showSuccess('Student deleted successfully!');
+            closeDeleteUserModal();
+            // Reload the page to show updated data
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            showError(result.message || 'Failed to delete student');
+        }
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        showError('An error occurred while deleting the student');
+    }
+}
+
+// Delete user directly from table
+async function deleteUserDirect(userId) {
+    currentUserId = userId;
+    
+    try {
+        const response = await fetch(`/admin/api/users/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            currentUserData = result.user;
+            openDeleteUserModal(result.user);
+        } else {
+            showError('Error loading user data for deletion');
+        }
+    } catch (error) {
+        console.error('Error loading user data:', error);
+        showError('Error loading user data for deletion');
+    }
 }
 
 // Toggle user status (approve/activate or deactivate)
@@ -548,32 +936,9 @@ async function toggleUserStatus(userId, action) {
     }
 }
 
-// Delete user
-async function deleteUser(userId) {
-    if (confirm('Are you sure you want to delete this student? This action cannot be undone.')) {
-        try {
-            const response = await fetch(`/admin/api/users/${userId}`, {
-                method: 'DELETE'
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                showSuccess('Student deleted successfully!');
-                window.location.reload();
-            } else {
-                showError(result.message || 'Failed to delete student');
-            }
-        } catch (error) {
-            showError('An error occurred while deleting the student');
-        }
-    }
-}
-
 // Export users
 function exportUsers() {
-    // Implementation for exporting users
-    console.log('Exporting users');
+    showInfo('Export functionality coming soon!');
 }
 
 // Refresh users
@@ -677,18 +1042,14 @@ async function bulkDeactivate() {
 function bulkExport() {
     const selectedIds = getSelectedUserIds();
     if (selectedIds.length > 0) {
-        // Implementation for bulk export
-        console.log('Bulk exporting:', selectedIds);
+        showInfo('Bulk export functionality coming soon!');
     }
 }
 
 function bulkDelete() {
     const selectedIds = getSelectedUserIds();
     if (selectedIds.length > 0) {
-        if (confirm(`Are you sure you want to delete ${selectedIds.length} students? This action cannot be undone.`)) {
-            // Implementation for bulk delete
-            console.log('Bulk deleting:', selectedIds);
-        }
+        showInfo('Bulk delete functionality coming soon!');
     }
 }
 
@@ -702,45 +1063,6 @@ function closeBulkActionsModal() {
     const modal = document.getElementById('bulkActionsModal');
     modal.classList.remove('show');
     document.body.style.overflow = '';
-}
-
-// Notification functions
-function showSuccess(message) {
-    // Create a simple success notification
-    const notification = document.createElement('div');
-    notification.className = 'alert alert-success alert-dismissible fade show position-fixed';
-    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-    notification.innerHTML = `
-        <i class="fas fa-check-circle me-2"></i>${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    document.body.appendChild(notification);
-    
-    // Auto remove after 3 seconds
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.remove();
-        }
-    }, 3000);
-}
-
-function showError(message) {
-    // Create a simple error notification
-    const notification = document.createElement('div');
-    notification.className = 'alert alert-danger alert-dismissible fade show position-fixed';
-    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-    notification.innerHTML = `
-        <i class="fas fa-exclamation-triangle me-2"></i>${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    document.body.appendChild(notification);
-    
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.remove();
-        }
-    }, 5000);
 }
 
 // Add event listeners for checkboxes

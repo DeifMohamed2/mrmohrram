@@ -1000,7 +1000,7 @@ const createUser = async (req, res) => {
   }
 };
 
-// GET - User Details
+// GET - User Details (API endpoint)
 const getUserDetails = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -1019,38 +1019,132 @@ const getUserDetails = async (req, res) => {
     }
 
     // Get user's progress and submissions
-    const progress = await StudentProgress.find({ student: userId })
-      .populate('week', 'title weekNumber')
-      .sort({ updatedAt: -1 })
-      .limit(10);
+    let progress = [];
+    let submissions = [];
 
-    const submissions = await HomeworkSubmission.find({ student: userId })
-      .populate('week', 'title weekNumber')
-      .sort({ submittedAt: -1 })
-      .limit(10);
-
-    // Return user details as JSON or render a partial view
-    if (req.headers.accept && req.headers.accept.includes('application/json')) {
-      res.json({ 
-        success: true, 
-        user: targetUser,
-        progress,
-        submissions
-      });
-    } else {
-      // Render a partial view for the modal
-      res.render('Admin/partials/user-details', { 
-        user: targetUser,
-        progress,
-        submissions
-      });
+    try {
+      progress = await StudentProgress.find({ student: userId })
+        .populate('week', 'title weekNumber')
+        .sort({ updatedAt: -1 })
+        .limit(10);
+    } catch (progressError) {
+      console.error('Error fetching progress:', progressError);
+      // Continue with empty progress array
     }
+
+    try {
+      submissions = await HomeworkSubmission.find({ student: userId })
+        .populate('week', 'title weekNumber')
+        .sort({ submittedAt: -1 })
+        .limit(10);
+    } catch (submissionError) {
+      console.error('Error fetching submissions:', submissionError);
+      // Continue with empty submissions array
+    }
+
+    // Always return JSON for API endpoints
+    res.json({ 
+      success: true, 
+      user: targetUser,
+      progress,
+      submissions
+    });
   } catch (error) {
     console.error('Get user details error:', error);
     res.status(500).json({ 
       success: false, 
-      message: 'An error occurred while loading user details' 
+      message: 'An error occurred while loading user details',
+      error: error.message 
     });
+  }
+};
+
+// GET - Student Details Page (Comprehensive view)
+const getStudentDetails = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = req.session.user;
+
+    if (!user || user.role !== 'admin') {
+      req.flash('error_msg', 'Access denied');
+      return res.redirect('/admin/dashboard');
+    }
+
+    // Get comprehensive student data
+    const student = await User.findById(userId).select('-password');
+    if (!student) {
+      req.flash('error_msg', 'Student not found');
+      return res.redirect('/admin/manage-users');
+    }
+
+    // Get all student progress data
+    let progress = [];
+    try {
+      progress = await StudentProgress.find({ student: userId })
+        .populate('week', 'title weekNumber year curriculum studentType')
+        .sort({ 'week.weekNumber': 1 });
+    } catch (progressError) {
+      console.error('Error fetching progress:', progressError);
+    }
+
+    // Get all homework submissions
+    let submissions = [];
+    try {
+      submissions = await HomeworkSubmission.find({ student: userId })
+        .populate('week', 'title weekNumber')
+        .sort({ submittedAt: -1 });
+    } catch (submissionError) {
+      console.error('Error fetching submissions:', submissionError);
+    }
+
+    // Get student's past paper attempts (if any)
+    let pastPaperAttempts = [];
+    try {
+      // This would need to be implemented if you have a PastPaperAttempt model
+      // pastPaperAttempts = await PastPaperAttempt.find({ student: userId })
+      //   .populate('pastPaper', 'title year paperType')
+      //   .sort({ attemptedAt: -1 });
+    } catch (error) {
+      console.error('Error fetching past paper attempts:', error);
+    }
+
+    // Get student's restrictions
+    let restrictions = [];
+    try {
+      const Restriction = require('../models/Restriction');
+      restrictions = await Restriction.find({ 
+        targetUser: userId, 
+        isActive: true 
+      }).populate('restrictedBy', 'name');
+    } catch (restrictionError) {
+      console.error('Error fetching restrictions:', restrictionError);
+    }
+
+    // Calculate additional statistics
+    const totalStudyTime = student.overallProgress ? student.overallProgress.totalStudyTime || 0 : 0;
+    const completedWeeksCount = student.completedWeeks ? student.completedWeeks.length : 0;
+    const averageScore = student.statistics ? student.statistics.averageScore || 0 : 0;
+
+    // Render the comprehensive student details page
+    res.render('Admin/student-details', {
+      title: `Student Details - ${student.name}`,
+      student,
+      progress,
+      submissions,
+      restrictions,
+      pastPaperAttempts,
+      user,
+      layout: false,
+      // Additional calculated data
+      totalStudyTime,
+      completedWeeksCount,
+      averageScore
+    });
+
+  } catch (error) {
+    console.error('Get student details error:', error);
+    req.flash('error_msg', 'An error occurred while loading student details');
+    res.redirect('/admin/manage-users');
   }
 };
 
@@ -1239,6 +1333,117 @@ const deleteHomeworkSubmissionAPI = async (req, res) => {
   } catch (error) {
     console.error('Delete homework submission API error:', error);
     res.status(500).json({ success: false, message: 'Error deleting submission' });
+  }
+};
+
+// DELETE - API: Delete user
+const deleteUserAPI = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = req.session.user;
+    
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied' });
+    }
+
+    // Prevent admin from deleting themselves
+    if (userId === user.id || userId === user._id) {
+      return res.status(400).json({ success: false, message: 'You cannot delete your own account' });
+    }
+
+    const targetUser = await User.findById(userId);
+    if (!targetUser) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Check if user is admin
+    if (targetUser.role === 'admin') {
+      return res.status(400).json({ success: false, message: 'Cannot delete admin accounts' });
+    }
+
+    // Delete associated data first
+    await HomeworkSubmission.deleteMany({ student: userId });
+    await StudentProgress.deleteMany({ student: userId });
+    
+    // Delete the user
+    await User.findByIdAndDelete(userId);
+
+    res.json({ success: true, message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Delete user API error:', error);
+    res.status(500).json({ success: false, message: 'Error deleting user' });
+  }
+};
+
+// PUT - API: Update user
+const updateUserAPI = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = req.session.user;
+    
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied' });
+    }
+
+    const {
+      name,
+      email,
+      age,
+      year,
+      schoolName,
+      studentPhoneNumber,
+      parentPhoneNumber,
+      curriculum,
+      studentType,
+      isActive
+    } = req.body;
+
+    const targetUser = await User.findById(userId);
+    if (!targetUser) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Check if email is already taken by another user
+    if (email && email !== targetUser.email) {
+      const existingUser = await User.findOne({ email, _id: { $ne: userId } });
+      if (existingUser) {
+        return res.status(400).json({ success: false, message: 'Email already taken by another user' });
+      }
+    }
+
+    // Update user fields
+    if (name) targetUser.name = name;
+    if (email) targetUser.email = email;
+    if (age) targetUser.age = parseInt(age);
+    if (year) targetUser.year = year;
+    if (schoolName) targetUser.schoolName = schoolName;
+    if (studentPhoneNumber) targetUser.studentPhoneNumber = studentPhoneNumber;
+    if (parentPhoneNumber) targetUser.parentPhoneNumber = parentPhoneNumber;
+    if (curriculum) targetUser.curriculum = curriculum;
+    if (studentType) targetUser.studentType = studentType;
+    if (isActive !== undefined) targetUser.isActive = isActive === 'true' || isActive === true;
+    
+    targetUser.updatedAt = new Date();
+
+    await targetUser.save();
+
+    res.json({ 
+      success: true, 
+      message: 'User updated successfully',
+      user: {
+        _id: targetUser._id,
+        name: targetUser.name,
+        email: targetUser.email,
+        year: targetUser.year,
+        curriculum: targetUser.curriculum,
+        studentType: targetUser.studentType,
+        isActive: targetUser.isActive,
+        updatedAt: targetUser.updatedAt
+      }
+    });
+  } catch (error) {
+    console.error('Update user API error:', error);
+    res.status(500).json({ success: false, message: 'Error updating user' });
   }
 };
 
@@ -1470,6 +1675,171 @@ const clearStudentRestrictionsAPI = async (req, res) => {
   } catch (error) {
     console.error('Clear student restrictions API error:', error);
     res.status(500).json({ success: false, message: 'Error clearing restrictions' });
+  }
+};
+
+// POST - API: Apply bulk restrictions to multiple students
+const applyBulkRestrictionsAPI = async (req, res) => {
+  try {
+    const user = req.session.user;
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied' });
+    }
+
+    const { studentIds, restrictions } = req.body;
+    if (!studentIds || !Array.isArray(studentIds) || studentIds.length === 0) {
+      return res.status(400).json({ success: false, message: 'No students provided' });
+    }
+
+    const updates = [];
+    for (const sid of studentIds) {
+      const student = await User.findById(sid);
+      if (!student) continue;
+
+      if (!student.restrictions) {
+        student.restrictions = {
+          canAccessHomework: true,
+          canAccessNotes: true,
+          canAccessQuiz: true,
+          canAccessWeeks: true,
+          canAccessPastPapers: true,
+          restrictedWeeks: []
+        };
+      }
+
+      if (typeof restrictions.restrictHomework === 'boolean') {
+        student.restrictions.canAccessHomework = !restrictions.restrictHomework;
+      }
+      if (typeof restrictions.restrictNotes === 'boolean') {
+        student.restrictions.canAccessNotes = !restrictions.restrictNotes;
+      }
+      if (typeof restrictions.restrictQuiz === 'boolean') {
+        student.restrictions.canAccessQuiz = !restrictions.restrictQuiz;
+      }
+      if (typeof restrictions.restrictWeeks === 'boolean') {
+        student.restrictions.canAccessWeeks = !restrictions.restrictWeeks;
+      }
+      if (typeof restrictions.restrictPastPapers === 'boolean') {
+        student.restrictions.canAccessPastPapers = !restrictions.restrictPastPapers;
+      }
+      if (Array.isArray(restrictions.restrictedWeeks)) {
+        student.restrictions.restrictedWeeks = restrictions.restrictedWeeks.map(weekNumber => ({
+          weekNumber,
+          reason: restrictions.reason || '',
+          restrictedAt: new Date()
+        }));
+      }
+
+      updates.push(student.save());
+    }
+
+    await Promise.all(updates);
+
+    return res.json({ success: true, message: 'Restrictions applied successfully' });
+  } catch (error) {
+    console.error('Bulk restrictions API error:', error);
+    return res.status(500).json({ success: false, message: 'Error applying restrictions' });
+  }
+};
+
+// DELETE - API: Clear all restrictions for all students
+const clearAllRestrictionsAPI = async (req, res) => {
+  try {
+    const user = req.session.user;
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied' });
+    }
+
+    const students = await User.find({ role: 'student' });
+    const updates = students.map(student => {
+      student.restrictions = {
+        canAccessHomework: true,
+        canAccessNotes: true,
+        canAccessQuiz: true,
+        canAccessWeeks: true,
+        canAccessPastPapers: true,
+        restrictedWeeks: []
+      };
+      return student.save();
+    });
+
+    await Promise.all(updates);
+    return res.json({ success: true, message: 'All restrictions cleared successfully' });
+  } catch (error) {
+    console.error('Clear all restrictions API error:', error);
+    return res.status(500).json({ success: false, message: 'Error clearing restrictions' });
+  }
+};
+
+// PUT - API: Update admin profile (name, email)
+const updateAdminProfileAPI = async (req, res) => {
+  try {
+    const sessionUser = req.session.user;
+    if (!sessionUser || sessionUser.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied' });
+    }
+
+    const { name, email } = req.body;
+    if (!name || !email) {
+      return res.status(400).json({ success: false, message: 'Name and email are required' });
+    }
+
+    const admin = await User.findById(sessionUser.id || sessionUser._id);
+    if (!admin) {
+      return res.status(404).json({ success: false, message: 'Admin not found' });
+    }
+
+    // Unique email check
+    const existing = await User.findOne({ email, _id: { $ne: admin._id } });
+    if (existing) {
+      return res.status(400).json({ success: false, message: 'Email already in use' });
+    }
+
+    admin.name = name;
+    admin.email = email;
+    await admin.save();
+
+    // reflect in session
+    req.session.user.name = admin.name;
+    req.session.user.email = admin.email;
+
+    return res.json({ success: true, message: 'Profile updated successfully' });
+  } catch (error) {
+    console.error('Update admin profile API error:', error);
+    return res.status(500).json({ success: false, message: 'Error updating profile' });
+  }
+};
+
+// PUT - API: Update admin password
+const updateAdminPasswordAPI = async (req, res) => {
+  try {
+    const sessionUser = req.session.user;
+    if (!sessionUser || sessionUser.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied' });
+    }
+
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword || newPassword.length < 6) {
+      return res.status(400).json({ success: false, message: 'Invalid password data' });
+    }
+
+    const admin = await User.findById(sessionUser.id || sessionUser._id);
+    if (!admin) {
+      return res.status(404).json({ success: false, message: 'Admin not found' });
+    }
+
+    const valid = await admin.matchPassword(currentPassword);
+    if (!valid) {
+      return res.status(400).json({ success: false, message: 'Current password is incorrect' });
+    }
+
+    admin.password = newPassword; // will be hashed by pre-save hook
+    await admin.save();
+
+    return res.json({ success: true, message: 'Password updated successfully' });
+  } catch (error) {
+    console.error('Update admin password API error:', error);
+    return res.status(500).json({ success: false, message: 'Error updating password' });
   }
 };
 
@@ -3298,6 +3668,7 @@ module.exports = {
   deleteWeek,
   createUser,
   getUserDetails,
+  getStudentDetails,
   updateSettings,
   createPastPaper,
   createYearContent,
@@ -3308,6 +3679,8 @@ module.exports = {
   getHomeworkSubmissionAPI,
   gradeHomeworkSubmissionAPI,
   deleteHomeworkSubmissionAPI,
+  deleteUserAPI,
+  updateUserAPI,
   getStudentProgressAPI,
   updateStudentProgressAPI,
   sendStudentReminderAPI,
@@ -3343,4 +3716,10 @@ module.exports = {
   sendMissedHomeworkSummaryAPI,
   // Utility Functions
   cleanupOrphanedContent,
+  // Restrictions bulk ops
+  applyBulkRestrictionsAPI,
+  clearAllRestrictionsAPI,
+  // Admin profile APIs
+  updateAdminProfileAPI,
+  updateAdminPasswordAPI,
 };

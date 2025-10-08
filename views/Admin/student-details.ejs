@@ -1,0 +1,646 @@
+<%- include('partials/header', { title: 'Student Details - ' + student.name }) %>
+
+<style>
+    /* Custom styles for student details page */
+    .admin-user-avatar-large {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .admin-stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--admin-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .admin-stat-label {
+        font-size: 0.85rem;
+        color: var(--admin-text-muted);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .admin-info-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .admin-info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--admin-border);
+    }
+
+    .admin-info-item:last-child {
+        border-bottom: none;
+    }
+
+    .admin-info-label {
+        font-weight: 500;
+        color: var(--admin-text-muted);
+        font-size: 0.95rem;
+    }
+
+    .admin-info-value {
+        font-weight: 600;
+        color: var(--admin-text);
+        text-align: right;
+        max-width: 60%;
+        word-break: break-word;
+    }
+
+    .admin-progress-item {
+        background: var(--admin-bg-light);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--admin-primary);
+    }
+
+    .admin-progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .admin-progress-title {
+        font-weight: 600;
+        color: var(--admin-text);
+        font-size: 1.1rem;
+    }
+
+    .admin-progress-bar {
+        height: 8px;
+        background: var(--admin-border);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+
+    .admin-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--admin-primary), var(--admin-secondary));
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+
+    .admin-progress-text {
+        font-size: 0.85rem;
+        color: var(--admin-text-muted);
+        text-align: center;
+    }
+
+    .admin-submission-item {
+        background: var(--admin-bg-light);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        border-left: 4px solid var(--admin-success);
+    }
+
+    .admin-submission-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .admin-submission-title {
+        font-weight: 600;
+        color: var(--admin-text);
+    }
+
+    .admin-submission-score {
+        background: var(--admin-success-light);
+        color: var(--admin-success);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .admin-submission-date {
+        font-size: 0.85rem;
+        color: var(--admin-text-muted);
+    }
+
+    .admin-submission-feedback {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--admin-text-muted);
+    }
+
+    .admin-empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: var(--admin-text-muted);
+    }
+
+    .admin-empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--admin-border);
+    }
+
+    .admin-action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+        .admin-action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .admin-action-buttons .admin-btn {
+            width: 100%;
+            max-width: 300px;
+            justify-content: center;
+        }
+    }
+</style>
+
+<!-- Admin Layout -->
+<div class="admin-layout">
+    <%- include('partials/sidebar') %>
+    
+    <!-- Main Content -->
+    <main class="admin-main-content">
+        <%- include('partials/header-bar', { title: 'Student Details', breadcrumb: [{ title: 'Admin', url: '/admin/dashboard' }, { title: 'Users', url: '/admin/manage-users' }, { title: student.name, url: '#' }] }) %>
+        
+        <!-- Content Area -->
+        <div class="admin-content">
+            <!-- Student Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up">
+                        <div class="admin-card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 text-center">
+                                    <div class="admin-user-avatar-large mx-auto mb-3">
+                                        <%= student.name.charAt(0).toUpperCase() %>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h2 class="admin-card-title mb-1"><%= student.name %></h2>
+                                    <p class="text-muted mb-2">Student Code: <%= student.studentCode %></p>
+                                    <div class="admin-status-badge <%= student.isActive ? 'active' : 'pending' %>">
+                                        <%= student.isActive ? 'Active' : 'Inactive' %>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="row">
+                                        <div class="col-6 text-center">
+                                            <div class="admin-stat-value"><%= student.totalProgress || 0 %>%</div>
+                                            <div class="admin-stat-label">Progress</div>
+                                        </div>
+                                        <div class="col-6 text-center">
+                                            <div class="admin-stat-value"><%= submissions ? submissions.length : 0 %></div>
+                                            <div class="admin-stat-label">Submissions</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Information -->
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="admin-card-header">
+                            <div>
+                                <h3 class="admin-card-title">
+                                    <i class="fas fa-user me-2"></i>
+                                    Personal Information
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="admin-card-body">
+                            <div class="admin-info-grid">
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Full Name</span>
+                                    <span class="admin-info-value"><%= student.name %></span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Email</span>
+                                    <span class="admin-info-value"><%= student.email %></span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Age</span>
+                                    <span class="admin-info-value"><%= student.age %> years</span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Student Code</span>
+                                    <span class="admin-info-value"><%= student.studentCode %></span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Registration Date</span>
+                                    <span class="admin-info-value"><%= new Date(student.createdAt).toLocaleDateString() %></span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Last Activity</span>
+                                    <span class="admin-info-value"><%= student.lastActivity ? new Date(student.lastActivity).toLocaleDateString() : 'Never' %></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="admin-card-header">
+                            <div>
+                                <h3 class="admin-card-title">
+                                    <i class="fas fa-graduation-cap me-2"></i>
+                                    Academic Information
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="admin-card-body">
+                            <div class="admin-info-grid">
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Year</span>
+                                    <span class="admin-info-value"><%= student.year %></span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">School</span>
+                                    <span class="admin-info-value"><%= student.schoolName %></span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Curriculum</span>
+                                    <span class="admin-info-value"><%= student.curriculum %></span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Student Type</span>
+                                    <span class="admin-info-value"><%= student.studentType %></span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Current Week</span>
+                                    <span class="admin-info-value">Week <%= student.currentWeek || 1 %></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="admin-card-header">
+                            <div>
+                                <h3 class="admin-card-title">
+                                    <i class="fas fa-phone me-2"></i>
+                                    Contact Information
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="admin-card-body">
+                            <div class="admin-info-grid">
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Student Phone</span>
+                                    <span class="admin-info-value"><%= student.studentPhoneNumber %></span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Parent Phone</span>
+                                    <span class="admin-info-value"><%= student.parentPhoneNumber %></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="400">
+                        <div class="admin-card-header">
+                            <div>
+                                <h3 class="admin-card-title">
+                                    <i class="fas fa-chart-line me-2"></i>
+                                    Overall Progress
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="admin-card-body">
+                            <div class="admin-info-grid">
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Materials Viewed</span>
+                                    <span class="admin-info-value"><%= student.overallProgress ? student.overallProgress.totalMaterialsViewed || 0 : 0 %></span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Materials Completed</span>
+                                    <span class="admin-info-value"><%= student.overallProgress ? student.overallProgress.totalMaterialsCompleted || 0 : 0 %></span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Total Study Time</span>
+                                    <span class="admin-info-value"><%= student.overallProgress ? Math.round((student.overallProgress.totalStudyTime || 0) / 60) : 0 %> hours</span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Homework Submitted</span>
+                                    <span class="admin-info-value"><%= student.statistics ? student.statistics.homeworkSubmitted || 0 : 0 %></span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Notes Downloaded</span>
+                                    <span class="admin-info-value"><%= student.statistics ? student.statistics.notesDownloaded || 0 : 0 %></span>
+                                </div>
+                                <div class="admin-info-item">
+                                    <span class="admin-info-label">Quizzes Attempted</span>
+                                    <span class="admin-info-value"><%= student.statistics ? student.statistics.quizzesAttempted || 0 : 0 %></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Access Restrictions -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="500">
+                        <div class="admin-card-header">
+                            <div>
+                                <h3 class="admin-card-title">
+                                    <i class="fas fa-shield-alt me-2"></i>
+                                    Access Restrictions
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="admin-card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="admin-info-grid">
+                                        <div class="admin-info-item">
+                                            <span class="admin-info-label">Homework Access</span>
+                                            <span class="admin-info-value">
+                                                <span class="admin-status-badge <%= student.restrictions && student.restrictions.canAccessHomework ? 'active' : 'pending' %>">
+                                                    <%= student.restrictions && student.restrictions.canAccessHomework ? 'Allowed' : 'Restricted' %>
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <div class="admin-info-item">
+                                            <span class="admin-info-label">Notes Access</span>
+                                            <span class="admin-info-value">
+                                                <span class="admin-status-badge <%= student.restrictions && student.restrictions.canAccessNotes ? 'active' : 'pending' %>">
+                                                    <%= student.restrictions && student.restrictions.canAccessNotes ? 'Allowed' : 'Restricted' %>
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <div class="admin-info-item">
+                                            <span class="admin-info-label">Quiz Access</span>
+                                            <span class="admin-info-value">
+                                                <span class="admin-status-badge <%= student.restrictions && student.restrictions.canAccessQuiz ? 'active' : 'pending' %>">
+                                                    <%= student.restrictions && student.restrictions.canAccessQuiz ? 'Allowed' : 'Restricted' %>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="admin-info-grid">
+                                        <div class="admin-info-item">
+                                            <span class="admin-info-label">Weeks Access</span>
+                                            <span class="admin-info-value">
+                                                <span class="admin-status-badge <%= student.restrictions && student.restrictions.canAccessWeeks ? 'active' : 'pending' %>">
+                                                    <%= student.restrictions && student.restrictions.canAccessWeeks ? 'Allowed' : 'Restricted' %>
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <div class="admin-info-item">
+                                            <span class="admin-info-label">Past Papers Access</span>
+                                            <span class="admin-info-value">
+                                                <span class="admin-status-badge <%= student.restrictions && student.restrictions.canAccessPastPapers ? 'active' : 'pending' %>">
+                                                    <%= student.restrictions && student.restrictions.canAccessPastPapers ? 'Allowed' : 'Restricted' %>
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <% if (student.restrictions && student.restrictions.restrictedWeeks && student.restrictions.restrictedWeeks.length > 0) { %>
+                                        <div class="admin-info-item">
+                                            <span class="admin-info-label">Restricted Weeks</span>
+                                            <span class="admin-info-value">
+                                                <% student.restrictions.restrictedWeeks.forEach(function(week, index) { %>
+                                                    Week <%= week.weekNumber %><% if (index < student.restrictions.restrictedWeeks.length - 1) { %>, <% } %>
+                                                <% }); %>
+                                            </span>
+                                        </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Progress -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="600">
+                        <div class="admin-card-header">
+                            <div>
+                                <h3 class="admin-card-title">
+                                    <i class="fas fa-calendar-week me-2"></i>
+                                    Weekly Progress
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="admin-card-body">
+                            <% if (progress && progress.length > 0) { %>
+                                <% progress.forEach(function(weekProgress) { %>
+                                <div class="admin-progress-item">
+                                    <div class="admin-progress-header">
+                                        <div class="admin-progress-title">
+                                            <%= weekProgress.week ? weekProgress.week.title : 'Week ' + weekProgress.weekNumber %>
+                                        </div>
+                                        <div class="admin-status-badge <%= weekProgress.status === 'completed' ? 'active' : weekProgress.status === 'in_progress' ? 'warning' : 'pending' %>">
+                                            <%= weekProgress.status.replace('_', ' ').toUpperCase() %>
+                                        </div>
+                                    </div>
+                                    <div class="admin-progress-bar">
+                                        <div class="admin-progress-fill" style="width: <%= weekProgress.score || 0 %>%"></div>
+                                    </div>
+                                    <div class="admin-progress-text">
+                                        <%= weekProgress.score || 0 %>% Complete - <%= weekProgress.timeSpent || 0 %> minutes spent
+                                    </div>
+                                    <% if (weekProgress.progress) { %>
+                                    <div class="row mt-3">
+                                        <div class="col-md-4">
+                                            <strong>Homework:</strong> 
+                                            <%= weekProgress.progress.homework ? (weekProgress.progress.homework.submitted ? 'Submitted' : 'Not Submitted') : 'N/A' %>
+                                            <% if (weekProgress.progress.homework && weekProgress.progress.homework.score) { %>
+                                                (<%= weekProgress.progress.homework.score %>%)
+                                            <% } %>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>Notes:</strong> 
+                                            <%= weekProgress.progress.notes ? (weekProgress.progress.notes.downloaded ? 'Downloaded' : 'Not Downloaded') : 'N/A' %>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>Quiz:</strong> 
+                                            <%= weekProgress.progress.quiz ? (weekProgress.progress.quiz.attempted ? 'Attempted' : 'Not Attempted') : 'N/A' %>
+                                            <% if (weekProgress.progress.quiz && weekProgress.progress.quiz.score) { %>
+                                                (<%= weekProgress.progress.quiz.score %>%)
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    <% } %>
+                                </div>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="admin-empty-state">
+                                    <i class="fas fa-calendar-times"></i>
+                                    <h4>No Progress Data</h4>
+                                    <p>This student hasn't started any weeks yet.</p>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Homework Submissions -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="700">
+                        <div class="admin-card-header">
+                            <div>
+                                <h3 class="admin-card-title">
+                                    <i class="fas fa-tasks me-2"></i>
+                                    Homework Submissions
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="admin-card-body">
+                            <% if (submissions && submissions.length > 0) { %>
+                                <% submissions.forEach(function(submission) { %>
+                                <div class="admin-submission-item">
+                                    <div class="admin-submission-header">
+                                        <div class="admin-submission-title">
+                                            <%= submission.week ? submission.week.title : 'Week ' + submission.weekNumber %>
+                                        </div>
+                                        <% if (submission.score !== undefined && submission.score !== null) { %>
+                                        <div class="admin-submission-score">
+                                            <%= submission.score %>% Score
+                                        </div>
+                                        <% } %>
+                                    </div>
+                                    <div class="admin-submission-date">
+                                        Submitted: <%= new Date(submission.submittedAt).toLocaleString() %>
+                                        <% if (submission.status) { %>
+                                        • Status: <%= submission.status.charAt(0).toUpperCase() + submission.status.slice(1) %>
+                                        <% } %>
+                                    </div>
+                                    <% if (submission.feedback) { %>
+                                    <div class="admin-submission-feedback">
+                                        <strong>Feedback:</strong> <%= submission.feedback %>
+                                    </div>
+                                    <% } %>
+                                </div>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="admin-empty-state">
+                                    <i class="fas fa-inbox"></i>
+                                    <h4>No Submissions</h4>
+                                    <p>This student hasn't submitted any homework yet.</p>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-card" data-aos="fade-up" data-aos-delay="800">
+                        <div class="admin-card-body text-center">
+                            <div class="admin-action-buttons">
+                                <button class="admin-btn admin-btn-primary" onclick="editStudent()">
+                                    <i class="fas fa-edit me-2"></i>
+                                    Edit Student
+                                </button>
+                                <button class="admin-btn admin-btn-<%= student.isActive ? 'warning' : 'success' %>" onclick="toggleStudentStatus()">
+                                    <i class="fas fa-<%= student.isActive ? 'ban' : 'check' %> me-2"></i>
+                                    <%= student.isActive ? 'Deactivate' : 'Activate' %> Student
+                                </button>
+                                <button class="admin-btn admin-btn-danger" onclick="deleteStudent()">
+                                    <i class="fas fa-trash me-2"></i>
+                                    Delete Student
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<%- include('partials/footer') %>
+
+<script>
+    const studentId = '<%= student._id %>';
+    const studentData = <%- JSON.stringify(student) %>;
+
+    // Edit Student
+    function editStudent() {
+        // Open edit modal or redirect to edit page
+        window.location.href = `/admin/manage-users?edit=${studentId}`;
+    }
+
+    // Toggle Student Status
+    async function toggleStudentStatus() {
+        try {
+            const action = studentData.isActive ? 'deactivate' : 'activate';
+            const response = await fetch(`/admin/users/${studentId}/toggle-status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action })
+            });
+
+            if (response.ok) {
+                showSuccess(`Student ${action}d successfully!`);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                showError('Failed to update student status');
+            }
+        } catch (error) {
+            console.error('Error toggling student status:', error);
+            showError('An error occurred while updating student status');
+        }
+    }
+
+    // Delete Student
+    function deleteStudent() {
+        if (confirm(`Are you sure you want to delete ${studentData.name}? This action cannot be undone.`)) {
+            // Implement delete functionality
+            window.location.href = `/admin/manage-users?delete=${studentId}`;
+        }
+    }
+</script>

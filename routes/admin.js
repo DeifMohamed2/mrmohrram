@@ -60,7 +60,7 @@ router.get('/weeks/:weekId', isAdmin, adminController.getWeekDetails);
 
 // User Management Routes - Additional
 router.post('/users/create', isAdmin, adminController.createUser);
-router.get('/users/:userId', isAdmin, adminController.getUserDetails);
+router.get('/student-details/:userId', isAdmin, adminController.getStudentDetails);
 
 // Homework Management Routes
 router.get('/homework', isAdmin, adminController.getHomework);
@@ -100,6 +100,8 @@ router.post('/settings/update', isAdmin, adminController.updateSettings);
 // Students API
 router.get('/api/students', isAdmin, adminController.getStudentsAPI);
 router.get('/api/users/:userId', isAdmin, adminController.getUserDetails);
+router.put('/api/users/:userId', isAdmin, adminController.updateUserAPI);
+router.delete('/api/users/:userId', isAdmin, adminController.deleteUserAPI);
 
 // Weeks API
 router.get('/api/weeks', isAdmin, adminController.getWeeksAPI);
@@ -126,6 +128,12 @@ router.put('/api/students/:studentId/restrictions', isAdmin, adminController.tog
 router.get('/api/students/:studentId/week-restrictions', isAdmin, adminController.getStudentWeekRestrictionsAPI);
 router.put('/api/students/:studentId/week-restrictions', isAdmin, adminController.updateStudentWeekRestrictionsAPI);
 router.delete('/api/students/:studentId/restrictions', isAdmin, adminController.clearStudentRestrictionsAPI);
+router.post('/api/students/bulk-restrictions', isAdmin, adminController.applyBulkRestrictionsAPI);
+router.delete('/api/students/clear-all-restrictions', isAdmin, adminController.clearAllRestrictionsAPI);
+
+// Admin profile
+router.put('/api/admin/profile', isAdmin, adminController.updateAdminProfileAPI);
+router.put('/api/admin/password', isAdmin, adminController.updateAdminPasswordAPI);
 
 // Settings API
 router.get('/api/settings', isAdmin, adminController.getSettingsAPI);
