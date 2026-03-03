@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
-const connectDB = require('./config/db');
+const { connectDB } = require('./config/db');
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 
@@ -47,16 +47,11 @@ const upload = multer({
   }
 });
 
-// Connect to MongoDB
-connectDB();
-
 // Create admin user if doesn't exist
 const { createAdminUser } = require('./utils/createAdmin');
-createAdminUser();
 
 // Initialize scheduled tasks for notifications
 const { initScheduledTasks } = require('./utils/scheduledTasks');
-initScheduledTasks();
 
 // Create Express app
 const app = express();
@@ -131,8 +126,19 @@ app.use((req, res) => {
   });
 });
 
-// Start server
-const PORT =  3210;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Database connection and server startup
+const PORT = 3210;
+
+connectDB()
+  .then(() => {
+    createAdminUser();
+    initScheduledTasks();
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  });

@@ -1,14 +1,42 @@
 const mongoose = require('mongoose');
 
-const connectDB = async () => {
-  try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI );
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.error(`Error: ${error.message}`);
-    process.exit(1);
-  }
+const MONGO_OPTIONS = {
+  maxPoolSize: 6,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
 };
 
-module.exports = connectDB;
+let clientPromise = null;
 
+function connectDB() {
+  if (clientPromise) return clientPromise;
+
+  const uri = process.env.DATABASE_URL;
+  if (!uri) {
+    console.error('FATAL: DATABASE_URL environment variable is not set');
+    process.exit(1);
+  }
+
+  clientPromise = mongoose.connect(uri, MONGO_OPTIONS).then(() => {
+    console.log('MongoDB connected successfully');
+    return mongoose.connection.getClient();
+  });
+
+  mongoose.connection.on('error', (err) => {
+    console.error('MongoDB connection error:', err.message);
+  });
+
+  return clientPromise;
+}
+
+process.on('SIGINT', async () => {
+  await mongoose.connection.close();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  await mongoose.connection.close();
+  process.exit(0);
+});
+
+module.exports = { connectDB };
